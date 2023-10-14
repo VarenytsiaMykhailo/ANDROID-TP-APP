@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import com.example.app.R
 
 import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
@@ -32,6 +31,18 @@ class MapsFragment : Fragment() {
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
     }
 
+    private fun onNewLocation(
+        latitude: Double,
+        longitude: Double,
+        locationTitle: String = "Location is here"
+    ): OnMapReadyCallback =
+        OnMapReadyCallback { googleMap ->
+            val location = LatLng(latitude, longitude)
+            googleMap.addMarker(MarkerOptions().position(location).title(locationTitle))
+            googleMap.moveCamera(CameraUpdateFactory.newLatLng(location))
+        }
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -43,6 +54,9 @@ class MapsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
-        mapFragment?.getMapAsync(callback)
+
+        mapFragment?.getMapAsync(onNewLocation(0.0, 0.0, "AMAHASLA"))
     }
+
+
 }
