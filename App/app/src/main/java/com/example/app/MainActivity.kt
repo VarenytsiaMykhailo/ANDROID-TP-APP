@@ -20,8 +20,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupTabBar() {
-        val tabBarAdapter = TabBarAdapter(this, binding.MainActivityTabLayout.tabCount)
-        binding.MainActivityViewPager.adapter = tabBarAdapter
+        // Disable swipe between fragments
+        binding.MainActivityViewPager.isUserInputEnabled = false
+
+        binding.MainActivityViewPager.adapter =
+            TabBarAdapter(this, binding.MainActivityTabLayout.tabCount)
 
         binding.MainActivityViewPager.registerOnPageChangeCallback(
             object : ViewPager2.OnPageChangeCallback() {
