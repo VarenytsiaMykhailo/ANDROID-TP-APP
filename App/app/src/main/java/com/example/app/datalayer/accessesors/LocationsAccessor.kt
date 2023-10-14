@@ -11,8 +11,8 @@ import retrofit2.http.Query
 
 interface LocationsAccessor {
     //отредачить по апи
-    @GET("/v2/beers")
-    suspend fun getLocations(@Query("abv_lt") limit: Int): List<Location>
+    @GET("places/list")
+    suspend fun getLocations(): List<Location>
     @GET("/v2/beers/{id}")
     suspend fun getLocation(@Path("id") id: String): List<Location>
 
@@ -31,7 +31,7 @@ interface LocationsAccessor {
             val retrofit = Retrofit.Builder().apply {
                 client(client)
                 addConverterFactory(GsonConverterFactory.create())
-                baseUrl("https://api.punkapi.com")
+                baseUrl("http://87.239.109.16/api/v1/")
             }.build()
 
 

@@ -5,25 +5,37 @@ import com.google.gson.annotations.SerializedName
 class Location {
     // в @ лежит название переменной на бэке
 
-    @SerializedName("image_url")
-    var image_url = ""
-    fun imageUrl() = image_url
+    @SerializedName("id")
+    var id = ""
+    fun id() = id
+
+    @SerializedName("place_id")
+    var place_id = ""
+    fun place_id() = place_id
 
     @SerializedName("name")
     var name = ""
     fun name() = name
 
-    @SerializedName("description")
-    var description=""
-    fun description() = description
+    @SerializedName("cover")
+    var image_url = ""
+    fun imageUrl() = image_url
 
-    @SerializedName("abv")
-    var coordinates=""
-    fun coordinates() = coordinates
+    @SerializedName("rating")
+    var rating :Float= 0F
+    fun rating() = rating
 
-    @SerializedName("id")
-    var id = ""
-    fun id() = id
+    @SerializedName("rating_count")
+    var rating_count:Int=0
+    fun rating_count() = rating_count
+
+    @SerializedName("lat")
+    var lat=""
+    fun lat() = lat
+
+    @SerializedName("lng")
+    var lng=""
+    fun lng() = lng
 
 
 }
