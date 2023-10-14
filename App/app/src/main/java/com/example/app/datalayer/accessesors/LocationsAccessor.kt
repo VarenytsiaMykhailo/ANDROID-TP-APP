@@ -1,6 +1,6 @@
-package com.example.app.datalayer.Accessesors
+package com.example.app.datalayer.accessesors
 
-import com.example.app.datalayer.Models.Location
+import com.example.app.datalayer.models.Location
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit

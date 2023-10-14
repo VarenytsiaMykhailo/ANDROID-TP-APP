@@ -1,7 +1,7 @@
-package com.example.app.businesslayer.Providers
+package com.example.app.businesslayer.providers
 
-import com.example.app.datalayer.Accessesors.LocationsAccessor
-import com.example.app.datalayer.Models.Location
+import com.example.app.datalayer.accessesors.LocationsAccessor
+import com.example.app.datalayer.models.Location
 
 class LocationProvider(private val accessor: LocationsAccessor) {
 
