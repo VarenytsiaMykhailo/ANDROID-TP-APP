@@ -3,7 +3,7 @@ package com.example.app.presentationlayer.ui
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.viewpager2.widget.ViewPager2
-import com.example.app.presentationlayer.Adapters.TabBarAdapter
+import com.example.app.presentationlayer.adapters.TabBarAdapter
 import com.example.app.databinding.ActivityMainBinding
 import com.google.android.material.tabs.TabLayout
 

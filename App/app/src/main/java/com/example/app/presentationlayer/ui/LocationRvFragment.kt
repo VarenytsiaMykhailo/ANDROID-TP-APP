@@ -10,8 +10,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.app.R
-import com.example.app.presentationlayer.Adapters.LocationAdapter
-import com.example.app.presentationlayer.ViewModels.LocationRvViewModel
+import com.example.app.presentationlayer.adapters.LocationAdapter
+import com.example.app.presentationlayer.viewmodels.LocationRvViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

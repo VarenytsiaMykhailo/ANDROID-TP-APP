@@ -1,9 +1,9 @@
-package com.example.app.presentationlayer.Adapters
+package com.example.app.presentationlayer.adapters
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.example.app.maps.MapsFragment
+import com.example.app.presentationlayer.ui.MapsFragment
 import com.example.app.presentationlayer.ui.ChartFragment
 import com.example.app.presentationlayer.ui.HomeFragment
 import com.example.app.presentationlayer.ui.LocationRvFragment

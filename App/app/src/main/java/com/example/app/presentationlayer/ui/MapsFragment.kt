@@ -1,4 +1,4 @@
-package com.example.app.maps
+package com.example.app.presentationlayer.ui
 
 import androidx.fragment.app.Fragment
 
