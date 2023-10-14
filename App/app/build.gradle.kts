@@ -1,8 +1,13 @@
+import java.util.*
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
+
+val properties = Properties()
+properties.load(project.rootProject.file("local.properties").reader())
 
 android {
     namespace = "com.example.app"
@@ -26,6 +31,14 @@ android {
                 "proguard-rules.pro"
             )
         }
+
+        debug {
+            buildConfigField(
+                "String",
+                "BACKEND_CONNECTION_URL",
+                properties.getProperty("BACKEND_CONNECTION_URL")
+            )
+        }
     }
 
     compileOptions {
@@ -39,6 +52,7 @@ android {
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 }
 
@@ -57,9 +71,9 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 
-    implementation ("com.squareup.okhttp3:okhttp:4.9.3")
-    implementation ("com.squareup.okhttp3:logging-interceptor:4.9.3")
-    implementation ("com.google.code.gson:gson:2.9.1")
+    implementation("com.squareup.okhttp3:okhttp:4.9.3")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
+    implementation("com.google.code.gson:gson:2.9.1")
 
     implementation("io.coil-kt:coil:1.4.0")
 
