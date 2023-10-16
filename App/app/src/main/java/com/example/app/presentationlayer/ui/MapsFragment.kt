@@ -40,6 +40,18 @@ class MapsFragment : Fragment() {
     }
 
 
+    private fun onNewLocation(
+        latitude: Double,
+        longitude: Double,
+        locationTitle: String = "Location is here"
+    ): OnMapReadyCallback =
+        OnMapReadyCallback { googleMap ->
+            val location = LatLng(latitude, longitude)
+            googleMap.addMarker(MarkerOptions().position(location).title(locationTitle))
+            googleMap.moveCamera(CameraUpdateFactory.newLatLng(location))
+        }
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -53,22 +65,14 @@ class MapsFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             val list = withContext(Dispatchers.IO) { viewModel.getFriends() }
             val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
-            mapFragment?.getMapAsync(callback)
-            Map(mapFragment, list)
+            for (i in list.indices) {
+                val lat = list[i].lat.toDouble()
+                val lng = list[i].lng.toDouble()
+                val name = list[i].name
+                mapFragment?.getMapAsync(onNewLocation(lat, lng, name))
+            }
         }
     }
 
-    fun Map(googleMap: GoogleMap, list: List<Location>) {
-        for (i in list.indices) {
-            val lat = list[i].lat.toDouble()
-            val lng = list[i].lng.toDouble()
-            val sydney = LatLng(lat, lng)
-            googleMap.addMarker(
-                MarkerOptions()
-                    .position(sydney)
-                    .title("Marker in Sydney")
-            )
-
-        }
-    }
+    
 }
