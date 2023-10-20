@@ -1,6 +1,7 @@
 package com.example.app.datalayer.accessesors
 
 import com.example.app.datalayer.models.Location
+import com.example.app.datalayer.repositories.LocalPropertiesSecrets
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -11,12 +12,15 @@ import retrofit2.http.Query
 
 interface LocationsAccessor {
     //отредачить по апи
-    @GET("/v2/beers")
-    suspend fun getLocations(@Query("abv_lt") limit: Int): List<Location>
+    @GET("places/list")
+    suspend fun getLocations(): List<Location>
     @GET("/v2/beers/{id}")
     suspend fun getLocation(@Path("id") id: String): List<Location>
 
+
+
     companion object {
+
         fun create(): LocationsAccessor {
             val loggingInterceptor = HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.BODY
@@ -30,8 +34,9 @@ interface LocationsAccessor {
 
             val retrofit = Retrofit.Builder().apply {
                 client(client)
+                val backendURL:LocalPropertiesSecrets?=null
                 addConverterFactory(GsonConverterFactory.create())
-                baseUrl("https://api.punkapi.com")
+                baseUrl("${ backendURL?.getBackendConnectionUrl()}")
             }.build()
 
 

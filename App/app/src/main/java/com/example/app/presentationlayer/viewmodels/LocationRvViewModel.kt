@@ -8,7 +8,7 @@ class LocationRvViewModel : ViewModel() {
     private val accessor = LocationsAccessor.create()
     private val provider = LocationProvider(accessor)
 
-    suspend fun getFriends() = provider.getLocations(10)
+    suspend fun getFriends() = provider.getLocations()
 
     suspend fun getFriend(id: String) = provider.getLocation(id)
 }

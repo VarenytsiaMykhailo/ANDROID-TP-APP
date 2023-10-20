@@ -5,8 +5,8 @@ import com.example.app.datalayer.models.Location
 
 class LocationProvider(private val accessor: LocationsAccessor) {
 
-    suspend fun getLocations( limit: Int): List<Location> {
-        return accessor.getLocations( limit)
+    suspend fun getLocations(): List<Location> {
+        return accessor.getLocations()
     }
 
     suspend fun getLocation(id: String): List<Location> {
