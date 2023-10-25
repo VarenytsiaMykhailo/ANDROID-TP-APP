@@ -1,4 +1,4 @@
-package com.example.app.presentationlayer.ui
+package com.example.app.presentationlayer.fragments
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -6,20 +6,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.app.R
-import com.example.app.presentationlayer.adapters.LocationAdapter
-import com.example.app.presentationlayer.viewmodels.LocationRvViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.example.app.presentationlayer.adapters.PlacesListRecyclerViewAdapter
+import com.example.app.presentationlayer.viewmodels.PlacesListFragmentViewModel
 
-class LocationRvFragment : Fragment() {
-    private val viewModel by viewModels<LocationRvViewModel>()
+class PlacesListFragment : Fragment() {
 
-    private val locationAdapter = LocationAdapter()
+    private val viewModel by viewModels<PlacesListFragmentViewModel>()
+
+    private val placesListRecyclerViewAdapter = PlacesListRecyclerViewAdapter()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -27,23 +25,25 @@ class LocationRvFragment : Fragment() {
     ): View? {
         return inflater.inflate(R.layout.main_screen_rv_layout, container, false)
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         view.findViewById<RecyclerView>(R.id.locations_rv).apply {
             layoutManager = GridLayoutManager(context, 1)
-            adapter = locationAdapter
+            adapter = placesListRecyclerViewAdapter
         }
-        viewLifecycleOwner.lifecycleScope.launch {
-            val list = withContext(Dispatchers.IO){ viewModel.getFriends()}
-            locationAdapter.submitList(list)
-        }
+
+        viewModel.placesListRecyclerViewAdapter = placesListRecyclerViewAdapter
+
+        viewModel.onUpdatePlaces()
     }
+
     companion object {
         @JvmStatic
         fun newInstance(
             //param1: String,
             //param2: String,
-        ) = LocationRvFragment().apply {
+        ) = PlacesListFragment().apply {
             arguments = Bundle().apply {
                 //putString(ARG_PARAM1, param1)
                 //putString(ARG_PARAM2, param2)
