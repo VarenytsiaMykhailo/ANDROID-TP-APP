@@ -1,4 +1,4 @@
-package com.example.app.presentationlayer.ui
+package com.example.app.presentationlayer.fragments
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -13,7 +13,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //setContentView(R.layout.activity_main)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -40,7 +39,7 @@ class MainActivity : AppCompatActivity() {
         binding.MainActivityTabLayout.addOnTabSelectedListener(
             object : TabLayout.OnTabSelectedListener {
                 override fun onTabSelected(tab: TabLayout.Tab) {
-                    binding.MainActivityViewPager.currentItem = tab.position
+                    binding.MainActivityViewPager.setCurrentItem(tab.position, false)
                 }
 
                 override fun onTabUnselected(tab: TabLayout.Tab?) {}

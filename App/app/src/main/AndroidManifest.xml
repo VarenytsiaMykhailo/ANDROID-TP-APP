@@ -19,7 +19,7 @@
         tools:targetApi="33">
 
         <activity
-            android:name=".presentationlayer.ui.MainActivity"
+            android:name=".presentationlayer.fragments.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
