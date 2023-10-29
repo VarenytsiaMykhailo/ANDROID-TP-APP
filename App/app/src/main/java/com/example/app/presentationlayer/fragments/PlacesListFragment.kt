@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -42,6 +43,11 @@ class PlacesListFragment : Fragment() {
         val itemTouchHelper = ItemTouchHelper(onMoveCallback)
         itemTouchHelper.attachToRecyclerView(recyclerView)
         viewModel.onUpdatePlaces()
+        view.findViewById<Button>(R.id.change_fragment_button).setOnClickListener{
+
+            //Миша сделай
+
+        }
     }
 
     private var onMoveCallback =

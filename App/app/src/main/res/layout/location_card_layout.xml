@@ -195,4 +195,5 @@
 
             app:layout_constraintTop_toTopOf="@+id/location_closetime_txt" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
