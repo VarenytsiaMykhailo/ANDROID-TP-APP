@@ -4,7 +4,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.RatingBar
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -25,6 +28,8 @@ internal class PlacesListRecyclerViewAdapter :
     override fun onBindViewHolder(holder: LocationViewHolder, position: Int) {
         val location = getItem(position)
         holder.bind(location)
+
+
     }
 
     private class LocationDifferentCallback : DiffUtil.ItemCallback<Place>() {
@@ -32,18 +37,58 @@ internal class PlacesListRecyclerViewAdapter :
             oldItem.id == newItem.id
 
         override fun areContentsTheSame(oldItem: Place, newItem: Place) =
-            oldItem.imageUrl == newItem.imageUrl
+            oldItem.mainImageUrl == newItem.mainImageUrl
     }
 }
 
 internal class LocationViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-    private val image by lazy { view.findViewById<ImageView>(R.id.location_avatar) }
+    private val expandableInfo = view.findViewById<ConstraintLayout>(R.id.expandable_info)
+
+    private val mainImage by lazy { view.findViewById<ImageView>(R.id.location_main_picture) }
+    private val image1 by lazy { view.findViewById<ImageView>(R.id.location_picture_1) }
+    private val image2 by lazy { view.findViewById<ImageView>(R.id.location_picture_2) }
+    private val image3 by lazy { view.findViewById<ImageView>(R.id.location_picture_3) }
+
+    private val placeNameWhite = view.findViewById<TextView>(R.id.location_name_white)
+    private val ratingWhite = view.findViewById<TextView>(R.id.location_rating_white)
 
     private val placeName = view.findViewById<TextView>(R.id.location_name)
+    private val rating = view.findViewById<TextView>(R.id.location_rating)
+    private val ratingStars = view.findViewById<RatingBar>(R.id.location_stars_rating)
+    private val ratingCount = view.findViewById<TextView>(R.id.location_rating_count)
+
+    private val placeDescription = view.findViewById<TextView>(R.id.location_description)
 
     fun bind(place: Place) {
+        placeNameWhite.text = place.name
+        ratingWhite.text = place.rating.toString()
+
         placeName.text = place.name
-        image.load(place.imageUrl)
+        rating.text = place.rating.toString()
+        ratingStars.rating = place.rating.toFloat()
+        ratingCount.text = place.ratingCount.toString()
+
+        placeDescription.text = place.name
+
+        mainImage.load(place.mainImageUrl)
+        image1.load(place.mainImageUrl)
+        image2.load(place.mainImageUrl)
+        image3.load(place.mainImageUrl)
+
+        var expandable = true
+        mainImage.setOnClickListener {
+            if (expandable) {
+                expandableInfo.visibility = View.VISIBLE
+                placeNameWhite.visibility = View.GONE
+                ratingWhite.visibility = View.GONE
+                expandable = !expandable
+            } else {
+                expandableInfo.visibility = View.GONE
+                placeNameWhite.visibility = View.VISIBLE
+                ratingWhite.visibility = View.VISIBLE
+                expandable = !expandable
+            }
+        }
     }
 }
