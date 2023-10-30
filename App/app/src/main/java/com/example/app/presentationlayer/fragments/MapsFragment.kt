@@ -44,7 +44,6 @@ class MapsFragment : Fragment() {
         mapFragment.getMapAsync(onMapReadyCallback)
     }
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -56,7 +55,7 @@ class MapsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+        mapFragment = childFragmentManager.findFragmentById(R.id.MapsFragment__FragmentContainerView) as SupportMapFragment
         viewModel.fragment = this
 
         viewModel.onUpdatePlaces()

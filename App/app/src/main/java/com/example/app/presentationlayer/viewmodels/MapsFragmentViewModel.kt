@@ -17,11 +17,7 @@ internal class MapsFragmentViewModel : ViewModel() {
             val placesList = mapProvider.getPlaces()
 
             placesList.forEach {
-                val lat = it.location.lat
-                val lng = it.location.lng
-                val name = it.name
-
-                fragment.onNewLocation(lat, lng, name)
+                fragment.onNewLocation(it.location.lat, it.location.lng, it.name)
             }
         }
     }
