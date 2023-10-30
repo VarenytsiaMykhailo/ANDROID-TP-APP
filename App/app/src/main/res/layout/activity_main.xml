@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentationlayer.fragments.MainActivity">
+    tools:context=".presentationlayer.MainActivity">
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/MainActivity__ViewPager"
@@ -27,11 +27,6 @@
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Home" />
-
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:text="List" />
 
         <com.google.android.material.tabs.TabItem
@@ -42,9 +37,13 @@
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="Place" />
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="Chart" />
 
     </com.google.android.material.tabs.TabLayout>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

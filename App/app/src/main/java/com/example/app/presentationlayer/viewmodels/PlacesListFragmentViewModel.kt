@@ -12,10 +12,15 @@ internal class PlacesListFragmentViewModel : ViewModel() {
 
     lateinit var placesListRecyclerViewAdapter: PlacesListRecyclerViewAdapter
 
+    private var isDataAlreadyLoaded = false // TODO Костыль, подумать как сделать лучше
+
     fun onUpdatePlaces() {
-        viewModelScope.launch {
-            val placesList = mapProvider.getPlaces()
-            placesListRecyclerViewAdapter.submitList(placesList)
+        if (!isDataAlreadyLoaded) {
+            viewModelScope.launch {
+                val placesList = mapProvider.getPlaces()
+                placesListRecyclerViewAdapter.submitList(placesList)
+                isDataAlreadyLoaded = true
+            }
         }
     }
 }

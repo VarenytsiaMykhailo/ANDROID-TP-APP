@@ -5,8 +5,8 @@ import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.app.presentationlayer.fragments.MapsFragment
 import com.example.app.presentationlayer.fragments.ChartFragment
-import com.example.app.presentationlayer.fragments.HomeFragment
-import com.example.app.presentationlayer.fragments.PlacesListFragment
+import com.example.app.presentationlayer.fragments.placedescriptionscreen.PlaceDescriptionFragment
+import com.example.app.presentationlayer.fragments.placeslistscreen.PlacesListRootFragment
 
 class TabBarAdapter(
     activity: FragmentActivity,
@@ -17,10 +17,10 @@ class TabBarAdapter(
 
     override fun createFragment(position: Int): Fragment =
         when (position) {
-            0 -> HomeFragment.newInstance()
-            1 -> PlacesListFragment.newInstance()
-            2 -> MapsFragment()
-            3 -> ChartFragment.newInstance()
-            else -> HomeFragment.newInstance()
+            0 -> PlacesListRootFragment.newInstance()
+            1 -> MapsFragment()
+            2 -> PlaceDescriptionFragment.newInstance("ChIJfRJDflpKtUYRl0UbgcrmUUk")
+            3-> ChartFragment.newInstance()
+            else -> ChartFragment.newInstance()
         }
 }

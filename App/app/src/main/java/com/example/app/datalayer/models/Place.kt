@@ -20,7 +20,7 @@ internal data class Place(
     val rating: Double,
 
     @SerializedName("rating_count")
-    val ratingCount: Double,
+    val ratingCount: Int,
 
     @SerializedName("location")
     val location: Location,
