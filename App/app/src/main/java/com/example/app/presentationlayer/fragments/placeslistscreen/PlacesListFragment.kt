@@ -48,6 +48,7 @@ class PlacesListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         val recyclerView = view.findViewById<RecyclerView>(R.id.locations_rv)
 
         view.findViewById<RecyclerView>(R.id.locations_rv).apply {
@@ -73,9 +74,9 @@ class PlacesListFragment : Fragment() {
             override fun onMove(
                 recyclerView: RecyclerView,
                 viewHolder: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder
+                target: RecyclerView.ViewHolder,
             ): Boolean {
-                TODO("Not yet implemented")
+                return false
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
@@ -89,9 +90,9 @@ class PlacesListFragment : Fragment() {
                         view?.let {
                             Snackbar.make(
                                 it.findViewById<RecyclerView>(R.id.locations_rv),
-                                "${deletedLocation.name} is deleted",
+                                "${deletedLocation.name} удалено",
                                 Snackbar.LENGTH_LONG
-                            ).setAction("Undo", View.OnClickListener {
+                            ).setAction("Отменить", View.OnClickListener {
                                 viewModel.placesList.add(position, deletedLocation)
                                 placesListRecyclerViewAdapter.notifyItemInserted(position)
                             }).show()

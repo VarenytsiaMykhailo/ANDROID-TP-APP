@@ -15,7 +15,7 @@ internal class PlacesListFragmentViewModel : ViewModel() {
 
     private var isDataAlreadyLoaded = false // TODO Костыль, подумать как сделать лучше
 
-    lateinit var placesList:MutableList<Place>
+    lateinit var placesList: MutableList<Place>
 
     fun onUpdatePlaces() {
         if (!isDataAlreadyLoaded) {

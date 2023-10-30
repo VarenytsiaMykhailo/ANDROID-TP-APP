@@ -7,7 +7,6 @@ import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -42,22 +41,22 @@ internal class PlacesListRecyclerViewAdapter(
 
     internal class PlaceViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        private val expandableInfo = view.findViewById<ConstraintLayout>(R.id.expandable_info)
+        private val expandableInfo = view.findViewById<ConstraintLayout>(R.id.PlacesListFragment__ConstraintLayout_ExpandableInfo)
 
-        private val mainImage by lazy { view.findViewById<ImageView>(R.id.location_main_picture) }
-        private val image1 by lazy { view.findViewById<ImageView>(R.id.location_picture_1) }
-        private val image2 by lazy { view.findViewById<ImageView>(R.id.location_picture_2) }
-        private val image3 by lazy { view.findViewById<ImageView>(R.id.location_picture_3) }
+        private val mainImage = view.findViewById<ImageView>(R.id.PlacesListFragment__ImageView_MainPic)
+        private val image1 = view.findViewById<ImageView>(R.id.PlacesListFragment__ImageView_Pic1)
+        private val image2 = view.findViewById<ImageView>(R.id.PlacesListFragment__ImageView_Pic2)
+        private val image3 = view.findViewById<ImageView>(R.id.PlacesListFragment__ImageView_Pic3)
 
-        private val placeNameWhite = view.findViewById<TextView>(R.id.location_name_white)
-        private val ratingWhite = view.findViewById<TextView>(R.id.location_rating_white)
+        private val placeNameWhite = view.findViewById<TextView>(R.id.PlacesListFragment__TextView_NameWhite)
+        private val ratingWhite = view.findViewById<TextView>(R.id.PlacesListFragment__TextView_RateWhite)
 
-        private val placeName = view.findViewById<TextView>(R.id.location_name)
-        private val rating = view.findViewById<TextView>(R.id.location_rating)
-        private val ratingStars = view.findViewById<RatingBar>(R.id.location_stars_rating)
-        private val ratingCount = view.findViewById<TextView>(R.id.location_rating_count)
+        private val placeName = view.findViewById<TextView>(R.id.PlacesListFragment__TextView_Name)
+        private val rating = view.findViewById<TextView>(R.id.PlacesListFragment__TextView_Rate)
+        private val ratingStars = view.findViewById<RatingBar>(R.id.PlacesListFragment__RatingBar_StarsRate)
+        private val ratingCount = view.findViewById<TextView>(R.id.PlacesListFragment__TextView_RateCount)
 
-        private val placeDescription = view.findViewById<TextView>(R.id.location_description)
+        private val placeDescription = view.findViewById<TextView>(R.id.PlacesListFragment__TextView_Description)
 
         fun bind(
             place: Place,
@@ -80,21 +79,24 @@ internal class PlacesListRecyclerViewAdapter(
 
             var expandable = true
             mainImage.setOnClickListener {
+
                 if (expandable) {
                     expandableInfo.visibility = View.VISIBLE
                     placeNameWhite.visibility = View.GONE
                     ratingWhite.visibility = View.GONE
-                    expandable = !expandable
+
                 } else {
                     expandableInfo.visibility = View.GONE
                     placeNameWhite.visibility = View.VISIBLE
                     ratingWhite.visibility = View.VISIBLE
-                    expandable = !expandable
                 }
+                expandable = !expandable
             }
+
             placeName.setOnClickListener {
                 launchPlaceDescriptionFragment(place.placeId)
             }
+
         }
     }
 
