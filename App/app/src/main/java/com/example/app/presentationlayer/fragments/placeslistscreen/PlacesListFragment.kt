@@ -48,7 +48,7 @@ class PlacesListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val recyclerView = view.findViewById<RecyclerView>(R.id.locations_rv).apply {
+        val recyclerView = view.findViewById<RecyclerView>(R.id.locations_rv)
 
         view.findViewById<RecyclerView>(R.id.locations_rv).apply {
             layoutManager = GridLayoutManager(context, 1)
@@ -56,14 +56,16 @@ class PlacesListFragment : Fragment() {
         }
 
         viewModel.placesListRecyclerViewAdapter = placesListRecyclerViewAdapter
+
         val itemTouchHelper = ItemTouchHelper(onMoveCallback)
         itemTouchHelper.attachToRecyclerView(recyclerView)
         viewModel.onUpdatePlaces()
-        view.findViewById<Button>(R.id.change_fragment_button).setOnClickListener{
+        view.findViewById<Button>(R.id.change_fragment_button).setOnClickListener {
 
             //Миша сделай
 
         }
+
     }
 
     private var onMoveCallback =
@@ -85,10 +87,15 @@ class PlacesListFragment : Fragment() {
                         placesListRecyclerViewAdapter.notifyItemRemoved(position)
 
                         view?.let {
-                            Snackbar.make(it.findViewById<RecyclerView>(R.id.locations_rv), "${deletedLocation.name} is deleted", Snackbar.LENGTH_LONG).setAction("Undo", View.OnClickListener {
-                                viewModel.placesList.add(position,deletedLocation)
+                            Snackbar.make(
+                                it.findViewById<RecyclerView>(R.id.locations_rv),
+                                "${deletedLocation.name} is deleted",
+                                Snackbar.LENGTH_LONG
+                            ).setAction("Undo", View.OnClickListener {
+                                viewModel.placesList.add(position, deletedLocation)
                                 placesListRecyclerViewAdapter.notifyItemInserted(position)
-                            }).show()}
+                            }).show()
+                        }
 
                     }
                 }
