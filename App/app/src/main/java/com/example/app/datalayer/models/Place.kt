@@ -14,7 +14,7 @@ internal data class Place(
     val name: String,
 
     @SerializedName("cover")
-    val imageUrl: String,
+    val mainImageUrl: String,
 
     @SerializedName("rating")
     val rating: Double,

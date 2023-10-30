@@ -3,6 +3,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="tabbar_background_color">#FFFFFFFF</color>
-    <color name="gray">#938686</color>
-    <color name="gold">#DFFFBF00</color>
+    <color name="gray">#FFD9D9D9</color>
+    <color name="stars_rating">#FFF9C710</color>
+    <color name="dark_grey">#FF8C8C8C</color>
 </resources>

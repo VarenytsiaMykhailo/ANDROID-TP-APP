@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.fragment.app.viewModels
 import com.example.app.R
 import com.example.app.presentationlayer.viewmodels.MapsFragmentViewModel
@@ -59,5 +60,10 @@ class MapsFragment : Fragment() {
         viewModel.fragment = this
 
         viewModel.onUpdatePlaces()
+            // view.findViewById<Button>(R.id.change_fragment_button).setOnClickListener{
+
+            //Миша сделай
+
+        //}
     }
 }
