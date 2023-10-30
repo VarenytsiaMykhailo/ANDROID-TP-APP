@@ -15,21 +15,21 @@ import coil.load
 import com.example.app.R
 import com.example.app.datalayer.models.Place
 
-internal class PlacesListRecyclerViewAdapter :
-    ListAdapter<Place, LocationViewHolder>(LocationDifferentCallback()) {
+internal class PlacesListRecyclerViewAdapter(
+    private val launchPlaceDescriptionFragment: (placeId: String) -> Unit,
+) : ListAdapter<Place, PlacesListRecyclerViewAdapter.PlaceViewHolder>(LocationDifferentCallback()) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LocationViewHolder {
-        val view = LayoutInflater.from(parent.context)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaceViewHolder {
+        val view = LayoutInflater
+            .from(parent.context)
             .inflate(R.layout.location_card_layout, parent, false)
 
-        return LocationViewHolder(view)
+        return PlaceViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: LocationViewHolder, position: Int) {
-        val location = getItem(position)
-        holder.bind(location)
-
-
+    override fun onBindViewHolder(holder: PlaceViewHolder, position: Int) {
+        val place = getItem(position)
+        holder.bind(place, launchPlaceDescriptionFragment)
     }
 
     private class LocationDifferentCallback : DiffUtil.ItemCallback<Place>() {
@@ -41,7 +41,7 @@ internal class PlacesListRecyclerViewAdapter :
     }
 }
 
-internal class LocationViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+internal class PlaceViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     private val expandableInfo = view.findViewById<ConstraintLayout>(R.id.expandable_info)
 
@@ -89,6 +89,9 @@ internal class LocationViewHolder(view: View) : RecyclerView.ViewHolder(view) {
                 ratingWhite.visibility = View.VISIBLE
                 expandable = !expandable
             }
+        }
+        placeName.setOnClickListener {
+            launchPlaceDescriptionFragment(place.placeId)
         }
     }
 }

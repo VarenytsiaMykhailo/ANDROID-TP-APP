@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:expandableTextView="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/PlaceDescriptionFragment__ConstraintLayout_Root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/PlaceDescriptionFragment__ImageView_BackButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/image_view_description_back_button"
+        android:elevation="10dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintStart_toStartOf="@+id/PlaceDescriptionFragment__ConstraintLayout_Root"
+        app:layout_constraintTop_toTopOf="@+id/PlaceDescriptionFragment__ConstraintLayout_Root"
+        app:srcCompat="@drawable/back_button" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@+id/PlaceDescriptionFragment__ConstraintLayout_Root"
+        app:layout_constraintTop_toTopOf="@+id/PlaceDescriptionFragment__ConstraintLayout_Root">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:orientation="vertical"
+            android:paddingTop="24dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/PlaceDescriptionFragment__ConstraintLayout_PlaceImage"
+                android:layout_width="match_parent"
+                android:layout_height="220dp">
+
+                <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/PlaceDescriptionFragment__ViewPager2_PlaceImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/PlaceDescriptionFragment__TextView_Title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:maxLines="2"
+                android:textSize="22sp"
+                tools:text="Парк Горького фывфывф ывфйцуйцумкма" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+
+                <RatingBar
+                    android:id="@+id/PlaceDescriptionFragment__RatingBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="-100dp"
+                    android:layout_marginBottom="-40dp"
+                    android:isIndicator="true"
+                    android:max="5"
+                    android:progressTint="@color/gold"
+                    android:rating="3.0"
+                    android:scaleX="0.55"
+                    android:scaleY="0.55"
+                    android:transformPivotX="0dp"
+                    android:transformPivotY="0dp" />
+
+                <TextView
+                    android:id="@+id/PlaceDescriptionFragment__TextView_Rating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:textSize="18sp"
+                    tools:text="4.7" />
+
+                <TextView
+                    android:id="@+id/PlaceDescriptionFragment__TextView_RatingCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:textColor="#938C8C"
+                    android:textSize="18sp"
+                    tools:text="9999 оценок" />
+
+            </LinearLayout>
+
+            <io.github.glailton.expandabletextview.ExpandableTextView
+                android:id="@+id/PlaceDescriptionFragment__TextView_Description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textSize="14sp"
+                app:expandType="layout"
+                expandableTextView:animDuration="1500"
+                expandableTextView:collapsedLines="2"
+                expandableTextView:readLessText=" less"
+                expandableTextView:readMoreText=" more"
+                expandableTextView:textMode="line"
+                tools:text="@string/very_long_text" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginTop="8dp"
+                android:background="#c0c0c0" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="180dp"
+                    android:layout_marginTop="8dp"
+                    android:contentDescription="@string/image_view_description_map_stub"
+                    android:src="@mipmap/map_stub" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Адрес:"
+                        android:textColor="@color/gray"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/PlaceDescriptionFragment__TextView_Address"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:textSize="14sp"
+                        tools:text="ул. Крымский вал, 9, 119049" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginTop="8dp"
+                android:background="#c0c0c0" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="График работы:"
+                        android:textColor="@color/gray"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/PlaceDescriptionFragment__TextView_WorkingHours"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:textSize="14sp"
+                        tools:text="понедельник: 10:00–18:00" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

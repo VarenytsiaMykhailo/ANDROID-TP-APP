@@ -2,6 +2,8 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="tabbar_background_color">#FFFFFFFF</color>
+    <color name="gray">#938686</color>
     <color name="tabbar_background_color">#5CC1CA</color>
     <color name="gray">#FFD9D9D9</color>
     <color name="stars_rating">#FFF9C710</color>

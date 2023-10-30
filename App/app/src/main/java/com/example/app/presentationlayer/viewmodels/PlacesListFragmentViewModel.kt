@@ -13,12 +13,17 @@ internal class PlacesListFragmentViewModel : ViewModel() {
 
     lateinit var placesListRecyclerViewAdapter: PlacesListRecyclerViewAdapter
 
+    private var isDataAlreadyLoaded = false // TODO Костыль, подумать как сделать лучше
+
     lateinit var placesList:MutableList<Place>
 
     fun onUpdatePlaces() {
-        viewModelScope.launch {
-            placesList = mapProvider.getPlaces().toMutableList()
-            placesListRecyclerViewAdapter.submitList(placesList)
+        if (!isDataAlreadyLoaded) {
+            viewModelScope.launch {
+                placesList = mapProvider.getPlaces().toMutableList()
+                placesListRecyclerViewAdapter.submitList(placesList)
+                isDataAlreadyLoaded = true
+            }
         }
     }
 }
