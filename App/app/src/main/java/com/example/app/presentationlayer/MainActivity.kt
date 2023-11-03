@@ -1,14 +1,18 @@
 package com.example.app.presentationlayer
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.SharedPreferences
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
 import com.example.app.businesslayer.providers.MapsAndroidClient
-import com.example.app.presentationlayer.adapters.TabBarAdapter
 import com.example.app.databinding.ActivityMainBinding
 import com.example.app.datalayer.repositories.LocalPropertiesSecretsRepository
+import com.example.app.presentationlayer.adapters.TabBarAdapter
 import com.google.android.libraries.places.api.Places
 import com.google.android.material.tabs.TabLayout
+import java.lang.RuntimeException
+import java.util.UUID
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -19,8 +23,30 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        generateOrGetUserUUID()
+
         setupTabBar()
         initMapsAndroidClient()
+    }
+
+    private fun generateOrGetUserUUID() {
+        val sharedPreferences: SharedPreferences = this.getPreferences(MODE_PRIVATE)
+        val userUUIDValue = sharedPreferences.getString(USER_UUID_KEY, "")
+        if (userUUIDValue.isNullOrEmpty()) {
+            // It is the first launch
+            val newUserUUID = UUID.randomUUID().toString()
+
+            val editor = sharedPreferences.edit()
+            editor.putString(USER_UUID_KEY, newUserUUID)
+            val isSuccess = editor.commit()
+            if (!isSuccess) {
+                throw RuntimeException("Error while saving user UUID!")
+            }
+
+            LocalPropertiesSecretsRepository.USER_UUID = newUserUUID
+        } else {
+            LocalPropertiesSecretsRepository.USER_UUID = userUUIDValue
+        }
     }
 
     private fun setupTabBar() {
@@ -59,5 +85,10 @@ class MainActivity : AppCompatActivity() {
         // Create a new Places client instance.
         val placesClient = Places.createClient(this)
         MapsAndroidClient.placesClient = placesClient
+    }
+
+    companion object {
+
+        private const val USER_UUID_KEY = "user_uuid_key"
     }
 }
