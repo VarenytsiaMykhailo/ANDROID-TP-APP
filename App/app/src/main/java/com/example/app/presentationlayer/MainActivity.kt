@@ -1,6 +1,5 @@
 package com.example.app.presentationlayer
 
-import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
@@ -23,30 +22,31 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        generateOrGetUserUUID()
-
+        generateOrInitializeUserUUID()
         setupTabBar()
         initMapsAndroidClient()
     }
 
-    private fun generateOrGetUserUUID() {
-        val sharedPreferences: SharedPreferences = this.getPreferences(MODE_PRIVATE)
-        val userUUIDValue = sharedPreferences.getString(USER_UUID_KEY, "")
-        if (userUUIDValue.isNullOrEmpty()) {
-            // It is the first launch
-            val newUserUUID = UUID.randomUUID().toString()
+    private fun generateOrInitializeUserUUID() {
+        val sharedPreferences = this.getPreferences(MODE_PRIVATE)
+        val userUUID = sharedPreferences.getString(USER_UUID_KEY, "")
 
-            val editor = sharedPreferences.edit()
-            editor.putString(USER_UUID_KEY, newUserUUID)
-            val isSuccess = editor.commit()
-            if (!isSuccess) {
-                throw RuntimeException("Error while saving user UUID!")
+        LocalPropertiesSecretsRepository.USER_UUID =
+            if (!userUUID.isNullOrEmpty()) {
+                userUUID
+            } else {
+                // The first launch
+                val newUserUUID = UUID.randomUUID().toString()
+
+                val editor = sharedPreferences.edit()
+                editor.putString(USER_UUID_KEY, newUserUUID)
+                val isSuccess = editor.commit()
+                if (!isSuccess) {
+                    throw RuntimeException("Error while saving user UUID!")
+                }
+
+                newUserUUID
             }
-
-            LocalPropertiesSecretsRepository.USER_UUID = newUserUUID
-        } else {
-            LocalPropertiesSecretsRepository.USER_UUID = userUUIDValue
-        }
     }
 
     private fun setupTabBar() {
