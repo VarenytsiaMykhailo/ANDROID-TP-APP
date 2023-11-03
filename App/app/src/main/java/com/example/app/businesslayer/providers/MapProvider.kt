@@ -11,6 +11,21 @@ internal class MapProvider {
     suspend fun getPlaces(): List<Place> =
         mapRepository.getPlaces()
 
+    /**
+     * @param lat Example: 55.753544.
+     * @param lng Example: 37.621202.
+     * @param radius Example: 50000 in metres.
+     */
+    suspend fun getSuggestPlaces(
+        lat: Double,
+        lng: Double,
+        radius: Int
+    ): List<Place> =
+        mapRepository.getSuggestPlaces("$lat,$lng", radius.toString())
+
+    /**
+     * @param placeId Example: "ChIJfRJDflpKtUYRl0UbgcrmUUk".
+     */
     suspend fun getPlaceDescription(placeId: String): PlaceDescription =
         mapRepository.getPlaceDescription(placeId)
 }

@@ -15,8 +15,23 @@ internal interface MapRepository {
     @GET("places/list")
     suspend fun getPlaces(): List<Place>
 
+    /**
+     * @param location Example: "55.7520233,37.6174994" in lat, lng format.
+     * @param radius Example: "50000" in metres.
+     */
+    @GET("suggest/nearby")
+    suspend fun getSuggestPlaces(
+        @Query("location") location: String,
+        @Query("radius") radius: String,
+    ): List<Place>
+
+    /**
+     * @param placeId Example: "ChIJfRJDflpKtUYRl0UbgcrmUUk".
+     */
     @GET("places/info")
-    suspend fun getPlaceDescription(@Query("place_id") placeId: String): PlaceDescription
+    suspend fun getPlaceDescription(
+        @Query("place_id") placeId: String,
+    ): PlaceDescription
 
     companion object {
 
