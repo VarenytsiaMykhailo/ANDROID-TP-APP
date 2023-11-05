@@ -71,7 +71,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     override fun onMapReady(map: GoogleMap) {
         this.googleMap = map
 
-        mainActivity.getLocationPermission()
+        mainActivity.requestLocationPermission()
 
         updateGeolocationUI()
     }

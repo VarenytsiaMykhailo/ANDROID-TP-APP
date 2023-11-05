@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
         initMapAndroidClient()
         initLocationClient()
 
-        getLocationPermission()
+        requestLocationPermission()
     }
 
     private fun generateOrInitializeUserUUID() {
@@ -114,7 +114,7 @@ class MainActivity : AppCompatActivity() {
      * Request location permission, so that we can get the location of the device.
      * The result of the permission request is handled by a onRequestPermissionsResult callback.
      */
-    fun getLocationPermission() {
+    fun requestLocationPermission() {
         if (ContextCompat.checkSelfPermission(
                 this.applicationContext,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -183,6 +183,9 @@ class MainActivity : AppCompatActivity() {
                         onFail()
                     }
                 }
+            } else {
+                requestLocationPermission()
+                onFail()
             }
         } catch (e: SecurityException) {
             Log.e(LOG_TAG, e.message, e)
