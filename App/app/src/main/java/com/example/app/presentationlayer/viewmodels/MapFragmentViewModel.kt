@@ -3,14 +3,14 @@ package com.example.app.presentationlayer.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.app.businesslayer.providers.MapProvider
-import com.example.app.presentationlayer.fragments.MapsFragment
+import com.example.app.presentationlayer.fragments.mapscreen.MapFragment
 import kotlinx.coroutines.launch
 
-internal class MapsFragmentViewModel : ViewModel() {
+internal class MapFragmentViewModel : ViewModel() {
 
     private val mapProvider = MapProvider()
 
-    lateinit var fragment: MapsFragment
+    lateinit var fragment: MapFragment
 
     fun onUpdatePlaces() {
         viewModelScope.launch {

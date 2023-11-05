@@ -9,7 +9,7 @@ import com.google.android.libraries.places.api.net.FetchPhotoRequest
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.net.PlacesClient
 
-class MapsAndroidClient {
+internal class MapAndroidClient {
 
     /**
      * Example: "ChIJfRJDflpKtUYRl0UbgcrmUUk", listOf(Place.Field.ID, Place.Field.NAME)
@@ -80,6 +80,6 @@ class MapsAndroidClient {
 
         lateinit var placesClient: PlacesClient
 
-        const val LOG_TAG = "MapsAndroidClient"
+        private const val LOG_TAG = "MapAndroidClient"
     }
 }
