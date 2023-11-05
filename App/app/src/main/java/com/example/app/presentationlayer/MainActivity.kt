@@ -16,10 +16,10 @@ import com.example.app.datalayer.repositories.LocalPropertiesSecretsRepository
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.libraries.places.api.Places
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import java.lang.RuntimeException
 import java.util.UUID
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -148,6 +148,12 @@ class MainActivity : AppCompatActivity() {
                     grantResults[0] == PackageManager.PERMISSION_GRANTED
                 ) {
                     locationPermissionGranted = true
+                } else {
+                    Snackbar.make(
+                        binding.MainActivityViewPager,
+                        "Включите разрешение на геолокацию в 'настройки ->приложения->наше приложение->разрешения'",
+                        Snackbar.LENGTH_LONG
+                    ).show()
                 }
             }
 
@@ -184,7 +190,6 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             } else {
-                requestLocationPermission()
                 onFail()
             }
         } catch (e: SecurityException) {

@@ -24,7 +24,8 @@ class PlacesListRootFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        parentFragmentManager
+        // Нужно использовать именно child т.к. можно наткнуться на краш при выбивании фрагмента
+        childFragmentManager
             .beginTransaction()
             .replace(
                 R.id.PlacesListRootFragment__FragmentContainerView,

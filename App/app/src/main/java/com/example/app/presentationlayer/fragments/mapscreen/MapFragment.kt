@@ -85,9 +85,9 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 googleMap.isMyLocationEnabled = true
                 googleMap.uiSettings.isMyLocationButtonEnabled = true
             } else {
-                googleMap.isMyLocationEnabled = false
-                googleMap.uiSettings.isMyLocationButtonEnabled = false
-                mainActivity.lastKnownLocation = null
+                //googleMap.isMyLocationEnabled = false
+                //googleMap.uiSettings.isMyLocationButtonEnabled = false
+                //mainActivity.lastKnownLocation = null
             }
             updateDeviceLocationPoint()
         } catch (e: SecurityException) {
@@ -115,7 +115,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 CameraUpdateFactory
                     .newLatLngZoom(defaultLocation, DEFAULT_ZOOM.toFloat())
             )
-            googleMap.uiSettings.isMyLocationButtonEnabled = false
+            //googleMap.uiSettings.isMyLocationButtonEnabled = false
         }
 
         mainActivity.updateDeviceLocation(onSuccess, onFail)
