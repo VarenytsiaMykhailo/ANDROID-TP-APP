@@ -17,6 +17,9 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.libraries.places.api.Places
 import com.google.android.material.tabs.TabLayout
+import java.lang.RuntimeException
+import java.util.UUID
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -37,11 +40,34 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        generateOrInitializeUserUUID()
         setupTabBar()
         initMapAndroidClient()
         initLocationClient()
 
         getLocationPermission()
+    }
+
+    private fun generateOrInitializeUserUUID() {
+        val sharedPreferences = this.getPreferences(MODE_PRIVATE)
+        val userUUID = sharedPreferences.getString(USER_UUID_KEY, "")
+
+        LocalPropertiesSecretsRepository.USER_UUID =
+            if (!userUUID.isNullOrEmpty()) {
+                userUUID
+            } else {
+                // The first launch
+                val newUserUUID = UUID.randomUUID().toString()
+
+                val editor = sharedPreferences.edit()
+                editor.putString(USER_UUID_KEY, newUserUUID)
+                val isSuccess = editor.commit()
+                if (!isSuccess) {
+                    throw RuntimeException("Error while saving user UUID!")
+                }
+
+                newUserUUID
+            }
     }
 
     private fun setupTabBar() {
@@ -169,5 +195,7 @@ class MainActivity : AppCompatActivity() {
         private const val LOG_TAG = "MainActivity"
 
         private const val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1
+
+        private const val USER_UUID_KEY = "user_uuid_key"
     }
 }

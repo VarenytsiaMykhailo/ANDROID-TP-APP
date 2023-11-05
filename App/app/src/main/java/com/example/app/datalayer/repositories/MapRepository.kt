@@ -1,5 +1,6 @@
 package com.example.app.datalayer.repositories
 
+import com.example.app.BuildConfig
 import com.example.app.datalayer.repositories.interceptors.HeadersInterceptor
 import com.example.app.datalayer.models.Place
 import com.example.app.datalayer.models.PlaceDescription
@@ -23,12 +24,13 @@ internal interface MapRepository {
         val mapRepository: MapRepository = createMapRepository()
 
         private fun createMapRepository(): MapRepository {
-            val loggingInterceptor = HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BODY
-            }
-
             val client = OkHttpClient.Builder().apply {
-                addNetworkInterceptor(loggingInterceptor)
+                if (BuildConfig.DEBUG) {
+                    val loggingInterceptor = HttpLoggingInterceptor().apply {
+                        level = HttpLoggingInterceptor.Level.BODY
+                    }
+                    addNetworkInterceptor(loggingInterceptor)
+                }
                 addInterceptor(HeadersInterceptor())
             }.build()
 
