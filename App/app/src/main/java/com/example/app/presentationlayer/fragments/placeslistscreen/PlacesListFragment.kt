@@ -16,8 +16,11 @@ import com.example.app.presentationlayer.adapters.PlacesListRecyclerViewAdapter
 import com.example.app.presentationlayer.fragments.placedescriptionscreen.PlaceDescriptionFragment
 import com.example.app.presentationlayer.viewmodels.PlacesListFragmentViewModel
 import com.google.android.material.snackbar.Snackbar
-import okhttp3.internal.notify
 
+/**
+ * Use the [PlacesListFragment.newInstance] factory method to
+ * create an instance of this fragment.
+ */
 class PlacesListFragment : Fragment() {
 
     private val viewModel by viewModels<PlacesListFragmentViewModel>()
@@ -104,6 +107,14 @@ class PlacesListFragment : Fragment() {
 
         }
 
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @param param1 Parameter 1.
+     * @param param2 Parameter 2.
+     * @return A new instance of fragment PlacesListFragment.
+     */
     companion object {
         @JvmStatic
         fun newInstance(
