@@ -33,13 +33,15 @@ class MainActivity : AppCompatActivity() {
     // location retrieved by the Fused Location Provider.
     var lastKnownLocation: Location? = null
 
-    var onLocationPermissionGranted: () -> Unit = {} // Initializes from MapFragment
+    var onLocationPermissionGrantedForMapFragment: () -> Unit = {} // Initializes from MapFragment
+    var onLocationPermissionGrantedForPlacesListFragment: (forceRefresh: Boolean) -> Unit = {} // Initializes from PlacesListFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        LocalPropertiesSecretsRepository.APP_PACKAGE_NAME = applicationContext.packageName
         generateOrInitializeUserUUID()
         setupTabBar()
         initMapAndroidClient()
@@ -161,7 +163,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         // TODO check is fragment instance exists or/and visible or/and attached
-        onLocationPermissionGranted()
+        onLocationPermissionGrantedForMapFragment()
+        onLocationPermissionGrantedForPlacesListFragment(true)
     }
 
     /**

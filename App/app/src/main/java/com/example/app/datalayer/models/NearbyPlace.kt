@@ -4,10 +4,10 @@ import com.example.app.R
 import com.example.app.datalayer.repositories.LocalPropertiesSecretsRepository
 import com.google.gson.annotations.SerializedName
 
-internal data class Place(
+internal data class NearbyPlace(
 
-    @SerializedName("id")
-    val id: String,
+    @SerializedName("place_id")
+    val placeId: String,
 
     @SerializedName("name")
     val name: String,
@@ -15,11 +15,17 @@ internal data class Place(
     @SerializedName("cover")
     private val _mainImageUrl: String?,
 
+    @SerializedName("photos")
+    val photos: List<String>,
+
     @SerializedName("rating")
     val rating: Double,
 
     @SerializedName("rating_count")
     val ratingCount: Int,
+
+    @SerializedName("reaction")
+    val reaction: String,
 
     @SerializedName("location")
     val location: Location,
@@ -41,4 +47,6 @@ internal data class Place(
         @SerializedName("lng")
         val lng: Double,
     )
+
+
 }

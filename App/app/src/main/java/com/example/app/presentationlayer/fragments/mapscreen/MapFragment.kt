@@ -33,7 +33,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var googleMap: GoogleMap
 
-    // A default location to use when location permission is not granted.
+    // A default location to use when location permission is not granted. Moscow, Red Square.
     private val defaultLocation = LatLng(55.753544, 37.621202)
 
     override fun onCreateView(
@@ -47,7 +47,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         super.onViewCreated(view, savedInstanceState)
 
         mainActivity = requireActivity() as MainActivity
-        mainActivity.onLocationPermissionGranted = this::updateGeolocationUI
+        mainActivity.onLocationPermissionGrantedForMapFragment = this::updateGeolocationUI
 
         mapFragment =
             childFragmentManager.findFragmentById(R.id.MapFragment__FragmentContainerView) as SupportMapFragment

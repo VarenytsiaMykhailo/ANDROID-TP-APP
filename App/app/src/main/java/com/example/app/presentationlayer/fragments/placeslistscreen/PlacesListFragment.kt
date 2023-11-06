@@ -11,7 +11,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.app.R
-import com.example.app.datalayer.models.Place
+import com.example.app.datalayer.models.NearbyPlace
+import com.example.app.presentationlayer.MainActivity
 import com.example.app.presentationlayer.adapters.PlacesListRecyclerViewAdapter
 import com.example.app.presentationlayer.fragments.placedescriptionscreen.PlaceDescriptionFragment
 import com.example.app.presentationlayer.viewmodels.PlacesListFragmentViewModel
@@ -24,6 +25,8 @@ import com.google.android.material.snackbar.Snackbar
 class PlacesListFragment : Fragment() {
 
     private val viewModel by viewModels<PlacesListFragmentViewModel>()
+
+    internal lateinit var mainActivity: MainActivity
 
     private val launchPlaceDescriptionFragment: (placeId: String) -> Unit = {
         parentFragmentManager
@@ -40,7 +43,7 @@ class PlacesListFragment : Fragment() {
     private val placesListRecyclerViewAdapter =
         PlacesListRecyclerViewAdapter(launchPlaceDescriptionFragment)
 
-    private lateinit var deletedLocation: Place
+    private lateinit var deletedLocation: NearbyPlace
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -51,6 +54,11 @@ class PlacesListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        mainActivity = requireActivity() as MainActivity
+        mainActivity.onLocationPermissionGrantedForPlacesListFragment = viewModel::onUpdatePlaces
+
+        viewModel.fragment = this
 
         val recyclerView = view.findViewById<RecyclerView>(R.id.locations_rv)
 

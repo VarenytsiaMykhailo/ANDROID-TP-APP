@@ -45,8 +45,7 @@ class PlaceDescriptionFragment : Fragment() {
             placeDescriptionImagesSliderRecyclerViewAdapter
 
         val placeId: String = arguments?.getString(PLACE_ID_KEY)!!
-        //viewModel.onSetContent(placeId)
-        viewModel.onSetContent("ChIJfRJDflpKtUYRl0UbgcrmUUk")
+        viewModel.onSetContent(placeId)
 
         binding.PlaceDescriptionFragmentImageViewBackButton.setOnClickListener {
             parentFragmentManager.popBackStack()
