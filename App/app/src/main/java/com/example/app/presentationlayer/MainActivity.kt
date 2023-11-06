@@ -16,10 +16,10 @@ import com.example.app.datalayer.repositories.LocalPropertiesSecretsRepository
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.libraries.places.api.Places
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import java.lang.RuntimeException
 import java.util.UUID
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -33,13 +33,16 @@ class MainActivity : AppCompatActivity() {
     // location retrieved by the Fused Location Provider.
     var lastKnownLocation: Location? = null
 
-    var onLocationPermissionGranted: () -> Unit = {} // Initializes from MapFragment
+    var onLocationPermissionGrantedForMapFragment: () -> Unit = {} // Initializes from MapFragment
+    var onLocationPermissionGrantedForPlacesListFragment: (forceRefresh: Boolean) -> Unit = {} // Initializes from PlacesListFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
+        LocalPropertiesSecretsRepository.APP_PACKAGE_NAME = applicationContext.packageName
         // !!! All requests to backend (such as ping-pong) should be used after this
         // because uuid sets to header and we can get exception uninitialized uuid
         generateOrInitializeUserUUID()
@@ -150,6 +153,12 @@ class MainActivity : AppCompatActivity() {
                     grantResults[0] == PackageManager.PERMISSION_GRANTED
                 ) {
                     locationPermissionGranted = true
+                } else {
+                    Snackbar.make(
+                        binding.MainActivityViewPager,
+                        "Включите разрешение на геолокацию в 'настройки ->приложения->наше приложение->разрешения'",
+                        Snackbar.LENGTH_LONG
+                    ).show()
                 }
             }
 
@@ -157,7 +166,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         // TODO check is fragment instance exists or/and visible or/and attached
-        onLocationPermissionGranted()
+        onLocationPermissionGrantedForMapFragment()
+        onLocationPermissionGrantedForPlacesListFragment(true)
     }
 
     /**
@@ -186,7 +196,6 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             } else {
-                requestLocationPermission()
                 onFail()
             }
         } catch (e: SecurityException) {

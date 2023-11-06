@@ -17,14 +17,14 @@ class PlacesListRootFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_places_list_root, container, false)
-    }
+    ): View =
+        inflater.inflate(R.layout.fragment_places_list_root, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        parentFragmentManager
+        // Нужно использовать именно child т.к. можно наткнуться на краш при выбивании фрагмента
+        childFragmentManager
             .beginTransaction()
             .replace(
                 R.id.PlacesListRootFragment__FragmentContainerView,

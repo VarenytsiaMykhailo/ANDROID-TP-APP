@@ -4,9 +4,6 @@ import com.google.gson.annotations.SerializedName
 
 internal data class PlaceDescription(
 
-    @SerializedName("id")
-    val id: String,
-
     @SerializedName("place_id")
     val placeId: String,
 

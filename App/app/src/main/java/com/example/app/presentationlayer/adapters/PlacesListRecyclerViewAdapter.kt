@@ -12,11 +12,13 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.app.R
-import com.example.app.datalayer.models.Place
+import com.example.app.datalayer.models.NearbyPlace
 
 internal class PlacesListRecyclerViewAdapter(
     private val launchPlaceDescriptionFragment: (placeId: String) -> Unit,
-) : ListAdapter<Place, PlacesListRecyclerViewAdapter.PlaceViewHolder>(LocationDifferentCallback()) {
+) : ListAdapter<NearbyPlace, PlacesListRecyclerViewAdapter.PlaceViewHolder>(
+    LocationDifferentCallback()
+) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaceViewHolder {
         val view = LayoutInflater
@@ -31,35 +33,47 @@ internal class PlacesListRecyclerViewAdapter(
         holder.bind(place, launchPlaceDescriptionFragment)
     }
 
-    private class LocationDifferentCallback : DiffUtil.ItemCallback<Place>() {
-        override fun areItemsTheSame(oldItem: Place, newItem: Place) =
-            oldItem.id == newItem.id
+    private class LocationDifferentCallback : DiffUtil.ItemCallback<NearbyPlace>() {
+        override fun areItemsTheSame(oldItem: NearbyPlace, newItem: NearbyPlace) =
+            oldItem.placeId == newItem.placeId
 
-        override fun areContentsTheSame(oldItem: Place, newItem: Place) =
-            oldItem.mainImageUrl == newItem.mainImageUrl
+        override fun areContentsTheSame(oldItem: NearbyPlace, newItem: NearbyPlace) =
+            oldItem.mainImageUrl == newItem.mainImageUrl // TODO все ли проверки тут выполнены?
     }
 
     internal class PlaceViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        private val expandableInfo = view.findViewById<ConstraintLayout>(R.id.PlacesListFragment__ConstraintLayout_ExpandableInfo)
+        private val expandableInfo =
+            view.findViewById<ConstraintLayout>(R.id.PlacesListFragment__ConstraintLayout_ExpandableInfo)
 
-        private val mainImage = view.findViewById<ImageView>(R.id.PlacesListFragment__ImageView_MainPic)
-        private val image1 = view.findViewById<ImageView>(R.id.PlacesListFragment__ImageView_Pic1)
-        private val image2 = view.findViewById<ImageView>(R.id.PlacesListFragment__ImageView_Pic2)
-        private val image3 = view.findViewById<ImageView>(R.id.PlacesListFragment__ImageView_Pic3)
+        private val mainImage =
+            view.findViewById<ImageView>(R.id.PlacesListFragment__ImageView_MainPic)
+        private val image1 =
+            view.findViewById<ImageView>(R.id.PlacesListFragment__ImageView_Pic1)
+        private val image2 =
+            view.findViewById<ImageView>(R.id.PlacesListFragment__ImageView_Pic2)
+        private val image3 =
+            view.findViewById<ImageView>(R.id.PlacesListFragment__ImageView_Pic3)
 
-        private val placeNameWhite = view.findViewById<TextView>(R.id.PlacesListFragment__TextView_NameWhite)
-        private val ratingWhite = view.findViewById<TextView>(R.id.PlacesListFragment__TextView_RateWhite)
+        private val placeNameWhite =
+            view.findViewById<TextView>(R.id.PlacesListFragment__TextView_NameWhite)
+        private val ratingWhite =
+            view.findViewById<TextView>(R.id.PlacesListFragment__TextView_RateWhite)
 
-        private val placeName = view.findViewById<TextView>(R.id.PlacesListFragment__TextView_Name)
-        private val rating = view.findViewById<TextView>(R.id.PlacesListFragment__TextView_Rate)
-        private val ratingStars = view.findViewById<RatingBar>(R.id.PlacesListFragment__RatingBar_StarsRate)
-        private val ratingCount = view.findViewById<TextView>(R.id.PlacesListFragment__TextView_RateCount)
+        private val placeName =
+            view.findViewById<TextView>(R.id.PlacesListFragment__TextView_Name)
+        private val rating =
+            view.findViewById<TextView>(R.id.PlacesListFragment__TextView_Rate)
+        private val ratingStars =
+            view.findViewById<RatingBar>(R.id.PlacesListFragment__RatingBar_StarsRate)
+        private val ratingCount =
+            view.findViewById<TextView>(R.id.PlacesListFragment__TextView_RateCount)
 
-        private val placeDescription = view.findViewById<TextView>(R.id.PlacesListFragment__TextView_Description)
+        private val placeDescription =
+            view.findViewById<TextView>(R.id.PlacesListFragment__TextView_Description)
 
         fun bind(
-            place: Place,
+            place: NearbyPlace,
             launchPlaceDescriptionFragment: (placeId: String) -> Unit,
         ) {
             placeNameWhite.text = place.name

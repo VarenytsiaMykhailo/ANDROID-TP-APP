@@ -10,4 +10,6 @@ internal object LocalPropertiesSecretsRepository {
     const val MAPS_API_KEY: String = BuildConfig.MAPS_API_KEY
 
     lateinit var USER_UUID: String // Initializes from MainActivity
+
+    lateinit var APP_PACKAGE_NAME: String // Initializes from MainActivity
 }

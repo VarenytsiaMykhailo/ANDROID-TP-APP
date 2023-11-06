@@ -1,6 +1,7 @@
 package com.example.app.datalayer.repositories
 
 import com.example.app.BuildConfig
+import com.example.app.datalayer.models.NearbyPlace
 import com.example.app.datalayer.repositories.interceptors.HeadersInterceptor
 import com.example.app.datalayer.models.Place
 import com.example.app.datalayer.models.PlaceDescription
@@ -16,8 +17,27 @@ internal interface MapRepository {
     @GET("places/list")
     suspend fun getPlaces(): List<Place>
 
+    /**
+     * @param location Example: "55.7520233,37.6174994" in lat, lng format.
+     * @param radius Example: "50000" in metres.
+     * @param limit Example: 10.
+     * @param offset Example: 10.
+     */
+    @GET("suggest/nearby")
+    suspend fun getSuggestPlaces(
+        @Query("location") location: String,
+        @Query("radius") radius: String,
+        @Query("limit") limit: Int,
+        @Query("offset") offset: Int,
+    ): List<NearbyPlace>
+
+    /**
+     * @param placeId Example: "ChIJfRJDflpKtUYRl0UbgcrmUUk".
+     */
     @GET("places/info")
-    suspend fun getPlaceDescription(@Query("place_id") placeId: String): PlaceDescription
+    suspend fun getPlaceDescription(
+        @Query("place_id") placeId: String,
+    ): PlaceDescription
 
     companion object {
 

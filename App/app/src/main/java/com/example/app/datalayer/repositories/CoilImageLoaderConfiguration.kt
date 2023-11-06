@@ -4,6 +4,7 @@ import android.content.Context
 import coil.ImageLoader
 import coil.util.DebugLogger
 import com.example.app.BuildConfig
+import com.example.app.R
 import com.example.app.datalayer.repositories.interceptors.HeadersInterceptor
 import okhttp3.OkHttpClient
 
@@ -15,6 +16,7 @@ internal fun getCoilImageLoader(context: Context): ImageLoader {
                 .build()
         }
         .crossfade(true) // Pretty animation
+        .placeholder(R.drawable.loading_animation) // Loading indicator
         .apply {
             if (BuildConfig.DEBUG) {
                 logger(DebugLogger())

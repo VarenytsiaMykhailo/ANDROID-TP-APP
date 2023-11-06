@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.example.app.R
+import com.example.app.databinding.FragmentMapBinding
 import com.example.app.presentationlayer.MainActivity
 import com.example.app.presentationlayer.viewmodels.MapFragmentViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -25,6 +26,8 @@ import com.google.android.gms.maps.model.MarkerOptions
  */
 class MapFragment : Fragment(), OnMapReadyCallback {
 
+    private lateinit var binding: FragmentMapBinding
+
     private val viewModel by viewModels<MapFragmentViewModel>()
 
     private lateinit var mainActivity: MainActivity
@@ -33,21 +36,24 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var googleMap: GoogleMap
 
-    // A default location to use when location permission is not granted.
+    // A default location to use when location permission is not granted. Moscow, Red Square.
     private val defaultLocation = LatLng(55.753544, 37.621202)
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View =
-        inflater.inflate(R.layout.fragment_map, container, false)
+    ): View {
+        binding = FragmentMapBinding.inflate(inflater, container, false)
+
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         mainActivity = requireActivity() as MainActivity
-        mainActivity.onLocationPermissionGranted = this::updateGeolocationUI
+        mainActivity.onLocationPermissionGrantedForMapFragment = this::updateGeolocationUI
 
         mapFragment =
             childFragmentManager.findFragmentById(R.id.MapFragment__FragmentContainerView) as SupportMapFragment
@@ -57,11 +63,10 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         //viewModel.onUpdatePlaces()
         mapFragment.getMapAsync(this)
 
-        // view.findViewById<Button>(R.id.change_fragment_button).setOnClickListener{
-
-        //Миша сделай
-
-        //}
+        // TODO переделать чтобы можно было свитчиться между фрагментами с сохранением состояния
+        binding.MapFragmentImageViewPlacesListButton.setOnClickListener {
+            parentFragmentManager.popBackStack()
+        }
     }
 
     /**
@@ -85,9 +90,9 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 googleMap.isMyLocationEnabled = true
                 googleMap.uiSettings.isMyLocationButtonEnabled = true
             } else {
-                googleMap.isMyLocationEnabled = false
-                googleMap.uiSettings.isMyLocationButtonEnabled = false
-                mainActivity.lastKnownLocation = null
+                //googleMap.isMyLocationEnabled = false
+                //googleMap.uiSettings.isMyLocationButtonEnabled = false
+                //mainActivity.lastKnownLocation = null
             }
             updateDeviceLocationPoint()
         } catch (e: SecurityException) {
@@ -115,7 +120,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 CameraUpdateFactory
                     .newLatLngZoom(defaultLocation, DEFAULT_ZOOM.toFloat())
             )
-            googleMap.uiSettings.isMyLocationButtonEnabled = false
+            //googleMap.uiSettings.isMyLocationButtonEnabled = false
         }
 
         mainActivity.updateDeviceLocation(onSuccess, onFail)
