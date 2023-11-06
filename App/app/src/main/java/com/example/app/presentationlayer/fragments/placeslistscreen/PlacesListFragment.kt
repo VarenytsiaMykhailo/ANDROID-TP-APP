@@ -14,6 +14,7 @@ import com.example.app.R
 import com.example.app.datalayer.models.NearbyPlace
 import com.example.app.presentationlayer.MainActivity
 import com.example.app.presentationlayer.adapters.PlacesListRecyclerViewAdapter
+import com.example.app.presentationlayer.fragments.mapscreen.MapFragment
 import com.example.app.presentationlayer.fragments.placedescriptionscreen.PlaceDescriptionFragment
 import com.example.app.presentationlayer.viewmodels.PlacesListFragmentViewModel
 import com.google.android.material.snackbar.Snackbar
@@ -72,12 +73,19 @@ class PlacesListFragment : Fragment() {
         val itemTouchHelper = ItemTouchHelper(onMoveCallback)
         itemTouchHelper.attachToRecyclerView(recyclerView)
         viewModel.onUpdatePlaces()
+
+        // TODO переделать чтобы можно было свитчиться между фрагментами с сохранением состояния
         view.findViewById<Button>(R.id.change_fragment_button).setOnClickListener {
-
-            //Миша сделай
-
+            parentFragmentManager
+                .beginTransaction()
+                .replace(
+                    R.id.PlacesListRootFragment__FragmentContainerView,
+                    MapFragment.newInstance()
+                )
+                //.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .addToBackStack("MapFragment")
+                .commit()
         }
-
     }
 
     private var onMoveCallback =

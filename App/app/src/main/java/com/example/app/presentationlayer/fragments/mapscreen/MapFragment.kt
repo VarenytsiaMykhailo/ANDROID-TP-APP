@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.example.app.R
+import com.example.app.databinding.FragmentMapBinding
 import com.example.app.presentationlayer.MainActivity
 import com.example.app.presentationlayer.viewmodels.MapFragmentViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -25,6 +26,8 @@ import com.google.android.gms.maps.model.MarkerOptions
  */
 class MapFragment : Fragment(), OnMapReadyCallback {
 
+    private lateinit var binding: FragmentMapBinding
+
     private val viewModel by viewModels<MapFragmentViewModel>()
 
     private lateinit var mainActivity: MainActivity
@@ -40,8 +43,11 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View =
-        inflater.inflate(R.layout.fragment_map, container, false)
+    ): View {
+        binding = FragmentMapBinding.inflate(inflater, container, false)
+
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -57,11 +63,10 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         //viewModel.onUpdatePlaces()
         mapFragment.getMapAsync(this)
 
-        // view.findViewById<Button>(R.id.change_fragment_button).setOnClickListener{
-
-        //Миша сделай
-
-        //}
+        // TODO переделать чтобы можно было свитчиться между фрагментами с сохранением состояния
+        binding.MapFragmentImageViewPlacesListButton.setOnClickListener {
+            parentFragmentManager.popBackStack()
+        }
     }
 
     /**
