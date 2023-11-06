@@ -41,7 +41,10 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
         LocalPropertiesSecretsRepository.APP_PACKAGE_NAME = applicationContext.packageName
+        // !!! All requests to backend (such as ping-pong) should be used after this
+        // because uuid sets to header and we can get exception uninitialized uuid
         generateOrInitializeUserUUID()
         setupTabBar()
         initMapAndroidClient()
