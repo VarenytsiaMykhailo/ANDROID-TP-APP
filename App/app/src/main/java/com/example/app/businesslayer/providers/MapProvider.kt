@@ -9,6 +9,7 @@ import com.example.app.datalayer.repositories.MapRepository
 internal class MapProvider {
 
     private val mapRepository = MapRepository.mapRepository
+    private var updateListFlag = true
 
     lateinit var placesList: MutableList<NearbyPlace>
 
@@ -29,6 +30,7 @@ internal class MapProvider {
         limit: Int,
         offset: Int,
     ): List<NearbyPlace> {
+        if (updateListFlag){
         placesList = mapRepository.getSuggestPlaces(
             "$lat,$lng",
             radius.toString(),
@@ -37,6 +39,7 @@ internal class MapProvider {
         ).also {
             Log.d(LOG_TAG, "getSuggestPlaces = $it")
         }.toMutableList()
+        updateListFlag=false}
         return placesList
     }
 
