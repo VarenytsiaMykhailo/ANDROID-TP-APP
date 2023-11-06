@@ -10,6 +10,8 @@ internal class MapProvider {
 
     private val mapRepository = MapRepository.mapRepository
 
+    lateinit var placesList: MutableList<NearbyPlace>
+
     suspend fun getPlaces(): List<Place> =
         mapRepository.getPlaces()
 
@@ -26,15 +28,17 @@ internal class MapProvider {
         radius: Int,
         limit: Int,
         offset: Int,
-    ): List<NearbyPlace> =
-        mapRepository.getSuggestPlaces(
+    ): List<NearbyPlace> {
+        placesList = mapRepository.getSuggestPlaces(
             "$lat,$lng",
             radius.toString(),
             limit,
             offset,
         ).also {
             Log.d(LOG_TAG, "getSuggestPlaces = $it")
-        }
+        }.toMutableList()
+        return placesList
+    }
 
     /**
      * @param placeId Example: "ChIJfRJDflpKtUYRl0UbgcrmUUk".

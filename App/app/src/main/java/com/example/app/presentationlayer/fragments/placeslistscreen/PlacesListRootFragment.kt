@@ -24,7 +24,7 @@ class PlacesListRootFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // Нужно использовать именно child т.к. можно наткнуться на краш при выбивании фрагмента
-        childFragmentManager
+        parentFragmentManager
             .beginTransaction()
             .replace(
                 R.id.PlacesListRootFragment__FragmentContainerView,

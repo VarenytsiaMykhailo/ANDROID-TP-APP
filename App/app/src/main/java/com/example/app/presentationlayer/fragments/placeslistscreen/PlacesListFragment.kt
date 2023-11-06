@@ -104,6 +104,7 @@ class PlacesListFragment : Fragment() {
                     ItemTouchHelper.LEFT -> {
                         deletedLocation = viewModel.placesList[position]
                         viewModel.placesList.removeAt(position)
+                        viewModel.onDeletePlace(position)
                         placesListRecyclerViewAdapter.notifyItemRemoved(position)
 
                         view?.let {
@@ -113,6 +114,7 @@ class PlacesListFragment : Fragment() {
                                 Snackbar.LENGTH_LONG
                             ).setAction("Отменить", View.OnClickListener {
                                 viewModel.placesList.add(position, deletedLocation)
+                                viewModel.onRestorePlace(position, deletedLocation)
                                 placesListRecyclerViewAdapter.notifyItemInserted(position)
                             }).show()
                         }
