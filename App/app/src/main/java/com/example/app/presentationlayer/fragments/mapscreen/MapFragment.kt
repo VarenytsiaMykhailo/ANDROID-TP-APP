@@ -8,8 +8,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import com.example.app.R
 import com.example.app.databinding.FragmentMapBinding
+import com.example.app.datalayer.models.NearbyPlace
 import com.example.app.presentationlayer.MainActivity
 import com.example.app.presentationlayer.viewmodels.MapFragmentViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -30,7 +32,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     private val viewModel by viewModels<MapFragmentViewModel>()
 
-    private lateinit var mainActivity: MainActivity
+    lateinit var mainActivity: MainActivity
 
     private lateinit var mapFragment: SupportMapFragment
 
@@ -54,13 +56,13 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
         mainActivity = requireActivity() as MainActivity
         mainActivity.onLocationPermissionGrantedForMapFragment = this::updateGeolocationUI
-
         mapFragment =
             childFragmentManager.findFragmentById(R.id.MapFragment__FragmentContainerView) as SupportMapFragment
 
         viewModel.fragment = this
 
-        //viewModel.onUpdatePlaces()
+        viewModel.onUpdatePlaces()
+
         mapFragment.getMapAsync(this)
 
         // TODO переделать чтобы можно было свитчиться между фрагментами с сохранением состояния
@@ -79,6 +81,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         mainActivity.requestLocationPermission()
 
         updateGeolocationUI()
+
     }
 
     /**

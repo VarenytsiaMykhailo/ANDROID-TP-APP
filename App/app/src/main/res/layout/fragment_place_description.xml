@@ -25,85 +25,83 @@
         app:layout_constraintStart_toStartOf="@+id/PlaceDescriptionFragment__ConstraintLayout_Root"
         app:layout_constraintTop_toTopOf="@+id/PlaceDescriptionFragment__ConstraintLayout_Root">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="12dp"
-            android:layout_marginRight="12dp"
-            android:orientation="vertical"
             android:paddingTop="24dp">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/PlaceDescriptionFragment__ConstraintLayout_PlaceImage"
-                android:layout_width="match_parent"
-                android:layout_height="220dp">
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/PlaceDescriptionFragment__ViewPager2_PlaceImage"
+                android:layout_width="388dp"
+                android:layout_height="320dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-                <androidx.viewpager2.widget.ViewPager2
-                    android:id="@+id/PlaceDescriptionFragment__ViewPager2_PlaceImage"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
                 android:id="@+id/PlaceDescriptionFragment__TextView_Title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginStart="21dp"
                 android:maxLines="2"
+                android:textColor="@color/black"
                 android:textSize="22sp"
+                app:layout_constraintTop_toBottomOf="@+id/PlaceDescriptionFragment__ViewPager2_PlaceImage"
                 tools:text="Парк Горького фывфывф ывфйцуйцумкма" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <RatingBar
+                android:id="@+id/PlaceDescriptionFragment__RatingBar"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:orientation="horizontal">
+                android:layout_marginTop="4dp"
+                android:isIndicator="true"
+                android:max="5"
+                android:numStars="5"
+                android:progressBackgroundTint="@color/gray"
+                android:progressTint="@color/stars_rating"
+                android:rating="3.6"
+                android:scaleX=".5"
+                android:scaleY=".5"
+                android:secondaryProgressTint="@color/stars_rating"
+                android:stepSize="0.1"
+                android:transformPivotX="0dp"
+                android:transformPivotY="0dp"
+                app:layout_constraintStart_toStartOf="@+id/PlaceDescriptionFragment__TextView_Title"
+                app:layout_constraintTop_toBottomOf="@+id/PlaceDescriptionFragment__TextView_Title" />
 
-                <RatingBar
-                    android:id="@+id/PlaceDescriptionFragment__RatingBar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="-100dp"
-                    android:layout_marginBottom="-40dp"
-                    android:isIndicator="true"
-                    android:max="5"
-                    android:progressTint="@color/stars_rating"
-                    android:rating="3.0"
-                    android:scaleX="0.55"
-                    android:scaleY="0.55"
-                    android:transformPivotX="0dp"
-                    android:transformPivotY="0dp" />
+            <TextView
+                android:id="@+id/PlaceDescriptionFragment__TextView_Rating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="132dp"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                app:layout_constraintStart_toStartOf="@+id/PlaceDescriptionFragment__RatingBar"
+                app:layout_constraintTop_toTopOf="@+id/PlaceDescriptionFragment__RatingBar"
+                tools:text="4.7" />
 
-                <TextView
-                    android:id="@+id/PlaceDescriptionFragment__TextView_Rating"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:textSize="18sp"
-                    tools:text="4.7" />
-
-                <TextView
-                    android:id="@+id/PlaceDescriptionFragment__TextView_RatingCount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:textColor="#938C8C"
-                    android:textSize="18sp"
-                    tools:text="9999 оценок" />
-
-            </LinearLayout>
+            <TextView
+                android:id="@+id/PlaceDescriptionFragment__TextView_RatingCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:textColor="@color/dark_grey"
+                android:textSize="18sp"
+                app:layout_constraintStart_toEndOf="@+id/PlaceDescriptionFragment__TextView_Rating"
+                app:layout_constraintTop_toTopOf="@+id/PlaceDescriptionFragment__RatingBar"
+                tools:text="9999 оценок" />
 
             <io.github.glailton.expandabletextview.ExpandableTextView
                 android:id="@+id/PlaceDescriptionFragment__TextView_Description"
-                android:layout_width="match_parent"
+                android:layout_width="368dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:textColor="@color/black"
                 android:textSize="14sp"
                 app:expandType="layout"
+                app:layout_constraintStart_toStartOf="@+id/PlaceDescriptionFragment__TextView_Title"
+                app:layout_constraintTop_toBottomOf="@+id/PlaceDescriptionFragment__TextView_Rating"
                 expandableTextView:animDuration="1500"
                 expandableTextView:collapsedLines="2"
                 expandableTextView:readLessText=" less"
@@ -112,88 +110,81 @@
                 tools:text="@string/very_long_text" />
 
             <View
-                android:layout_width="match_parent"
+                android:id="@+id/first_bar"
+                android:layout_width="368dp"
                 android:layout_height="2dp"
                 android:layout_marginTop="8dp"
-                android:background="#c0c0c0" />
+                android:background="@color/gray"
+                app:layout_constraintStart_toStartOf="@+id/PlaceDescriptionFragment__TextView_Description"
+                app:layout_constraintTop_toBottomOf="@+id/PlaceDescriptionFragment__TextView_Description" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="368dp"
+                android:layout_height="180dp"
+                android:layout_marginTop="8dp"
+                android:contentDescription="@string/image_view_description_map_stub"
+                android:src="@mipmap/map_stub"
+                app:layout_constraintStart_toStartOf="@+id/PlaceDescriptionFragment__TextView_Title"
+                app:layout_constraintTop_toBottomOf="@+id/first_bar" />
+
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:orientation="vertical">
+                android:layout_marginTop="4dp"
+                android:text="Адрес: "
+                android:textColor="@color/dark_grey"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="@+id/imageView2"
+                app:layout_constraintTop_toBottomOf="@+id/imageView2" />
 
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="180dp"
-                    android:layout_marginTop="8dp"
-                    android:contentDescription="@string/image_view_description_map_stub"
-                    android:src="@mipmap/map_stub" />
+            <TextView
+                android:id="@+id/PlaceDescriptionFragment__TextView_Address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintStart_toEndOf="@+id/textView"
+                app:layout_constraintTop_toTopOf="@+id/textView"
+                tools:text="ул. Крымский вал, 9, 119049" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Адрес:"
-                        android:textColor="@color/gray"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:id="@+id/PlaceDescriptionFragment__TextView_Address"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="6dp"
-                        android:textSize="14sp"
-                        tools:text="ул. Крымский вал, 9, 119049" />
-
-                </LinearLayout>
-
-            </LinearLayout>
 
             <View
-                android:layout_width="match_parent"
+                android:id="@+id/second_bar"
+                android:layout_width="368dp"
                 android:layout_height="2dp"
                 android:layout_marginTop="8dp"
-                android:background="#c0c0c0" />
+                android:background="@color/gray"
+                app:layout_constraintStart_toStartOf="@+id/PlaceDescriptionFragment__TextView_Description"
+                app:layout_constraintTop_toBottomOf="@+id/PlaceDescriptionFragment__TextView_Address" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:orientation="vertical">
+                android:layout_marginTop="8dp"
+                android:text="График работы: "
+                android:textColor="@color/dark_grey"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="@+id/textView"
+                app:layout_constraintTop_toBottomOf="@+id/second_bar" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:orientation="horizontal">
+            <TextView
+                android:id="@+id/PlaceDescriptionFragment__TextView_WorkingHours"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintStart_toEndOf="@+id/textView2"
+                app:layout_constraintTop_toTopOf="@+id/textView2"
+                tools:text="понедельник: 10:00–18:00" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="График работы:"
-                        android:textColor="@color/gray"
-                        android:textSize="14sp" />
 
-                    <TextView
-                        android:id="@+id/PlaceDescriptionFragment__TextView_WorkingHours"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:textSize="14sp"
-                        tools:text="понедельник: 10:00–18:00" />
-                </LinearLayout>
-
-            </LinearLayout>
-
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>
 
