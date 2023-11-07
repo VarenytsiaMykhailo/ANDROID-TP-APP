@@ -4,7 +4,7 @@ import com.example.app.R
 import com.example.app.datalayer.repositories.LocalPropertiesSecretsRepository
 import com.google.gson.annotations.SerializedName
 
-internal data class NearbyPlace(
+data class NearbyPlace(
 
     @SerializedName("place_id")
     val placeId: String,

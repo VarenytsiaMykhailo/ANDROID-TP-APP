@@ -6,10 +6,11 @@ import com.example.app.datalayer.models.Place
 import com.example.app.datalayer.models.PlaceDescription
 import com.example.app.datalayer.repositories.MapRepository
 
-internal class MapProvider {
+object MapProvider {
 
     private val mapRepository = MapRepository.mapRepository
     private var updateListFlag = true
+    var radius = 3000
 
     lateinit var placesList: MutableList<NearbyPlace>
 
@@ -26,21 +27,25 @@ internal class MapProvider {
     suspend fun getSuggestPlaces(
         lat: Double,
         lng: Double,
-        radius: Int,
         limit: Int,
         offset: Int,
     ): List<NearbyPlace> {
-        if (updateListFlag){
-        placesList = mapRepository.getSuggestPlaces(
-            "$lat,$lng",
-            radius.toString(),
-            limit,
-            offset,
-        ).also {
-            Log.d(LOG_TAG, "getSuggestPlaces = $it")
-        }.toMutableList()
-        updateListFlag=false}
+        if (updateListFlag) {
+            placesList = mapRepository.getSuggestPlaces(
+                "$lat,$lng",
+                radius.toString(),
+                limit,
+                offset,
+            ).also {
+            }.toMutableList()
+            updateListFlag = false
+        }
         return placesList
+    }
+
+    fun updateRadius(rad: Int) {
+        radius = rad
+        updateListFlag = true
     }
 
     /**
@@ -48,11 +53,7 @@ internal class MapProvider {
      */
     suspend fun getPlaceDescription(placeId: String): PlaceDescription =
         mapRepository.getPlaceDescription(placeId).also {
-            Log.d(LOG_TAG, "getPlaceDescription = $it")
         }
 
-    companion object {
 
-        private const val LOG_TAG = "MapProvider"
-    }
 }

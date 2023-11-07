@@ -30,4 +30,52 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <ImageView
+        android:id="@+id/radius_back"
+        android:layout_width="100dp"
+        android:layout_height="88dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/MapFragment__ImageView_PlacesListButton"
+        app:layout_constraintEnd_toEndOf="@+id/MapFragment__ImageView_PlacesListButton"
+        app:srcCompat="@drawable/radius_back" />
+
+    <TextView
+        android:id="@+id/radius_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:text="Радиус:"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/radius_back"
+        app:layout_constraintStart_toStartOf="@+id/radius_back"
+        app:layout_constraintTop_toTopOf="@+id/radius_back" />
+
+    <EditText
+        android:id="@+id/MapFragment__EditText"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginBottom="4dp"
+        android:hint="..."
+        android:gravity="center"
+        android:inputType="numberDecimal"
+        android:textColor="@color/black"
+        android:textColorHint="@color/dark_grey"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/radius_back"
+        app:layout_constraintStart_toStartOf="@+id/radius_back" />
+
+    <TextView
+        android:id="@+id/km_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" км"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/radius_back"
+        app:layout_constraintEnd_toEndOf="@+id/radius_back"
+        app:layout_constraintStart_toEndOf="@+id/MapFragment__EditText"
+        app:layout_constraintTop_toTopOf="@+id/MapFragment__EditText" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
