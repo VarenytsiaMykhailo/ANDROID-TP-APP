@@ -4,7 +4,7 @@ import com.example.app.R
 import com.example.app.datalayer.repositories.LocalPropertiesSecretsRepository
 import com.google.gson.annotations.SerializedName
 
-internal data class Place(
+data class Place(
 
     @SerializedName("id")
     val id: String,

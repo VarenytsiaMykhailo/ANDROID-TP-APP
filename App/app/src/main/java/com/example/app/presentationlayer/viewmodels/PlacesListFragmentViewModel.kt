@@ -1,5 +1,6 @@
 package com.example.app.presentationlayer.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.app.businesslayer.providers.MapProvider
@@ -11,7 +12,7 @@ import kotlinx.coroutines.launch
 
 internal class PlacesListFragmentViewModel : ViewModel() {
 
-    private val mapProvider = MapProvider()
+    private val mapProvider = MapProvider
 
     lateinit var fragment: PlacesListFragment
 
@@ -35,7 +36,6 @@ internal class PlacesListFragmentViewModel : ViewModel() {
                             mapProvider.getSuggestPlaces(
                                 it.latitude,
                                 it.longitude,
-                                1000,
                                 20,
                                 0
                             ).toMutableList()
@@ -49,7 +49,6 @@ internal class PlacesListFragmentViewModel : ViewModel() {
                             mapProvider.getSuggestPlaces(
                                 defaultLocation.latitude,
                                 defaultLocation.longitude,
-                                1000,
                                 20,
                                 0
                             ).toMutableList()

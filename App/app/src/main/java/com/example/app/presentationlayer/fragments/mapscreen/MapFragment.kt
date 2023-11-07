@@ -8,10 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import com.example.app.R
 import com.example.app.databinding.FragmentMapBinding
-import com.example.app.datalayer.models.NearbyPlace
 import com.example.app.presentationlayer.MainActivity
 import com.example.app.presentationlayer.viewmodels.MapFragmentViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -20,6 +18,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.snackbar.Snackbar
 
 
 /**
@@ -69,6 +68,20 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         binding.MapFragmentImageViewPlacesListButton.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
+
+        binding.MapFragmentEditText.hint=viewModel.giveRadius()
+        binding.MapFragmentEditText.setOnEditorActionListener { v, actionId, event ->
+            viewModel.getRadius(v.text.toString())
+            //Toast.makeText(activity, "Установлен радиус ${v.text} км", Toast.LENGTH_SHORT).show()
+            Snackbar.make(
+                v,
+                "Установлен радиус ${v.text} км",
+                Snackbar.LENGTH_SHORT
+            ).show()
+
+            return@setOnEditorActionListener true
+        }
+
     }
 
     /**

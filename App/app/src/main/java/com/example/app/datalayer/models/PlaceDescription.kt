@@ -2,7 +2,7 @@ package com.example.app.datalayer.models
 
 import com.google.gson.annotations.SerializedName
 
-internal data class PlaceDescription(
+data class PlaceDescription(
 
     @SerializedName("place_id")
     val placeId: String,

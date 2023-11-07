@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 
 internal class PlaceDescriptionFragmentViewModel : ViewModel() {
 
-    private val mapProvider = MapProvider()
+    private val mapProvider = MapProvider
 
     lateinit var fragment: PlaceDescriptionFragment
 

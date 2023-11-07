@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 
 internal class MapFragmentViewModel : ViewModel() {
 
-    private val mapProvider = MapProvider()
+    private val mapProvider = MapProvider
     lateinit var fragment: MapFragment
     lateinit var placesList: MutableList<NearbyPlace>
 
@@ -25,7 +25,6 @@ internal class MapFragmentViewModel : ViewModel() {
                         placesList = mapProvider.getSuggestPlaces(
                             it.latitude,
                             it.longitude,
-                            1000,
                             20,
                             0
                         ).toMutableList()
@@ -36,7 +35,6 @@ internal class MapFragmentViewModel : ViewModel() {
                         placesList = mapProvider.getSuggestPlaces(
                             defaultLocation.latitude,
                             defaultLocation.longitude,
-                            1000,
                             20,
                             0
                         ).toMutableList()
@@ -45,4 +43,10 @@ internal class MapFragmentViewModel : ViewModel() {
             )
         }
     }
+    fun getRadius(rad:String){
+        mapProvider.updateRadius((rad.toDouble()*1000).toInt())
+        onUpdatePlaces()
+    }
+
+    fun giveRadius()=((mapProvider.radius).toDouble()/1000).toString()
 }
