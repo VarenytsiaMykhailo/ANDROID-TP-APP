@@ -19,37 +19,31 @@ internal class MapFragmentViewModel : ViewModel() {
     // A default location to use when location permission is not granted. Moscow, Red Square.
     private val defaultLocation = LatLng(55.753544, 37.621202)
 
-    fun onUpdatePlaces() {
-        viewModelScope.launch {
-            fragment.mainActivity.updateDeviceLocation(
-                onSuccess = {
-                    viewModelScope.launch {
-                        placesList = mapProvider.getSuggestPlaces(
-                            it.latitude,
-                            it.longitude,
-                            20,
-                            0
-                        ).toMutableList()
-                    }
-                },
-                onFail = {
-                    viewModelScope.launch {
-                        placesList = mapProvider.getSuggestPlaces(
-                            defaultLocation.latitude,
-                            defaultLocation.longitude,
-                            20,
-                            0
-                        ).toMutableList()
-                    }
+    fun onUpdatePlaces(shouldUseCachedValue: Boolean = true) {
+        if (shouldUseCachedValue) {
+            mapProvider.placesCachedList.forEach {
+                fragment.onNewLocation(it.location.lat, it.location.lng, it.name)
+            }
+        } else {
+            viewModelScope.launch {
+                val placesList = mapProvider.getSuggestPlaces(
+                    mapProvider.lastUsedLat,
+                    mapProvider.lastUsedLng,
+                    20,
+                    0
+                )
+                placesList.forEach {
+                    fragment.onNewLocation(it.location.lat, it.location.lng, it.name)
                 }
-            )
+            }
+
         }
     }
 
     // TODO придумать способ как улучшить
     fun updateRadius(newRadius: String) {
         mapProvider.updateRadius((newRadius.toDouble() * 1000).toInt())
-        onUpdatePlaces()
+        onUpdatePlaces(shouldUseCachedValue = false)
     }
 
     fun giveRadiusString() = ((mapProvider.radius).toDouble() / 1000).toString()
