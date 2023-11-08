@@ -7,17 +7,22 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.app.R
 import com.example.app.datalayer.models.NearbyPlace
+import com.example.app.datalayer.models.PlaceReaction
 import com.example.app.presentationlayer.MainActivity
 import com.example.app.presentationlayer.adapters.PlacesListRecyclerViewAdapter
 import com.example.app.presentationlayer.fragments.mapscreen.MapFragment
 import com.example.app.presentationlayer.fragments.placedescriptionscreen.PlaceDescriptionFragment
 import com.example.app.presentationlayer.viewmodels.PlacesListFragmentViewModel
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Use the [PlacesListFragment.newInstance] factory method to
@@ -110,12 +115,50 @@ class PlacesListFragment : Fragment() {
                         deletedLocation = viewModel.placesList[position]
                         viewModel.placesList.removeAt(position)
                         viewModel.onDeletePlace(position)
+                        viewLifecycleOwner.lifecycleScope.launch {
+                            withContext(Dispatchers.IO) {
+                                viewModel.postSuggestReaction(
+                                    deletedLocation.placeId,
+                                    PlaceReaction.Reaction.REFUSE
+                                )
+                            }
+                        }
+
                         placesListRecyclerViewAdapter.notifyItemRemoved(position)
 
                         view?.let {
                             Snackbar.make(
                                 it.findViewById<RecyclerView>(R.id.locations_rv),
                                 "${deletedLocation.name} удалено",
+                                Snackbar.LENGTH_LONG
+                            ).setAction("Отменить") {
+                                viewModel.placesList.add(position, deletedLocation)
+                                viewModel.onRestorePlace(position, deletedLocation)
+                                placesListRecyclerViewAdapter.notifyItemInserted(position)
+                            }.show()
+                        }
+
+                    }
+
+                    ItemTouchHelper.RIGHT -> {
+                        deletedLocation = viewModel.placesList[position]
+                        viewModel.placesList.removeAt(position)
+                        viewModel.onDeletePlace(position)
+                        viewLifecycleOwner.lifecycleScope.launch {
+                            withContext(Dispatchers.IO) {
+                                viewModel.postSuggestReaction(
+                                    deletedLocation.placeId,
+                                    PlaceReaction.Reaction.VISITED
+                                )
+                            }
+                        }
+
+                        placesListRecyclerViewAdapter.notifyItemRemoved(position)
+
+                        view?.let {
+                            Snackbar.make(
+                                it.findViewById<RecyclerView>(R.id.locations_rv),
+                                "${deletedLocation.name} посещено",
                                 Snackbar.LENGTH_LONG
                             ).setAction("Отменить") {
                                 viewModel.placesList.add(position, deletedLocation)
