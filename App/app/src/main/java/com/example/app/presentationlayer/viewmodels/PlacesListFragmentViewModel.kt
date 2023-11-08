@@ -1,9 +1,8 @@
 package com.example.app.presentationlayer.viewmodels
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.app.businesslayer.providers.MapProvider
+import com.example.app.domain.providers.MapProvider
 import com.example.app.datalayer.models.NearbyPlace
 import com.example.app.presentationlayer.adapters.PlacesListRecyclerViewAdapter
 import com.example.app.presentationlayer.fragments.placeslistscreen.PlacesListFragment

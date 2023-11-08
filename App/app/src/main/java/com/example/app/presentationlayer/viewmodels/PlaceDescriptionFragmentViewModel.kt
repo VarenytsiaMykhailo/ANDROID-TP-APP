@@ -2,7 +2,7 @@ package com.example.app.presentationlayer.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.app.businesslayer.providers.MapProvider
+import com.example.app.domain.providers.MapProvider
 import com.example.app.presentationlayer.adapters.PlaceDescriptionImagesSliderRecyclerViewAdapter
 import com.example.app.presentationlayer.fragments.placedescriptionscreen.PlaceDescriptionFragment
 import kotlinx.coroutines.launch
