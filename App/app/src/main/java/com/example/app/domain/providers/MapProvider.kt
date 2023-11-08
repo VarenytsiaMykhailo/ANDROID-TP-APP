@@ -1,8 +1,9 @@
-package com.example.app.businesslayer.providers
+package com.example.app.domain.providers
 
 import android.util.Log
 import com.example.app.datalayer.models.NearbyPlace
 import com.example.app.datalayer.models.PlaceDescription
+import com.example.app.datalayer.models.PlaceReaction
 import com.example.app.datalayer.repositories.MapRepository
 
 object MapProvider {
@@ -47,11 +48,6 @@ object MapProvider {
         return placesList
     }
 
-    fun updateRadius(newRadius: Int) {
-        radius = newRadius
-        updateListFlag = true
-    }
-
     /**
      * @param placeId Example: "ChIJfRJDflpKtUYRl0UbgcrmUUk".
      */
@@ -59,4 +55,14 @@ object MapProvider {
         mapRepository.getPlaceDescription(placeId).also {
             Log.d(LOG_TAG, "getPlaceDescription = $it")
         }
+
+    suspend fun postSuggestReaction(placeId: String, reaction: PlaceReaction.Reaction) =
+        mapRepository.postSuggestReaction(
+            PlaceReaction(placeId, reaction)
+        )
+
+    fun updateRadius(newRadius: Int) {
+        radius = newRadius
+        updateListFlag = true
+    }
 }

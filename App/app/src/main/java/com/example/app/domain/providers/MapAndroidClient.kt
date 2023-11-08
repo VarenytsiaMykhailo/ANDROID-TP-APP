@@ -1,4 +1,4 @@
-package com.example.app.businesslayer.providers
+package com.example.app.domain.providers
 
 import android.graphics.Bitmap
 import android.util.Log
