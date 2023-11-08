@@ -113,6 +113,5 @@ internal class PlacesListRecyclerViewAdapter(
 
         }
     }
-
 }
 

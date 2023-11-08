@@ -69,13 +69,12 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             parentFragmentManager.popBackStack()
         }
 
-        binding.MapFragmentEditText.hint=viewModel.giveRadius()
-        binding.MapFragmentEditText.setOnEditorActionListener { v, actionId, event ->
-            viewModel.getRadius(v.text.toString())
-            //Toast.makeText(activity, "Установлен радиус ${v.text} км", Toast.LENGTH_SHORT).show()
+        binding.MapFragmentEditText.hint = viewModel.giveRadiusString()
+        binding.MapFragmentEditText.setOnEditorActionListener { textView, actionId, event ->
+            viewModel.updateRadius(textView.text.toString())
             Snackbar.make(
-                v,
-                "Установлен радиус ${v.text} км",
+                textView,
+                "Установлен радиус ${textView.text} км",
                 Snackbar.LENGTH_SHORT
             ).show()
 

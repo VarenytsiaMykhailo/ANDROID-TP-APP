@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-    lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     var locationPermissionGranted = false
 
@@ -33,8 +33,10 @@ class MainActivity : AppCompatActivity() {
     // location retrieved by the Fused Location Provider.
     var lastKnownLocation: Location? = null
 
-    var onLocationPermissionGrantedForMapFragment: () -> Unit = {} // Initializes from MapFragment
-    var onLocationPermissionGrantedForPlacesListFragment: (forceRefresh: Boolean) -> Unit = {} // Initializes from PlacesListFragment
+    var onLocationPermissionGrantedForMapFragment: () -> Unit =
+        {} // Initializes from MapFragment
+    var onLocationPermissionGrantedForPlacesListFragment: (forceRefresh: Boolean) -> Unit =
+        {} // Initializes from PlacesListFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
