@@ -1,6 +1,7 @@
 package com.example.app.datalayer.repositories
 
 import com.example.app.BuildConfig
+import com.example.app.R
 
 
 internal object LocalPropertiesSecretsRepository {
@@ -12,4 +13,10 @@ internal object LocalPropertiesSecretsRepository {
     lateinit var USER_UUID: String // Initializes from MainActivity
 
     lateinit var APP_PACKAGE_NAME: String // Initializes from MainActivity
+
+    val defaultImageUrl: String
+        get() = "android.resource://" +
+                APP_PACKAGE_NAME +
+                "/" +
+                R.mipmap.there_is_no_image
 }

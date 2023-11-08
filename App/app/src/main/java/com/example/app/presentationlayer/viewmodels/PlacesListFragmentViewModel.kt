@@ -37,7 +37,8 @@ internal class PlacesListFragmentViewModel : ViewModel() {
                                 it.latitude,
                                 it.longitude,
                                 20,
-                                0
+                                0,
+                                forceRefresh
                             ).toMutableList()
                         placesListRecyclerViewAdapter.submitList(placesList)
                         isDataAlreadyLoaded = true
@@ -50,7 +51,8 @@ internal class PlacesListFragmentViewModel : ViewModel() {
                                 defaultLocation.latitude,
                                 defaultLocation.longitude,
                                 20,
-                                0
+                                0,
+                                forceRefresh
                             ).toMutableList()
                         placesListRecyclerViewAdapter.submitList(placesList)
                         isDataAlreadyLoaded = true

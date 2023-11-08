@@ -146,7 +146,7 @@
             android:numStars="5"
             android:progressBackgroundTint="@color/gray"
             android:progressTint="@color/stars_rating"
-            android:rating="3.6"
+            android:rating="0.0"
             android:scaleX=".5"
             android:scaleY=".5"
             android:secondaryProgressTint="@color/stars_rating"

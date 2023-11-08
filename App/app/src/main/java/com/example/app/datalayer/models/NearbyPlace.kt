@@ -1,6 +1,5 @@
 package com.example.app.datalayer.models
 
-import com.example.app.R
 import com.example.app.datalayer.repositories.LocalPropertiesSecretsRepository
 import com.google.gson.annotations.SerializedName
 
@@ -10,19 +9,16 @@ data class NearbyPlace(
     val placeId: String,
 
     @SerializedName("name")
-    val name: String,
+    private val _name: String?,
 
     @SerializedName("cover")
     private val _mainImageUrl: String?,
 
-    @SerializedName("photos")
-    val photos: List<String>,
-
     @SerializedName("rating")
-    val rating: Double,
+    private val _rating: Double?,
 
     @SerializedName("rating_count")
-    val ratingCount: Int,
+    private val _ratingCount: Int?,
 
     @SerializedName("reaction")
     val reaction: String,
@@ -31,14 +27,19 @@ data class NearbyPlace(
     val location: Location,
 ) {
 
+    val name: String
+        get() = _name ?: "Название отсутствует"
+
     val mainImageUrl: String
         get() = _mainImageUrl
-            ?: (
-                    "android.resource://" +
-                            LocalPropertiesSecretsRepository.APP_PACKAGE_NAME +
-                            "/" +
-                            R.mipmap.there_is_no_image
-                    )
+            ?: LocalPropertiesSecretsRepository.defaultImageUrl
+
+    val rating: Double
+        get() = _rating ?: 0.0
+
+    val ratingCount: Int
+        get() = _ratingCount ?: 0
+
 
     data class Location(
         @SerializedName("lat")
