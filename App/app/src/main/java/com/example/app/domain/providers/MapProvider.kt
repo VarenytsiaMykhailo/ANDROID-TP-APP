@@ -31,8 +31,9 @@ object MapProvider {
         lng: Double,
         limit: Int,
         offset: Int,
+        forceRefresh: Boolean = false, // Need for ignoring updateListFlag
     ): List<NearbyPlace> {
-        if (updateListFlag) {
+        if (updateListFlag || forceRefresh) {
             placesList = mapRepository.getSuggestPlaces(
                 "$lat,$lng",
                 radius.toString(),
