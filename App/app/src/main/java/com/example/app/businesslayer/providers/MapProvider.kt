@@ -2,21 +2,22 @@ package com.example.app.businesslayer.providers
 
 import android.util.Log
 import com.example.app.datalayer.models.NearbyPlace
-import com.example.app.datalayer.models.Place
 import com.example.app.datalayer.models.PlaceDescription
 import com.example.app.datalayer.repositories.MapRepository
 
 object MapProvider {
 
+    private const val LOG_TAG = "MapProvider"
+
     private val mapRepository = MapRepository.mapRepository
+
     private var updateListFlag = true
+
     var radius = 3000
 
     lateinit var placesList: MutableList<NearbyPlace>
 
-    suspend fun getPlaces(): List<Place> =
-        mapRepository.getPlaces()
-
+    // TODO чет не нравится что из параметра убрали radius. Придумать как отрефакторить
     /**
      * @param lat Example: 55.753544.
      * @param lng Example: 37.621202.
@@ -37,14 +38,17 @@ object MapProvider {
                 limit,
                 offset,
             ).also {
+                Log.d(LOG_TAG, "getSuggestPlaces = $it")
             }.toMutableList()
+
             updateListFlag = false
         }
+
         return placesList
     }
 
-    fun updateRadius(rad: Int) {
-        radius = rad
+    fun updateRadius(newRadius: Int) {
+        radius = newRadius
         updateListFlag = true
     }
 
@@ -53,7 +57,6 @@ object MapProvider {
      */
     suspend fun getPlaceDescription(placeId: String): PlaceDescription =
         mapRepository.getPlaceDescription(placeId).also {
+            Log.d(LOG_TAG, "getPlaceDescription = $it")
         }
-
-
 }

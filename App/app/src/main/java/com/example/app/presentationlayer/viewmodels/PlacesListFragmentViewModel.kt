@@ -57,11 +57,11 @@ internal class PlacesListFragmentViewModel : ViewModel() {
                     }
                 }
             )
-
         }
     }
 
-    fun onDeletePlace(position: Int) = mapProvider.placesList.removeAt(position)
+    fun onDeletePlace(position: Int) =
+        mapProvider.placesList.removeAt(position)
 
     fun onRestorePlace(position: Int, restoredLocation: NearbyPlace) =
         mapProvider.placesList.add(position, restoredLocation)

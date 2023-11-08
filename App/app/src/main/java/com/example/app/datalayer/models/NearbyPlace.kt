@@ -47,6 +47,4 @@ data class NearbyPlace(
         @SerializedName("lng")
         val lng: Double,
     )
-
-
 }

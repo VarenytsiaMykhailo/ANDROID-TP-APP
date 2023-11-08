@@ -3,7 +3,6 @@ package com.example.app.datalayer.repositories
 import com.example.app.BuildConfig
 import com.example.app.datalayer.models.NearbyPlace
 import com.example.app.datalayer.repositories.interceptors.HeadersInterceptor
-import com.example.app.datalayer.models.Place
 import com.example.app.datalayer.models.PlaceDescription
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -13,9 +12,6 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 internal interface MapRepository {
-
-    @GET("places/list")
-    suspend fun getPlaces(): List<Place>
 
     /**
      * @param location Example: "55.7520233,37.6174994" in lat, lng format.

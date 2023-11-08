@@ -23,7 +23,8 @@ class PlacesListRootFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Нужно использовать именно child т.к. можно наткнуться на краш при выбивании фрагмента
+        // Нужно использовать именно child т.к. можно наткнуться на краш при выбивании фрагмента.
+        // Но с ним не работает системная кнопка назад (выходит из приложения)
         parentFragmentManager
             .beginTransaction()
             .replace(

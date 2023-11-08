@@ -1,7 +1,6 @@
 package com.example.app.presentationlayer.fragments.placeslistscreen
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -92,7 +91,10 @@ class PlacesListFragment : Fragment() {
     }
 
     private var onMoveCallback =
-        object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT.or(ItemTouchHelper.RIGHT)) {
+        object : ItemTouchHelper.SimpleCallback(
+            0,
+            ItemTouchHelper.LEFT.or(ItemTouchHelper.RIGHT),
+        ) {
             override fun onMove(
                 recyclerView: RecyclerView,
                 viewHolder: RecyclerView.ViewHolder,
@@ -115,11 +117,11 @@ class PlacesListFragment : Fragment() {
                                 it.findViewById<RecyclerView>(R.id.locations_rv),
                                 "${deletedLocation.name} удалено",
                                 Snackbar.LENGTH_LONG
-                            ).setAction("Отменить", View.OnClickListener {
+                            ).setAction("Отменить") {
                                 viewModel.placesList.add(position, deletedLocation)
                                 viewModel.onRestorePlace(position, deletedLocation)
                                 placesListRecyclerViewAdapter.notifyItemInserted(position)
-                            }).show()
+                            }.show()
                         }
 
                     }

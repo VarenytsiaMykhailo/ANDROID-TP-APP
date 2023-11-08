@@ -20,7 +20,7 @@ class TabBarAdapter(
             0 -> PlacesListRootFragment.newInstance()
             1 -> MapFragment.newInstance()
             2 -> PlaceDescriptionFragment.newInstance("ChIJfRJDflpKtUYRl0UbgcrmUUk")
-            3-> ChartFragment.newInstance()
+            3 -> ChartFragment.newInstance()
             else -> ChartFragment.newInstance()
         }
 }
