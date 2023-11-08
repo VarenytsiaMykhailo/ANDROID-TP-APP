@@ -63,10 +63,10 @@ internal class PlacesListFragmentViewModel : ViewModel() {
     }
 
     fun onDeletePlace(position: Int) =
-        mapProvider.placesList.removeAt(position)
+        mapProvider.placesCachedList.removeAt(position)
 
     fun onRestorePlace(position: Int, restoredLocation: NearbyPlace) =
-        mapProvider.placesList.add(position, restoredLocation)
+        mapProvider.placesCachedList.add(position, restoredLocation)
 
     suspend fun postSuggestReaction(placeId: String, reaction: PlaceReaction.Reaction) =
         mapProvider.postSuggestReaction(placeId, reaction)

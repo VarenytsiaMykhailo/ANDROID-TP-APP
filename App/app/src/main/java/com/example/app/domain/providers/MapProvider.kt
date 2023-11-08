@@ -16,7 +16,11 @@ object MapProvider {
 
     var radius = 3000
 
-    lateinit var placesList: MutableList<NearbyPlace>
+    var lastUsedLat: Double = 0.0
+
+    var lastUsedLng: Double = 0.0
+
+    lateinit var placesCachedList: MutableList<NearbyPlace>
 
     // TODO чет не нравится что из параметра убрали radius. Придумать как отрефакторить
     /**
@@ -34,7 +38,7 @@ object MapProvider {
         forceRefresh: Boolean = false, // Need for ignoring updateListFlag
     ): List<NearbyPlace> {
         if (updateListFlag || forceRefresh) {
-            placesList = mapRepository.getSuggestPlaces(
+            placesCachedList = mapRepository.getSuggestPlaces(
                 "$lat,$lng",
                 radius.toString(),
                 limit,
@@ -43,10 +47,12 @@ object MapProvider {
                 Log.d(LOG_TAG, "getSuggestPlaces = $it")
             }.toMutableList()
 
+            lastUsedLat = lat
+            lastUsedLng = lng
             updateListFlag = false
         }
 
-        return placesList
+        return placesCachedList
     }
 
     /**
