@@ -9,7 +9,7 @@ import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.viewpager2.widget.ViewPager2
-import com.example.app.businesslayer.providers.MapAndroidClient
+import com.example.app.domain.providers.MapAndroidClient
 import com.example.app.presentationlayer.adapters.TabBarAdapter
 import com.example.app.databinding.ActivityMainBinding
 import com.example.app.datalayer.repositories.LocalPropertiesSecretsRepository
