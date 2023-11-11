@@ -44,28 +44,70 @@ internal class MapFragmentViewModel : ViewModel() {
     }
 
     fun onDrawRoute() {
-        val encodedPolylines = listOf("uam~FtfbvOlhEayA}vBwIpp@oaA")
-        val pointsList = mutableListOf<LatLng>()
-
-        mapProvider.placesCachedList
-        /*
-        mapProvider.postSuggestRoute(RouteRequest(
-            travelMode = RouteRequest.TravelMode.WALK,
+        viewModelScope.launch {
+            Log.d("qwerty123", "onDrawRoute - enter")
 
 
-        ))
+            val list = mapProvider.placesCachedList.take(5)
 
-         */
+            //Log.d("qwerty123", "response route list = $list")
 
-        encodedPolylines.forEach {
-            val pointsListOfPolyline = PolyUtil.decode(it)
-            Log.d("qwerty123", "polyline = $it pointsListOfPolyline = $pointsListOfPolyline")
-            pointsList.addAll(pointsListOfPolyline)
+            val start = list.first()
+            val end = list.last()
+
+            val waypoints = mutableListOf<RouteRequest.Waypoint>()
+            list.forEachIndexed { index, nearbyPlace ->
+                if (index != 0 && index != 4) {
+                    val waypoint = RouteRequest.Waypoint(
+                        nearbyPlace.placeId,
+                        RouteRequest.Location(
+                            nearbyPlace.location.lat,
+                            nearbyPlace.location.lng,
+                        )
+                    )
+
+                    waypoints.add(waypoint)
+                }
+            }
+
+            val routeResponseList = mapProvider.postSuggestRoute(
+                RouteRequest(
+                    travelMode = RouteRequest.TravelMode.WALK,
+                    start = RouteRequest.Location(
+                        start.location.lat,
+                        start.location.lng,
+                    ),
+                    end = RouteRequest.Location(
+                        end.location.lat,
+                        end.location.lng,
+                    ),
+                    waypoints = waypoints
+                )
+            )
+            Log.d("qwerty123", "response routeResponseList = $routeResponseList")
+
+            val encodedPolylines = mutableListOf<String>()
+            routeResponseList.route.forEach {
+                encodedPolylines += it.polyline
+            }
+
+            Log.d("qwerty123", "response encodedPolylines = $encodedPolylines")
+
+
+
+
+            //val encodedPolylines = listOf("uam~FtfbvOlhEayA}vBwIpp@oaA")
+            val pointsList = mutableListOf<LatLng>()
+            encodedPolylines.forEach {
+                val pointsListOfPolyline = PolyUtil.decode(it)
+                Log.d("qwerty123", "polyline = $it pointsListOfPolyline = $pointsListOfPolyline")
+                pointsList.addAll(pointsListOfPolyline)
+            }
+
+            Log.d("qwerty123", "pointsList = $pointsList")
+
+            fragment.onDrawRoute(pointsList)
         }
-
-        Log.d("qwerty123", "pointsList = $pointsList")
-
-        fragment.onDrawRoute(pointsList)
     }
 
     // TODO придумать способ как улучшить

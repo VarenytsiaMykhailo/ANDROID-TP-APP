@@ -67,8 +67,10 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
         viewModel.fragment = this
 
-        //viewModel.onUpdatePlaces()
-        viewModel.onDrawRoute()
+        viewModel.onUpdatePlaces()
+        binding.RouteButton.setOnClickListener {
+            viewModel.onDrawRoute()
+        }
 
         mapFragment.getMapAsync(this)
 

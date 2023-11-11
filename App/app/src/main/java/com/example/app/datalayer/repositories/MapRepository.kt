@@ -51,7 +51,7 @@ internal interface MapRepository {
     @POST("suggest/route")
     suspend fun postSuggestRoute(
         @Body routeRequest: RouteRequest,
-    ): List<RouteResponse>
+    ): RouteResponse
 
     companion object {
 

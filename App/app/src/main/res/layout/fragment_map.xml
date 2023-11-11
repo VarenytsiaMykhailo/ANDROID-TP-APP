@@ -78,4 +78,12 @@
         app:layout_constraintStart_toEndOf="@+id/MapFragment__EditText"
         app:layout_constraintTop_toTopOf="@+id/MapFragment__EditText" />
 
+    <Button
+        android:id="@+id/RouteButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@+id/MapFragment__ImageView_PlacesListButton"
+        app:layout_constraintTop_toTopOf="@+id/MapFragment__ImageView_PlacesListButton"
+        android:text="Route" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

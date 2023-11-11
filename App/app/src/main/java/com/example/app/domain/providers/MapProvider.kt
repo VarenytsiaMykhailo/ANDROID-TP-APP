@@ -73,7 +73,7 @@ object MapProvider {
     suspend fun postSuggestUserNew() =
         mapRepository.postSuggestUserNew()
 
-    suspend fun postSuggestRoute(routeRequest: RouteRequest): List<RouteResponse> =
+    suspend fun postSuggestRoute(routeRequest: RouteRequest): RouteResponse =
         mapRepository.postSuggestRoute(
             routeRequest
         )
