@@ -4,6 +4,8 @@ import com.example.app.BuildConfig
 import com.example.app.datalayer.models.NearbyPlace
 import com.example.app.datalayer.models.PlaceDescription
 import com.example.app.datalayer.models.PlaceReaction
+import com.example.app.datalayer.models.RouteRequest
+import com.example.app.datalayer.models.RouteResponse
 import com.example.app.datalayer.repositories.interceptors.HeadersInterceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -42,6 +44,11 @@ internal interface MapRepository {
     suspend fun postSuggestReaction(
         @Body placeReaction: PlaceReaction,
     )
+
+    @POST("suggest/route")
+    suspend fun postSuggestRoute(
+        @Body routeRequest: RouteRequest,
+    ): List<RouteResponse>
 
     companion object {
 

@@ -6,4 +6,5 @@
     <color name="gray">#FFD9D9D9</color>
     <color name="stars_rating">#FFF9C710</color>
     <color name="dark_grey">#FF8C8C8C</color>
+    <color name="route_polyline_color">#3761DD</color>
 </resources>

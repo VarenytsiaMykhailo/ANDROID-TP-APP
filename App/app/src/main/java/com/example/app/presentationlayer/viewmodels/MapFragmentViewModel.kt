@@ -1,11 +1,14 @@
 package com.example.app.presentationlayer.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.app.domain.providers.MapProvider
 import com.example.app.datalayer.models.NearbyPlace
+import com.example.app.datalayer.models.RouteRequest
 import com.example.app.presentationlayer.fragments.mapscreen.MapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.PolyUtil
 import kotlinx.coroutines.launch
 
 internal class MapFragmentViewModel : ViewModel() {
@@ -38,6 +41,31 @@ internal class MapFragmentViewModel : ViewModel() {
             }
 
         }
+    }
+
+    fun onDrawRoute() {
+        val encodedPolylines = listOf("uam~FtfbvOlhEayA}vBwIpp@oaA")
+        val pointsList = mutableListOf<LatLng>()
+
+        mapProvider.placesCachedList
+        /*
+        mapProvider.postSuggestRoute(RouteRequest(
+            travelMode = RouteRequest.TravelMode.WALK,
+
+
+        ))
+
+         */
+
+        encodedPolylines.forEach {
+            val pointsListOfPolyline = PolyUtil.decode(it)
+            Log.d("qwerty123", "polyline = $it pointsListOfPolyline = $pointsListOfPolyline")
+            pointsList.addAll(pointsListOfPolyline)
+        }
+
+        Log.d("qwerty123", "pointsList = $pointsList")
+
+        fragment.onDrawRoute(pointsList)
     }
 
     // TODO придумать способ как улучшить
