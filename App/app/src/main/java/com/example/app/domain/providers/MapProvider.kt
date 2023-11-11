@@ -70,6 +70,9 @@ object MapProvider {
             PlaceReaction(placeId, reaction)
         )
 
+    suspend fun postSuggestUserNew() =
+        mapRepository.postSuggestUserNew()
+
     suspend fun postSuggestRoute(routeRequest: RouteRequest): List<RouteResponse> =
         mapRepository.postSuggestRoute(
             routeRequest

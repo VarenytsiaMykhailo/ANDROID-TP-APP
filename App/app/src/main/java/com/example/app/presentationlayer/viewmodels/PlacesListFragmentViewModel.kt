@@ -8,7 +8,9 @@ import com.example.app.datalayer.models.PlaceReaction
 import com.example.app.presentationlayer.adapters.PlacesListRecyclerViewAdapter
 import com.example.app.presentationlayer.fragments.placeslistscreen.PlacesListFragment
 import com.google.android.gms.maps.model.LatLng
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 internal class PlacesListFragmentViewModel : ViewModel() {
 
@@ -32,28 +34,32 @@ internal class PlacesListFragmentViewModel : ViewModel() {
             fragment.mainActivity.updateDeviceLocation(
                 onSuccess = {
                     viewModelScope.launch {
-                        placesList =
-                            mapProvider.getSuggestPlaces(
-                                it.latitude,
-                                it.longitude,
-                                20,
-                                0,
-                                forceRefresh
-                            ).toMutableList()
+                        withContext(Dispatchers.IO) {
+                            placesList =
+                                mapProvider.getSuggestPlaces(
+                                    it.latitude,
+                                    it.longitude,
+                                    20,
+                                    0,
+                                    forceRefresh
+                                ).toMutableList()
+                        }
                         placesListRecyclerViewAdapter.submitList(placesList)
                         isDataAlreadyLoaded = true
                     }
                 },
                 onFail = {
                     viewModelScope.launch {
-                        placesList =
-                            mapProvider.getSuggestPlaces(
-                                defaultLocation.latitude,
-                                defaultLocation.longitude,
-                                20,
-                                0,
-                                forceRefresh
-                            ).toMutableList()
+                        withContext(Dispatchers.IO) {
+                            placesList =
+                                mapProvider.getSuggestPlaces(
+                                    defaultLocation.latitude,
+                                    defaultLocation.longitude,
+                                    20,
+                                    0,
+                                    forceRefresh
+                                ).toMutableList()
+                        }
                         placesListRecyclerViewAdapter.submitList(placesList)
                         isDataAlreadyLoaded = true
                     }
@@ -68,6 +74,8 @@ internal class PlacesListFragmentViewModel : ViewModel() {
     fun onRestorePlace(position: Int, restoredLocation: NearbyPlace) =
         mapProvider.placesCachedList.add(position, restoredLocation)
 
-    suspend fun postSuggestReaction(placeId: String, reaction: PlaceReaction.Reaction) =
-        mapProvider.postSuggestReaction(placeId, reaction)
+    fun postSuggestReaction(placeId: String, reaction: PlaceReaction.Reaction) =
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) { mapProvider.postSuggestReaction(placeId, reaction) }
+        }
 }

@@ -8,17 +8,25 @@ import android.os.Bundle
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import com.example.app.domain.providers.MapAndroidClient
 import com.example.app.presentationlayer.adapters.TabBarAdapter
 import com.example.app.databinding.ActivityMainBinding
+import com.example.app.datalayer.models.NearbyPlace
 import com.example.app.datalayer.repositories.LocalPropertiesSecretsRepository
+import com.example.app.domain.providers.MapProvider
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.libraries.places.api.Places
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
+import kotlinx.coroutines.runBlocking
 import java.lang.RuntimeException
+import io.paperdb.Paper
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.UUID
 
 class MainActivity : AppCompatActivity() {
@@ -53,6 +61,8 @@ class MainActivity : AppCompatActivity() {
         initLocationClient()
 
         requestLocationPermission()
+
+        Paper.init(applicationContext);
     }
 
     private fun generateOrInitializeUserUUID() {
@@ -61,20 +71,63 @@ class MainActivity : AppCompatActivity() {
 
         LocalPropertiesSecretsRepository.USER_UUID =
             if (!userUUID.isNullOrEmpty()) {
+                Log.d(LOG_TAG, "generateOrInitializeUserUUID not first launch")
+
                 userUUID
             } else {
+                Log.d(LOG_TAG, "generateOrInitializeUserUUID first launch")
+
                 // The first launch
-                val newUserUUID = UUID.randomUUID().toString()
+                val newUserUUID = generateUserUuidAndCreateOnBackend()
 
                 val editor = sharedPreferences.edit()
                 editor.putString(USER_UUID_KEY, newUserUUID)
                 val isSuccess = editor.commit()
                 if (!isSuccess) {
+                    // TODO Use another way to save uuid
                     throw RuntimeException("Error while saving user UUID!")
                 }
 
                 newUserUUID
             }
+    }
+
+    private fun generateUserUuidAndCreateOnBackend(): String {
+        var newUserUUID = ""
+
+        // TODO добавить ограничение по итерациям и выводить информацию о мертвом бэкенде, если он упал
+        var successfulCreatedOnBackend = false
+        while (!successfulCreatedOnBackend) {
+            Log.d(LOG_TAG, "generateUserUuidAndCreateOnBackend while run")
+
+            Log.d(LOG_TAG, "generateUserUuidAndCreateOnBackend runBlocking before")
+            runBlocking {
+                Log.d(LOG_TAG, "generateUserUuidAndCreateOnBackend runBlocking run")
+
+                successfulCreatedOnBackend = try {
+                    newUserUUID = UUID.randomUUID().toString()
+                    LocalPropertiesSecretsRepository.USER_UUID = newUserUUID
+
+                    MapProvider.postSuggestUserNew() // User UUID stores in request header
+
+                    true
+                } catch (e: Exception) {
+                    Log.d(LOG_TAG, "generateUserUuidAndCreateOnBackend runBlocking catch")
+                    false
+                }
+
+                Log.d(LOG_TAG, "generateUserUuidAndCreateOnBackend runBlocking end")
+            }
+
+            Log.d(
+                LOG_TAG,
+                "generateUserUuidAndCreateOnBackend runBlocking after successfulCreatedOnBackend = $successfulCreatedOnBackend"
+            )
+
+        }
+        Log.d(LOG_TAG, "generateUserUuidAndCreateOnBackend return $newUserUUID")
+
+        return newUserUUID
     }
 
     private fun setupTabBar() {
@@ -204,6 +257,33 @@ class MainActivity : AppCompatActivity() {
             Log.e(LOG_TAG, e.message, e)
             onFail()
         }
+    }
+
+    fun saveLikedPlace(place: NearbyPlace) {
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                Paper.book("liked_places").write(place.placeId, place)
+                Paper.book("liked_places").read<NearbyPlace>(place.placeId)
+            }
+        }
+    }
+
+    fun deleteLikedPlace(place: NearbyPlace) {
+        Paper.book("liked_places").delete(place.placeId)
+    }
+
+    fun likeCheck(place: NearbyPlace) =
+        Paper.book("liked_places").read<NearbyPlace>(place.placeId) != null
+
+
+    fun getLikedPlace(): MutableList<NearbyPlace> {
+        val list: MutableList<NearbyPlace> = emptyList<NearbyPlace>().toMutableList()
+        var place: NearbyPlace
+        Paper.book("liked_places").allKeys.forEach {
+            place = Paper.book("liked_places").read<NearbyPlace>(it)!!
+            list += place
+        }
+        return list.toMutableList()
     }
 
     companion object {
