@@ -61,6 +61,9 @@ object MapProvider {
             PlaceReaction(placeId, reaction)
         )
 
+    suspend fun postSuggestUserNew() =
+        mapRepository.postSuggestUserNew()
+
     fun updateRadius(newRadius: Int) {
         radius = newRadius
         updateListFlag = true
