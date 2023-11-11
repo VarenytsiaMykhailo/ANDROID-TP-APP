@@ -4,6 +4,8 @@ import com.example.app.BuildConfig
 import com.example.app.datalayer.models.NearbyPlace
 import com.example.app.datalayer.models.PlaceDescription
 import com.example.app.datalayer.models.PlaceReaction
+import com.example.app.datalayer.models.RouteRequest
+import com.example.app.datalayer.models.RouteResponse
 import com.example.app.datalayer.repositories.interceptors.HeadersInterceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -45,6 +47,11 @@ internal interface MapRepository {
 
     @POST("suggest/user/new")
     suspend fun postSuggestUserNew() // User UUID stores in request header
+
+    @POST("suggest/route")
+    suspend fun postSuggestRoute(
+        @Body routeRequest: RouteRequest,
+    ): RouteResponse
 
     companion object {
 

@@ -4,6 +4,8 @@ import android.util.Log
 import com.example.app.datalayer.models.NearbyPlace
 import com.example.app.datalayer.models.PlaceDescription
 import com.example.app.datalayer.models.PlaceReaction
+import com.example.app.datalayer.models.RouteRequest
+import com.example.app.datalayer.models.RouteResponse
 import com.example.app.datalayer.repositories.MapRepository
 
 object MapProvider {
@@ -70,6 +72,11 @@ object MapProvider {
 
     suspend fun postSuggestUserNew() =
         mapRepository.postSuggestUserNew()
+
+    suspend fun postSuggestRoute(routeRequest: RouteRequest): RouteResponse =
+        mapRepository.postSuggestRoute(
+            routeRequest
+        )
 
     fun updateRadius(newRadius: Int) {
         radius = newRadius

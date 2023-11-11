@@ -1,12 +1,13 @@
 package com.example.app.presentationlayer.fragments.mapscreen
 
 import android.location.Location
-import androidx.fragment.app.Fragment
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.app.R
 import com.example.app.databinding.FragmentMapBinding
@@ -16,8 +17,14 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.CustomCap
+import com.google.android.gms.maps.model.JointType
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.Polyline
+import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.gms.maps.model.RoundCap
 import com.google.android.material.snackbar.Snackbar
 
 
@@ -61,6 +68,9 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         viewModel.fragment = this
 
         viewModel.onUpdatePlaces()
+        binding.RouteButton.setOnClickListener {
+            viewModel.onDrawRoute()
+        }
 
         mapFragment.getMapAsync(this)
 
@@ -120,6 +130,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
      */
     private fun updateDeviceLocationPoint() {
         val onSuccess: (location: Location) -> Unit = {
+            /*
             googleMap.moveCamera(
                 CameraUpdateFactory.newLatLngZoom(
                     LatLng(
@@ -128,13 +139,16 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                     ), DEFAULT_ZOOM.toFloat()
                 )
             )
+             */
         }
 
         val onFail: () -> Unit = {
+            /*
             googleMap.moveCamera(
                 CameraUpdateFactory
                     .newLatLngZoom(defaultLocation, DEFAULT_ZOOM.toFloat())
             )
+             */
             //googleMap.uiSettings.isMyLocationButtonEnabled = false
         }
 
@@ -151,17 +165,68 @@ class MapFragment : Fragment(), OnMapReadyCallback {
              * Manipulates the map once available.
              * This callback is triggered when the map is ready to be used.
              * This is where we can add markers or lines, add listeners or move the camera.
-             * In this case, we just add a marker near Sydney, Australia.
-             * If Google Play services is not installed on the device, the user will be prompted to
-             * install it inside the SupportMapFragment. This method will only be triggered once the
-             * user has installed Google Play services and returned to the app.
              */
             val location = LatLng(latitude, longitude)
             googleMap.addMarker(MarkerOptions().position(location).title(locationTitle))
-            googleMap.moveCamera(CameraUpdateFactory.newLatLng(location))
+            googleMap.moveCamera(
+                CameraUpdateFactory.newLatLngZoom(
+                    location,
+                    DEFAULT_ZOOM.toFloat()
+                )
+            )
         }
 
         mapFragment.getMapAsync(onMapReadyCallback)
+    }
+
+    fun onDrawRoute(
+        pointsList: List<LatLng>,
+    ) {
+        val onMapReadyCallback = OnMapReadyCallback { googleMap ->
+            /**
+             * Manipulates the map once available.
+             * This callback is triggered when the map is ready to be used.
+             * This is where we can add markers or lines, add listeners or move the camera.
+             */
+
+            val locationStart = pointsList[0]
+            val locationEnd = pointsList.last()
+            googleMap.addMarker(MarkerOptions().position(locationStart))
+            googleMap.addMarker(MarkerOptions().position(locationEnd))
+            googleMap.moveCamera(
+                CameraUpdateFactory.newLatLngZoom(locationStart, DEFAULT_ZOOM.toFloat())
+            )
+
+            //val pointsList = PolyUtil.decode("ipkcFjgchVd@@@cF]@@oCK?")
+            //Log.d("qwerty123", "$pointsList")
+
+            val routePolyline = googleMap.addPolyline(
+                PolylineOptions()
+                    .clickable(true)
+                    .addAll(pointsList)
+
+            )
+            routePolyline.tag = "routePolylineWithArrow"
+            stylePolyline(routePolyline)
+        }
+
+        mapFragment.getMapAsync(onMapReadyCallback)
+    }
+
+    private fun stylePolyline(polyline: Polyline) {
+        // Get the data object stored with the polyline.
+        val type = polyline.tag?.toString() ?: ""
+        when (type) {
+            "routePolylineWithArrow" -> {
+                polyline.startCap = CustomCap(
+                    BitmapDescriptorFactory.fromResource(R.drawable.ic_arrow), 15f)
+            }
+            else -> polyline.startCap = RoundCap()
+        }
+        polyline.endCap = RoundCap()
+        polyline.width = 12.0F
+        polyline.color = ContextCompat.getColor(requireContext(), R.color.route_polyline_color)
+        polyline.jointType = JointType.ROUND
     }
 
     /**
