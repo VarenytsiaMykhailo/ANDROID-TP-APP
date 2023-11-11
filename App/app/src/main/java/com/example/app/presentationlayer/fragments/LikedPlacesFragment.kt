@@ -1,13 +1,12 @@
-package com.example.app.presentationlayer.fragments.placeslistscreen
+package com.example.app.presentationlayer.fragments
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -16,23 +15,15 @@ import com.example.app.datalayer.models.NearbyPlace
 import com.example.app.datalayer.models.PlaceReaction
 import com.example.app.presentationlayer.MainActivity
 import com.example.app.presentationlayer.adapters.PlacesListRecyclerViewAdapter
-import com.example.app.presentationlayer.fragments.mapscreen.MapFragment
 import com.example.app.presentationlayer.fragments.placedescriptionscreen.PlaceDescriptionFragment
-import com.example.app.presentationlayer.viewmodels.PlacesListFragmentViewModel
+import com.example.app.presentationlayer.viewmodels.LikedPlacesFragmentViewModel
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
-/**
- * Use the [PlacesListFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class PlacesListFragment : Fragment() {
 
-    private val viewModel by viewModels<PlacesListFragmentViewModel>()
+class LikedPlacesFragment : Fragment() {
 
-    internal lateinit var mainActivity: MainActivity
+    private lateinit var mainActivity: MainActivity
+    private val viewModel by viewModels<LikedPlacesFragmentViewModel>()
 
     private val launchPlaceDescriptionFragment: (placeId: String) -> Unit = {
         parentFragmentManager
@@ -46,6 +37,10 @@ class PlacesListFragment : Fragment() {
             .commit()
     }
 
+    private val likeCheck: (place: NearbyPlace) ->Boolean = {
+        mainActivity.likeCheck(it)
+    }
+
     private val pressLikeButton: (place: NearbyPlace, pressedFlag: Boolean) -> Unit =
         { place: NearbyPlace, pressedFlag: Boolean ->
             if (pressedFlag) {
@@ -53,7 +48,7 @@ class PlacesListFragment : Fragment() {
                     place.placeId,
                     PlaceReaction.Reaction.LIKE
                 )
-                mainActivity.saveLikedPlace(place)
+                mainActivity.deleteLikedPlace(place)
             } else {
                 viewModel.postSuggestReaction(
                     place.placeId,
@@ -64,12 +59,9 @@ class PlacesListFragment : Fragment() {
             }
 
         }
-    private val likeCheck: (place: NearbyPlace) ->Boolean = {
-        mainActivity.likeCheck(it)
-    }
 
     private val placesListRecyclerViewAdapter =
-        PlacesListRecyclerViewAdapter(launchPlaceDescriptionFragment, pressLikeButton,likeCheck)
+        PlacesListRecyclerViewAdapter(launchPlaceDescriptionFragment, pressLikeButton, likeCheck)
 
     private lateinit var deletedLocation: NearbyPlace
 
@@ -78,13 +70,11 @@ class PlacesListFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? =
-        inflater.inflate(R.layout.fragment_places_list, container, false)
+        inflater.inflate(R.layout.fragment_places_liked, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         mainActivity = requireActivity() as MainActivity
-        mainActivity.onLocationPermissionGrantedForPlacesListFragment = viewModel::onUpdatePlaces
 
         viewModel.fragment = this
 
@@ -100,22 +90,14 @@ class PlacesListFragment : Fragment() {
         val itemTouchHelper = ItemTouchHelper(onMoveCallback)
         itemTouchHelper.attachToRecyclerView(recyclerView)
 
-        viewModel.onUpdatePlaces(true)
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.placesList = mainActivity.getLikedPlace()
+        viewModel.onUpdatePlaces()
         placesListRecyclerViewAdapter.notifyDataSetChanged()
-
-        // TODO переделать чтобы можно было свитчиться между фрагментами с сохранением состояния
-        view.findViewById<Button>(R.id.change_fragment_button).setOnClickListener {
-            parentFragmentManager
-                .beginTransaction()
-                .replace(
-                    R.id.PlacesListRootFragment__FragmentContainerView,
-                    MapFragment.newInstance()
-                )
-                //.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .addToBackStack("MapFragment")
-                .commit()
-        }
-
     }
 
     private var onMoveCallback =
@@ -134,29 +116,7 @@ class PlacesListFragment : Fragment() {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
                 when (direction) {
-                    ItemTouchHelper.LEFT -> {
-                        deletedLocation = viewModel.placesList[position]
-                        viewModel.placesList.removeAt(position)
-                        viewModel.onDeletePlace(position)
-                        viewModel.postSuggestReaction(
-                            deletedLocation.placeId,
-                            PlaceReaction.Reaction.REFUSE
-                        )
-                        placesListRecyclerViewAdapter.notifyItemRemoved(position)
-
-                        view?.let {
-                            Snackbar.make(
-                                it.findViewById<RecyclerView>(R.id.locations_rv),
-                                "${deletedLocation.name} удалено",
-                                Snackbar.LENGTH_LONG
-                            ).setAction("Отменить") {
-                                viewModel.placesList.add(position, deletedLocation)
-                                viewModel.onRestorePlace(position, deletedLocation)
-                                placesListRecyclerViewAdapter.notifyItemInserted(position)
-                            }.show()
-                        }
-
-                    }
+                    ItemTouchHelper.LEFT -> {}
 
                     ItemTouchHelper.RIGHT -> {
                         deletedLocation = viewModel.placesList[position]
@@ -204,7 +164,7 @@ class PlacesListFragment : Fragment() {
         fun newInstance(
             //param1: String,
             //param2: String,
-        ) = PlacesListFragment().apply {
+        ) = LikedPlacesFragment().apply {
             arguments = Bundle().apply {
                 //putString(ARG_PARAM1, param1)
                 //putString(ARG_PARAM2, param2)
