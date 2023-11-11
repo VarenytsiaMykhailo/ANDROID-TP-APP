@@ -43,6 +43,9 @@ internal interface MapRepository {
         @Body placeReaction: PlaceReaction,
     )
 
+    @POST("suggest/user/new")
+    suspend fun postSuggestUserNew() // User UUID stores in request header
+
     companion object {
 
         val mapRepository: MapRepository = createMapRepository()
