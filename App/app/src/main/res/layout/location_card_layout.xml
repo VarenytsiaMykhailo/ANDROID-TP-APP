@@ -28,6 +28,27 @@
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.cardview.widget.CardView>
 
+    <ImageView
+        android:id="@+id/PlacesListFragment__ImageView_LikeBack"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:clickable="true"
+        android:layout_margin="4dp"
+        app:layout_constraintEnd_toEndOf="@+id/PlacesListFragment__CardView_MainPicRoot"
+        app:layout_constraintTop_toTopOf="@+id/PlacesListFragment__CardView_MainPicRoot"
+        app:srcCompat="@drawable/like_background" />
+
+    <ImageView
+        android:id="@+id/PlacesListFragment__ImageView_Like"
+        android:layout_width="24dp"
+        android:layout_height="21.2dp"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="@+id/PlacesListFragment__ImageView_LikeBack"
+        app:layout_constraintEnd_toEndOf="@+id/PlacesListFragment__ImageView_LikeBack"
+        app:layout_constraintStart_toStartOf="@+id/PlacesListFragment__ImageView_LikeBack"
+        app:layout_constraintTop_toTopOf="@+id/PlacesListFragment__ImageView_LikeBack"
+        app:srcCompat="@drawable/like_unliked" />
+
     <TextView
         android:id="@+id/PlacesListFragment__TextView_NameWhite"
         android:layout_width="308dp"
@@ -102,8 +123,7 @@
                 android:id="@+id/PlacesListFragment__ImageView_Pic2"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="centerCrop"
- />
+                android:scaleType="centerCrop" />
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView

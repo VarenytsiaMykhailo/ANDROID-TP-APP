@@ -1,5 +1,6 @@
 package com.example.app.presentationlayer.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +17,8 @@ import com.example.app.datalayer.models.NearbyPlace
 
 internal class PlacesListRecyclerViewAdapter(
     private val launchPlaceDescriptionFragment: (placeId: String) -> Unit,
+    private val pressLikeButton: (place: NearbyPlace, pressedFlag: Boolean) -> Unit,
+    private val likeCheck: (place: NearbyPlace) -> Boolean,
 ) : ListAdapter<NearbyPlace, PlacesListRecyclerViewAdapter.PlaceViewHolder>(
     LocationDifferentCallback()
 ) {
@@ -30,7 +33,8 @@ internal class PlacesListRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: PlaceViewHolder, position: Int) {
         val place = getItem(position)
-        holder.bind(place, launchPlaceDescriptionFragment)
+        holder.bind(place, launchPlaceDescriptionFragment, pressLikeButton,likeCheck)
+
     }
 
     private class LocationDifferentCallback : DiffUtil.ItemCallback<NearbyPlace>() {
@@ -72,9 +76,14 @@ internal class PlacesListRecyclerViewAdapter(
         private val placeDescription =
             view.findViewById<TextView>(R.id.PlacesListFragment__TextView_Description)
 
+        private val likeButton =
+            view.findViewById<ImageView>(R.id.PlacesListFragment__ImageView_Like)
+
         fun bind(
             place: NearbyPlace,
             launchPlaceDescriptionFragment: (placeId: String) -> Unit,
+            pressLikeButton: (place: NearbyPlace, pressedFlag: Boolean) -> Unit,
+            likeCheck: (place: NearbyPlace) -> Boolean,
         ) {
             placeNameWhite.text = place.name
             ratingWhite.text = place.rating.toString()
@@ -90,6 +99,16 @@ internal class PlacesListRecyclerViewAdapter(
             image1.load(place.mainImageUrl)
             image2.load(place.mainImageUrl)
             image3.load(place.mainImageUrl)
+            var likedFlag = false
+
+           if (likeCheck(place)){
+               likeButton.setImageResource(R.drawable.like_liked)
+               likedFlag=true
+           }
+            else{
+               likeButton.setImageResource(R.drawable.like_unliked)
+               likedFlag=false
+            }
 
             var expandable = true
             mainImage.setOnClickListener {
@@ -105,6 +124,20 @@ internal class PlacesListRecyclerViewAdapter(
                     ratingWhite.visibility = View.VISIBLE
                 }
                 expandable = !expandable
+            }
+
+
+            likeButton.setOnClickListener {
+                likedFlag = if (!likedFlag) {
+                    pressLikeButton(place, true)
+                    this.likeButton.setImageResource(R.drawable.like_liked)
+                    true
+                } else {
+                    pressLikeButton(place, false)
+                    this.likeButton.setImageResource(R.drawable.like_unliked)
+                    false
+                }
+
             }
 
             placeName.setOnClickListener {
