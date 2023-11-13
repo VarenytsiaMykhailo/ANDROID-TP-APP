@@ -5,7 +5,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.app.presentationlayer.fragments.mapscreen.MapFragment
 import com.example.app.presentationlayer.fragments.placedescriptionscreen.PlaceDescriptionFragment
-import com.example.app.presentationlayer.fragments.LikedPlacesFragment
+import com.example.app.presentationlayer.fragments.favoriteplaceslistscreen.FavoritePlacesListRootFragment
 import com.example.app.presentationlayer.fragments.placeslistscreen.PlacesListRootFragment
 
 class TabBarAdapter(
@@ -20,7 +20,7 @@ class TabBarAdapter(
             0 -> PlacesListRootFragment.newInstance()
             1 -> MapFragment.newInstance()
             2 -> PlaceDescriptionFragment.newInstance("ChIJfRJDflpKtUYRl0UbgcrmUUk")
-            3 -> LikedPlacesFragment.newInstance()
-            else -> LikedPlacesFragment.newInstance()
+            3 -> FavoritePlacesListRootFragment.newInstance()
+            else -> PlacesListRootFragment.newInstance()
         }
 }

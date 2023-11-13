@@ -11,16 +11,17 @@ import coil.load
 import com.example.app.R
 
 internal class PlaceDescriptionImagesSliderRecyclerViewAdapter :
-    ListAdapter<String, PlaceDescriptionImagesSliderRecyclerViewAdapter.ImageCardViewHolder>(StringDifferentCallback()) {
+    ListAdapter<String, PlaceDescriptionImagesSliderRecyclerViewAdapter.ImageCardViewHolder>(
+        StringDifferentCallback()
+    ) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageCardViewHolder {
-        val view: View =
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageCardViewHolder =
+        ImageCardViewHolder(
             LayoutInflater
                 .from(parent.context)
                 .inflate(R.layout.slider_item, parent, false)
+        )
 
-        return ImageCardViewHolder(view)
-    }
 
     override fun onBindViewHolder(holder: ImageCardViewHolder, position: Int) {
         val url = getItem(position)
