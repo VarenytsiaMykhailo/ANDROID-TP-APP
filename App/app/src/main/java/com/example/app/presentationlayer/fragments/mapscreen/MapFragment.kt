@@ -68,7 +68,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         viewModel.fragment = this
 
         viewModel.onUpdatePlaces()
-        binding.RouteButton.setOnClickListener {
+        binding.MapFragmentButtonRoute.setOnClickListener {
             viewModel.onDrawRoute()
         }
 
@@ -80,6 +80,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
 
         binding.MapFragmentEditText.hint = viewModel.giveRadiusString()
+
         binding.MapFragmentEditText.setOnEditorActionListener { textView, actionId, event ->
             viewModel.updateRadius(textView.text.toString())
             Snackbar.make(

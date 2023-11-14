@@ -1,10 +1,13 @@
 package com.example.app.presentationlayer
 
 import android.Manifest
+import android.R
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -21,6 +24,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.runBlocking
 import java.util.UUID
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -53,6 +57,9 @@ class MainActivity : AppCompatActivity() {
         initLocationClient()
 
         requestLocationPermission()
+
+        binding.MainActivityViewPager.isUserInputEnabled = false
+
     }
 
     private fun generateOrInitializeUserUUID() {
@@ -115,7 +122,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupTabBar() {
         // Disable swipe between fragments
-        binding.MainActivityViewPager.isUserInputEnabled = false
 
         binding.MainActivityViewPager.adapter =
             TabBarAdapter(this, binding.MainActivityTabLayout.tabCount)

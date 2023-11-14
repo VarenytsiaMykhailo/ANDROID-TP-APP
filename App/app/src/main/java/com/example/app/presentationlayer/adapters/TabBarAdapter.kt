@@ -18,9 +18,8 @@ class TabBarAdapter(
     override fun createFragment(position: Int): Fragment =
         when (position) {
             0 -> PlacesListRootFragment.newInstance()
-            1 -> MapFragment.newInstance()
-            2 -> PlaceDescriptionFragment.newInstance("ChIJfRJDflpKtUYRl0UbgcrmUUk")
-            3 -> FavoritePlacesListRootFragment.newInstance()
+            1 -> FavoritePlacesListRootFragment.newInstance()
+            2 -> MapFragment.newInstance()
             else -> PlacesListRootFragment.newInstance()
         }
 }
