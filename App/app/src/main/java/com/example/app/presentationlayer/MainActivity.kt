@@ -58,8 +58,6 @@ class MainActivity : AppCompatActivity() {
 
         requestLocationPermission()
 
-        binding.MainActivityViewPager.isUserInputEnabled = false
-
     }
 
     private fun generateOrInitializeUserUUID() {
@@ -122,6 +120,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupTabBar() {
         // Disable swipe between fragments
+        binding.MainActivityViewPager.isUserInputEnabled = false
 
         binding.MainActivityViewPager.adapter =
             TabBarAdapter(this, binding.MainActivityTabLayout.tabCount)
