@@ -1,4 +1,4 @@
-package com.example.app.presentationlayer.fragments.placeslistscreen
+package com.example.app.presentationlayer.fragments.favoriteplaceslistscreen
 
 import android.content.Context
 import android.os.Bundle
@@ -10,10 +10,10 @@ import androidx.fragment.app.Fragment
 import com.example.app.R
 
 /**
- * Use the [PlacesListRootFragment.newInstance] factory method to
+ * Use the [FavoritePlacesListRootFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class PlacesListRootFragment : Fragment() {
+class FavoritePlacesListRootFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -40,7 +40,7 @@ class PlacesListRootFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View =
-        inflater.inflate(R.layout.fragment_places_list_root, container, false)
+        inflater.inflate(R.layout.fragment_favorite_places_list_root, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -51,8 +51,8 @@ class PlacesListRootFragment : Fragment() {
         childFragmentManager
             .beginTransaction()
             .replace(
-                R.id.PlacesListRootFragment__FragmentContainerView,
-                PlacesListFragment.newInstance()
+                R.id.FavoritePlacesListRootFragment__FragmentContainerView,
+                FavoritePlacesListFragment.newInstance()
             ).commit()
     }
 
@@ -63,13 +63,13 @@ class PlacesListRootFragment : Fragment() {
          *
          * @param param1 Parameter 1.
          * @param param2 Parameter 2.
-         * @return A new instance of fragment PlacesListRootFragment.
+         * @return A new instance of fragment FavoritePlacesListRootFragment.
          */
         @JvmStatic
         fun newInstance(
             //param1: String,
             //param2: String,
-        ) = PlacesListRootFragment().apply {
+        ) = FavoritePlacesListRootFragment().apply {
             arguments = Bundle().apply {
                 //putString(ARG_PARAM1, param1)
                 //putString(ARG_PARAM2, param2)

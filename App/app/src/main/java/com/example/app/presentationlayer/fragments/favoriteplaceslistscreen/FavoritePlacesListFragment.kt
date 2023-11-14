@@ -1,11 +1,10 @@
-package com.example.app.presentationlayer.fragments.placeslistscreen
+package com.example.app.presentationlayer.fragments.favoriteplaceslistscreen
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -14,29 +13,28 @@ import com.example.app.R
 import com.example.app.datalayer.models.NearbyPlace
 import com.example.app.presentationlayer.MainActivity
 import com.example.app.presentationlayer.adapters.PlacesListRecyclerViewAdapter
-import com.example.app.presentationlayer.fragments.mapscreen.MapFragment
 import com.example.app.presentationlayer.fragments.placedescriptionscreen.PlaceDescriptionFragment
+import com.example.app.presentationlayer.viewmodels.FavoritePlacesFragmentViewModel
 import com.example.app.presentationlayer.viewmodels.FavoritePlacesViewModel
-import com.example.app.presentationlayer.viewmodels.PlacesListFragmentViewModel
-import com.google.android.material.snackbar.Snackbar
+
 
 /**
- * Use the [PlacesListFragment.newInstance] factory method to
+ * Use the [FavoritePlacesListFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class PlacesListFragment : Fragment() {
+class FavoritePlacesListFragment : Fragment() {
 
-    private val viewModel by viewModels<PlacesListFragmentViewModel>()
+    private val viewModel by viewModels<FavoritePlacesFragmentViewModel>()
 
     private val favoritePlacesViewModel by viewModels<FavoritePlacesViewModel>()
 
-    internal lateinit var mainActivity: MainActivity
+    private lateinit var mainActivity: MainActivity
 
     private val onLaunchPlaceDescriptionFragment: (placeId: String) -> Unit = {
         parentFragmentManager
             .beginTransaction()
             .replace(
-                R.id.PlacesListRootFragment__FragmentContainerView,
+                R.id.FavoritePlacesListRootFragment__FragmentContainerView,
                 PlaceDescriptionFragment.newInstance(it)
             )
             //.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
@@ -44,12 +42,12 @@ class PlacesListFragment : Fragment() {
             .commit()
     }
 
-    private val onAddPlaceToFavorite: (place: NearbyPlace) -> Unit = {
-        favoritePlacesViewModel.savePlace(it)
-    }
-
     private val onRemovePlaceFromFavorite: (place: NearbyPlace) -> Unit = {
         favoritePlacesViewModel.removePlace(it)
+        viewModel.favoritePlacesList.removeIf { placeFromList ->
+            placeFromList.placeId == it.placeId
+        }
+        placesListRecyclerViewAdapter.notifyDataSetChanged()
     }
 
     private val onPlaceExistsInFavorite: (place: NearbyPlace) -> Boolean = {
@@ -59,7 +57,7 @@ class PlacesListFragment : Fragment() {
     private val placesListRecyclerViewAdapter =
         PlacesListRecyclerViewAdapter(
             onLaunchPlaceDescriptionFragment,
-            onAddPlaceToFavorite,
+            null,
             onRemovePlaceFromFavorite,
             onPlaceExistsInFavorite
         )
@@ -69,29 +67,22 @@ class PlacesListFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View =
-        inflater.inflate(R.layout.fragment_places_list, container, false)
+        inflater.inflate(R.layout.fragment_favorite_places_list, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         mainActivity = requireActivity() as MainActivity
-        mainActivity.onLocationPermissionGrantedForPlacesListFragment = viewModel::onUpdatePlaces
 
         viewModel.fragment = this
 
         setupRecyclerView(view)
-
-        setChangeFragmentButtonClickListener(view)
     }
 
     override fun onResume() {
         super.onResume()
-        // TODO здесь пока нужен true чтобы учтелся свайп с экрана рекомендации
-        // TODO но это не помогает снять иконку лайка
-        viewModel.onUpdatePlaces(true)
-        // TODO placesListRecyclerViewAdapter.notifyDataSetChanged() но если добавить это, то лайк ремувнется
-        // TODO и тогда в viewModel.onUpdatePlaces() true можно не передавать
-        placesListRecyclerViewAdapter.notifyDataSetChanged()
+
+        viewModel.onUpdatePlaces()
     }
 
     private fun setupRecyclerView(view: View) {
@@ -101,29 +92,14 @@ class PlacesListFragment : Fragment() {
             adapter = placesListRecyclerViewAdapter
         }
 
-        ItemTouchHelper(onMoveCallback).attachToRecyclerView(recyclerView)
+        //ItemTouchHelper(onMoveCallback).attachToRecyclerView(recyclerView)
         viewModel.placesListRecyclerViewAdapter = placesListRecyclerViewAdapter
     }
 
-    private fun setChangeFragmentButtonClickListener(view: View) {
-        // TODO переделать чтобы можно было свитчиться между фрагментами с сохранением состояния
-        view.findViewById<Button>(R.id.change_fragment_button).setOnClickListener {
-            parentFragmentManager
-                .beginTransaction()
-                .replace(
-                    R.id.PlacesListRootFragment__FragmentContainerView,
-                    MapFragment.newInstance()
-                )
-                //.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .addToBackStack("MapFragment")
-                .commit()
-        }
-    }
-
-    private var onMoveCallback =
+    private val onMoveCallback =
         object : ItemTouchHelper.SimpleCallback(
             0,
-            ItemTouchHelper.LEFT.or(ItemTouchHelper.RIGHT),
+            ItemTouchHelper.RIGHT,
         ) {
             override fun onMove(
                 recyclerView: RecyclerView,
@@ -135,29 +111,14 @@ class PlacesListFragment : Fragment() {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
                 when (direction) {
-                    ItemTouchHelper.LEFT -> {
-                        val placeToDelete = viewModel.placesList[position]
-                        viewModel.onRemovePlace(position, placeToDelete)
-                        val placeExistsInFavoriteDb = favoritePlacesViewModel.placeExists(placeToDelete)
-                        favoritePlacesViewModel.removePlace(placeToDelete)
-
-                        view?.let {
-                            Snackbar.make(
-                                it.findViewById<RecyclerView>(R.id.locations_rv),
-                                "${placeToDelete.name} удалено",
-                                Snackbar.LENGTH_LONG
-                            ).setAction("Отменить") {
-                                viewModel.onRestoreRemovedPlace(position, placeToDelete)
-                                if (placeExistsInFavoriteDb) {
-                                    favoritePlacesViewModel.savePlace(placeToDelete)
-                                }
-                            }.show()
-                        }
-                    }
+                    ItemTouchHelper.LEFT -> {}
 
                     ItemTouchHelper.RIGHT -> {
-                        val placeToVisited = viewModel.placesList[position]
-                        viewModel.onVisitedPlace(position, placeToVisited)
+                        /*
+                        val placeToVisited = viewModel.favoritePlacesList[position]
+                        val indexOfCachedListForRestoring =
+                            viewModel.onVisitedPlace(position, placeToVisited)
+                            favoritePlacesViewModel.removePlace(placeToVisited)
 
                         view?.let {
                             Snackbar.make(
@@ -165,9 +126,16 @@ class PlacesListFragment : Fragment() {
                                 "${placeToVisited.name} посещено",
                                 Snackbar.LENGTH_LONG
                             ).setAction("Отменить") {
-                                viewModel.onRestoreVisitedPlace(position, placeToVisited)
+                                viewModel.onRestoreVisitedPlace(
+                                    position,
+                                    indexOfCachedListForRestoring,
+                                    placeToVisited,
+                                )
+                                favoritePlacesViewModel.savePlace(placeToVisited)
                             }.show()
                         }
+
+                         */
                     }
                 }
             }
@@ -179,14 +147,14 @@ class PlacesListFragment : Fragment() {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment PlacesListFragment.
+     * @return A new instance of fragment FavoritePlacesListFragment.
      */
     companion object {
         @JvmStatic
         fun newInstance(
             //param1: String,
             //param2: String,
-        ) = PlacesListFragment().apply {
+        ) = FavoritePlacesListFragment().apply {
             arguments = Bundle().apply {
                 //putString(ARG_PARAM1, param1)
                 //putString(ARG_PARAM2, param2)

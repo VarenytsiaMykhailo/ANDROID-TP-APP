@@ -65,17 +65,65 @@ internal class PlacesListFragmentViewModel : ViewModel() {
                     }
                 }
             )
+        } else {
+            placesListRecyclerViewAdapter.submitList(placesList)
         }
     }
 
-    fun onDeletePlace(position: Int) =
+    fun onRemovePlace(position: Int, placeToDelete: NearbyPlace) {
+        removePlace(position)
+        postSuggestReaction(
+            placeToDelete.placeId,
+            PlaceReaction.Reaction.REFUSE
+        )
+    }
+
+    fun onVisitedPlace(position: Int, placeToVisited: NearbyPlace) {
+        removePlace(position)
+        postSuggestReaction(
+            placeToVisited.placeId,
+            PlaceReaction.Reaction.VISITED
+        )
+    }
+
+    fun onRestoreRemovedPlace(position: Int, placeToRestore: NearbyPlace) {
+        restorePlace(position, placeToRestore)
+        // TODO поменять на отмену REFUSE, как появится
+        /*
+        postSuggestReaction(
+            deletedLocation.placeId,
+            PlaceReaction.Reaction.REFUSE
+        )
+         */
+    }
+
+    fun onRestoreVisitedPlace(position: Int, placeToRestore: NearbyPlace) {
+        restorePlace(position, placeToRestore)
+        // TODO поменять на отмену VISITED, как появится
+        /*
+        postSuggestReaction(
+            deletedLocation.placeId,
+            PlaceReaction.Reaction.VISITED
+        )
+         */
+    }
+
+    private fun removePlace(position: Int) {
+        placesList.removeAt(position)
         mapProvider.placesCachedList.removeAt(position)
+        placesListRecyclerViewAdapter.notifyItemRemoved(position)
+    }
 
-    fun onRestorePlace(position: Int, restoredLocation: NearbyPlace) =
-        mapProvider.placesCachedList.add(position, restoredLocation)
+    private fun restorePlace(position: Int, placeToRestore: NearbyPlace) {
+        placesList.add(position, placeToRestore)
+        mapProvider.placesCachedList.add(position, placeToRestore)
+        placesListRecyclerViewAdapter.notifyItemInserted(position)
+    }
 
-    fun postSuggestReaction(placeId: String, reaction: PlaceReaction.Reaction) =
+    private fun postSuggestReaction(placeId: String, reaction: PlaceReaction.Reaction) =
         viewModelScope.launch {
-            withContext(Dispatchers.IO) { mapProvider.postSuggestReaction(placeId, reaction) }
+            withContext(Dispatchers.IO) {
+                mapProvider.postSuggestReaction(placeId, reaction)
+            }
         }
 }

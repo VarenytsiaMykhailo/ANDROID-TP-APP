@@ -3,30 +3,23 @@ package com.example.app.presentationlayer
 import android.Manifest
 import android.content.pm.PackageManager
 import android.location.Location
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
-import com.example.app.domain.providers.MapAndroidClient
-import com.example.app.presentationlayer.adapters.TabBarAdapter
 import com.example.app.databinding.ActivityMainBinding
-import com.example.app.datalayer.models.NearbyPlace
 import com.example.app.datalayer.repositories.LocalPropertiesSecretsRepository
+import com.example.app.domain.providers.MapAndroidClient
 import com.example.app.domain.providers.MapProvider
+import com.example.app.presentationlayer.adapters.TabBarAdapter
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.libraries.places.api.Places
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.runBlocking
-import java.lang.RuntimeException
-import io.paperdb.Paper
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.UUID
 
 class MainActivity : AppCompatActivity() {
@@ -51,7 +44,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
         LocalPropertiesSecretsRepository.APP_PACKAGE_NAME = applicationContext.packageName
         // !!! All requests to backend (such as ping-pong) should be used after this
         // because uuid sets to header and we can get exception uninitialized uuid
@@ -61,8 +53,6 @@ class MainActivity : AppCompatActivity() {
         initLocationClient()
 
         requestLocationPermission()
-
-        Paper.init(applicationContext);
     }
 
     private fun generateOrInitializeUserUUID() {
@@ -85,6 +75,7 @@ class MainActivity : AppCompatActivity() {
                 val isSuccess = editor.commit()
                 if (!isSuccess) {
                     // TODO Use another way to save uuid
+                    Log.e(LOG_TAG, "generateOrInitializeUserUUID Error while saving user UUID!")
                     throw RuntimeException("Error while saving user UUID!")
                 }
 
@@ -98,9 +89,6 @@ class MainActivity : AppCompatActivity() {
         // TODO добавить ограничение по итерациям и выводить информацию о мертвом бэкенде, если он упал
         var successfulCreatedOnBackend = false
         while (!successfulCreatedOnBackend) {
-            Log.d(LOG_TAG, "generateUserUuidAndCreateOnBackend while run")
-
-            Log.d(LOG_TAG, "generateUserUuidAndCreateOnBackend runBlocking before")
             runBlocking {
                 Log.d(LOG_TAG, "generateUserUuidAndCreateOnBackend runBlocking run")
 
@@ -112,18 +100,13 @@ class MainActivity : AppCompatActivity() {
 
                     true
                 } catch (e: Exception) {
-                    Log.d(LOG_TAG, "generateUserUuidAndCreateOnBackend runBlocking catch")
+                    Log.e(
+                        LOG_TAG,
+                        "generateUserUuidAndCreateOnBackend runBlocking catch: Error while request: $e"
+                    )
                     false
                 }
-
-                Log.d(LOG_TAG, "generateUserUuidAndCreateOnBackend runBlocking end")
             }
-
-            Log.d(
-                LOG_TAG,
-                "generateUserUuidAndCreateOnBackend runBlocking after successfulCreatedOnBackend = $successfulCreatedOnBackend"
-            )
-
         }
         Log.d(LOG_TAG, "generateUserUuidAndCreateOnBackend return $newUserUUID")
 
@@ -257,33 +240,6 @@ class MainActivity : AppCompatActivity() {
             Log.e(LOG_TAG, e.message, e)
             onFail()
         }
-    }
-
-    fun saveLikedPlace(place: NearbyPlace) {
-        lifecycleScope.launch {
-            withContext(Dispatchers.IO) {
-                Paper.book("liked_places").write(place.placeId, place)
-                Paper.book("liked_places").read<NearbyPlace>(place.placeId)
-            }
-        }
-    }
-
-    fun deleteLikedPlace(place: NearbyPlace) {
-        Paper.book("liked_places").delete(place.placeId)
-    }
-
-    fun likeCheck(place: NearbyPlace) =
-        Paper.book("liked_places").read<NearbyPlace>(place.placeId) != null
-
-
-    fun getLikedPlace(): MutableList<NearbyPlace> {
-        val list: MutableList<NearbyPlace> = emptyList<NearbyPlace>().toMutableList()
-        var place: NearbyPlace
-        Paper.book("liked_places").allKeys.forEach {
-            place = Paper.book("liked_places").read<NearbyPlace>(it)!!
-            list += place
-        }
-        return list.toMutableList()
     }
 
     companion object {

@@ -1,6 +1,5 @@
 package com.example.app.presentationlayer.adapters
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,25 +15,30 @@ import com.example.app.R
 import com.example.app.datalayer.models.NearbyPlace
 
 internal class PlacesListRecyclerViewAdapter(
-    private val launchPlaceDescriptionFragment: (placeId: String) -> Unit,
-    private val pressLikeButton: (place: NearbyPlace, pressedFlag: Boolean) -> Unit,
-    private val likeCheck: (place: NearbyPlace) -> Boolean,
+    private val onLaunchPlaceDescriptionFragment: (placeId: String) -> Unit,
+    private val onAddPlaceToFavorite: ((place: NearbyPlace) -> Unit)?,
+    private val onRemovePlaceFromFavorite: (place: NearbyPlace) -> Unit,
+    private val onPlaceExistsInFavorite: (place: NearbyPlace) -> Boolean,
 ) : ListAdapter<NearbyPlace, PlacesListRecyclerViewAdapter.PlaceViewHolder>(
     LocationDifferentCallback()
 ) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaceViewHolder {
-        val view = LayoutInflater
-            .from(parent.context)
-            .inflate(R.layout.location_card_layout, parent, false)
-
-        return PlaceViewHolder(view)
-    }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaceViewHolder =
+        PlaceViewHolder(
+            LayoutInflater
+                .from(parent.context)
+                .inflate(R.layout.location_card_layout, parent, false)
+        )
 
     override fun onBindViewHolder(holder: PlaceViewHolder, position: Int) {
         val place = getItem(position)
-        holder.bind(place, launchPlaceDescriptionFragment, pressLikeButton,likeCheck)
-
+        holder.bind(
+            place,
+            onLaunchPlaceDescriptionFragment,
+            onAddPlaceToFavorite,
+            onRemovePlaceFromFavorite,
+            onPlaceExistsInFavorite
+        )
     }
 
     private class LocationDifferentCallback : DiffUtil.ItemCallback<NearbyPlace>() {
@@ -81,9 +85,10 @@ internal class PlacesListRecyclerViewAdapter(
 
         fun bind(
             place: NearbyPlace,
-            launchPlaceDescriptionFragment: (placeId: String) -> Unit,
-            pressLikeButton: (place: NearbyPlace, pressedFlag: Boolean) -> Unit,
-            likeCheck: (place: NearbyPlace) -> Boolean,
+            onLaunchPlaceDescriptionFragment: (placeId: String) -> Unit,
+            onAddPlaceToFavorite: ((place: NearbyPlace) -> Unit)?,
+            onRemovePlaceFromFavorite: (place: NearbyPlace) -> Unit,
+            onPlaceExists: (place: NearbyPlace) -> Boolean,
         ) {
             placeNameWhite.text = place.name
             ratingWhite.text = place.rating.toString()
@@ -99,20 +104,10 @@ internal class PlacesListRecyclerViewAdapter(
             image1.load(place.mainImageUrl)
             image2.load(place.mainImageUrl)
             image3.load(place.mainImageUrl)
-            var likedFlag = false
 
-           if (likeCheck(place)){
-               likeButton.setImageResource(R.drawable.like_liked)
-               likedFlag=true
-           }
-            else{
-               likeButton.setImageResource(R.drawable.like_unliked)
-               likedFlag=false
-            }
 
             var expandable = true
             mainImage.setOnClickListener {
-
                 if (expandable) {
                     expandableInfo.visibility = View.VISIBLE
                     placeNameWhite.visibility = View.GONE
@@ -126,24 +121,25 @@ internal class PlacesListRecyclerViewAdapter(
                 expandable = !expandable
             }
 
-
+            if (onPlaceExists(place)) {
+                likeButton.setImageResource(R.drawable.like_liked)
+            } else {
+                likeButton.setImageResource(R.drawable.like_unliked)
+            }
             likeButton.setOnClickListener {
-                likedFlag = if (!likedFlag) {
-                    pressLikeButton(place, true)
+                // It is necessary to check again whether the place exists
+                if (!onPlaceExists(place)) {
+                    onAddPlaceToFavorite?.invoke(place)
                     this.likeButton.setImageResource(R.drawable.like_liked)
-                    true
                 } else {
-                    pressLikeButton(place, false)
+                    onRemovePlaceFromFavorite(place)
                     this.likeButton.setImageResource(R.drawable.like_unliked)
-                    false
                 }
-
             }
 
             placeName.setOnClickListener {
-                launchPlaceDescriptionFragment(place.placeId)
+                onLaunchPlaceDescriptionFragment(place.placeId)
             }
-
         }
     }
 }
