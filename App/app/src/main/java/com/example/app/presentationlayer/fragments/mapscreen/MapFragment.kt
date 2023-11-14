@@ -79,17 +79,21 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             parentFragmentManager.popBackStack()
         }
 
-        binding.MapFragmentEditText.hint = viewModel.giveRadiusString()
+        binding.MapFragmentTextViewRadius.text = viewModel.giveRadiusString()
 
-        binding.MapFragmentEditText.setOnEditorActionListener { textView, actionId, event ->
-            viewModel.updateRadius(textView.text.toString())
-            Snackbar.make(
-                textView,
-                "Установлен радиус ${textView.text} км",
-                Snackbar.LENGTH_SHORT
-            ).show()
+        binding.MapFragmentButtonRadiusInc.setOnClickListener {
+            viewModel.increaseRadius()
+            binding.MapFragmentTextViewRadius.text = viewModel.giveRadiusString()
+        }
 
-            return@setOnEditorActionListener true
+        binding.MapFragmentButtonRadiusDec.setOnClickListener {
+            if (viewModel.decreaseRadius())
+                Snackbar.make(
+                    binding.MapFragmentButtonRadiusDec,
+                    "Установлен минимальный радиус",
+                    Snackbar.LENGTH_SHORT
+                ).show()
+            binding.MapFragmentTextViewRadius.text = viewModel.giveRadiusString()
         }
 
     }
@@ -220,8 +224,10 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         when (type) {
             "routePolylineWithArrow" -> {
                 polyline.startCap = CustomCap(
-                    BitmapDescriptorFactory.fromResource(R.drawable.ic_arrow), 15f)
+                    BitmapDescriptorFactory.fromResource(R.drawable.ic_arrow), 15f
+                )
             }
+
             else -> polyline.startCap = RoundCap()
         }
         polyline.endCap = RoundCap()
