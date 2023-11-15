@@ -122,15 +122,14 @@
 
 
             <ImageView
-                android:id="@+id/imageView2"
+                android:id="@+id/PlaceDescriptionFragment__ImageView_StaticMap"
                 android:layout_width="368dp"
                 android:layout_height="180dp"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="8dp"
                 android:contentDescription="@string/image_view_description_map_stub"
-                android:src="@mipmap/map_stub"
+                tools:src="@mipmap/map_stub"
                 app:layout_constraintStart_toStartOf="@+id/PlaceDescriptionFragment__TextView_Title"
                 app:layout_constraintTop_toBottomOf="@+id/first_bar" />
-
 
             <TextView
                 android:id="@+id/textView"
@@ -140,8 +139,8 @@
                 android:text="Адрес: "
                 android:textColor="@color/dark_grey"
                 android:textSize="14sp"
-                app:layout_constraintStart_toStartOf="@+id/imageView2"
-                app:layout_constraintTop_toBottomOf="@+id/imageView2" />
+                app:layout_constraintStart_toStartOf="@+id/PlaceDescriptionFragment__ImageView_StaticMap"
+                app:layout_constraintTop_toBottomOf="@+id/PlaceDescriptionFragment__ImageView_StaticMap" />
 
             <TextView
                 android:id="@+id/PlaceDescriptionFragment__TextView_Address"

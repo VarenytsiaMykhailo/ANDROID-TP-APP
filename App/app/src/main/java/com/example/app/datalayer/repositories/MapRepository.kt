@@ -6,6 +6,8 @@ import com.example.app.datalayer.models.PlaceDescription
 import com.example.app.datalayer.models.PlaceReaction
 import com.example.app.datalayer.models.RouteRequest
 import com.example.app.datalayer.models.RouteResponse
+import com.example.app.datalayer.models.SortPlacesRequest
+import com.example.app.datalayer.models.SortPlaceResponse
 import com.example.app.datalayer.repositories.interceptors.HeadersInterceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -52,6 +54,11 @@ internal interface MapRepository {
     suspend fun postSuggestRoute(
         @Body routeRequest: RouteRequest,
     ): RouteResponse
+
+    @POST("suggest/route/sortPlaces")
+    suspend fun postSuggestRouteSortPlace(
+        @Body sortPlacesRequest: SortPlacesRequest,
+    ): SortPlaceResponse
 
     companion object {
 

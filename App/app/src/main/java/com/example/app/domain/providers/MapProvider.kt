@@ -6,6 +6,8 @@ import com.example.app.datalayer.models.PlaceDescription
 import com.example.app.datalayer.models.PlaceReaction
 import com.example.app.datalayer.models.RouteRequest
 import com.example.app.datalayer.models.RouteResponse
+import com.example.app.datalayer.models.SortPlacesRequest
+import com.example.app.datalayer.models.SortPlaceResponse
 import com.example.app.datalayer.repositories.MapRepository
 
 object MapProvider {
@@ -76,6 +78,11 @@ object MapProvider {
     suspend fun postSuggestRoute(routeRequest: RouteRequest): RouteResponse =
         mapRepository.postSuggestRoute(
             routeRequest
+        )
+
+    suspend fun postSuggestRouteSortPlace(sortPlacesRequest: SortPlacesRequest): SortPlaceResponse =
+        mapRepository.postSuggestRouteSortPlace(
+            sortPlacesRequest
         )
 
     fun increaseRadius() {

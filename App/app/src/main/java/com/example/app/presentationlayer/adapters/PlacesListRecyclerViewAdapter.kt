@@ -105,7 +105,6 @@ internal class PlacesListRecyclerViewAdapter(
             image2.load(place.mainImageUrl)
             image3.load(place.mainImageUrl)
 
-
             var expandable = true
             mainImage.setOnClickListener {
                 if (expandable) {
