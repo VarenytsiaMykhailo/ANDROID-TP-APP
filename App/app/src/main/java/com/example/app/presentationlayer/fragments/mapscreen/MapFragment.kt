@@ -28,7 +28,6 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.AdvancedMarkerOptions
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.CustomCap
 import com.google.android.gms.maps.model.Dot
 import com.google.android.gms.maps.model.Gap
 import com.google.android.gms.maps.model.JointType
@@ -318,7 +317,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun setRouteButtonOnClickListener() {
-        binding.RouteButton.setOnClickListener {
+        binding.MapFragmentButtonRoute.setOnClickListener {
             if (markersForRoute.size >= 1) {
 
                 var shouldUseUserSequence = true
@@ -356,7 +355,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
                         Log.d("qwerty123", "shouldUseUserSequence = $shouldUseUserSequence")
                         Log.d("qwerty123", "shouldUseUserGeolocationAsStartLocation = $shouldUseUserGeolocationAsStartLocation")
-                        // Example: "https://www.google.com/maps/dir/?api=1&origin=18.519513,73.868315&destination=18.518496,73.879259&waypoints=18.520561,73.872435|18.519254,73.876614|18.52152,73.877327|18.52019,73.879935&travelmode=driving"
+                        // Example: https://www.google.com/maps/dir/?api=1&origin=18.519513,73.868315&destination=18.518496,73.879259&waypoints=18.520561,73.872435|18.519254,73.876614|18.52152,73.877327|18.52019,73.879935&travelmode=driving
                         var requestUrl = "https://www.google.com/maps/dir/?api=1"
 
                         val startLocation = markersForRoute.first()
@@ -375,7 +374,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                         }
                         val endLat = endLocation.position.latitude
                         val endLng = endLocation.position.longitude
-                        val endLatLng: LatLng = LatLng(endLat, endLng)
+                        val endLatLng = LatLng(endLat, endLng)
                         requestUrl += "&destination=$endLat,$endLng"
                         val waypointsLatLng = mutableListOf<LatLng>()
                         val sizeShouldBeMoreThan = if (shouldUseUserGeolocationAsStartLocation) 1 else 2
@@ -401,8 +400,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                         removeAllPolylines()
                         viewModel.onDrawRoute(startLatLng, endLatLng, waypointsLatLng)
                         if (shouldOpenGoogleMapsNavigator) {
-                            val intentDeeplink = Uri.parse(requestUrl)
-                            launchGoogleMapApp(intentDeeplink)
+
+                            launchGoogleMapApp(requestUrl)
                         }
                     }
                     //setNegativeButton("Cancel", null)
@@ -410,16 +409,35 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                     .create()
                     .show()
             } else {
+                val startEndLat = mainActivity.lastKnownLocation?.latitude!!
+                val startEndLng = mainActivity.lastKnownLocation?.longitude!!
+                val startLatLng = LatLng(startEndLat, startEndLng)
+                val endLatLng = LatLng(startEndLat, startEndLng)
+
+                val waypointsLatLng = mutableListOf<LatLng>()
+                markers.forEachIndexed { index, marker ->
+                    val lat = marker.position.latitude
+                    val lng = marker.position.longitude
+                    waypointsLatLng += LatLng(lat, lng)
+                }
+                Log.d("qwerty123", "startLatLng = $startLatLng endLatLng = $endLatLng waypointsLatLng = $waypointsLatLng")
+
+                removeAllPolylines()
+                viewModel.onDrawRoute(startLatLng, endLatLng, waypointsLatLng)
+                viewModel.onGoogleMapRoute(startLatLng, endLatLng, waypointsLatLng)
+                /*
                 Snackbar.make(
                     binding.MapFragmentImageViewPlaceInfo,
                     "Выберите как минимум одно место двойным кликом",
                     Snackbar.LENGTH_SHORT
                 ).show()
+                 */
             }
         }
     }
 
-    private fun launchGoogleMapApp(intentDeeplink: Uri) {
+    fun launchGoogleMapApp(requestUrl: String) {
+        val intentDeeplink = Uri.parse(requestUrl)
         val intent = Intent(Intent.ACTION_VIEW, intentDeeplink)
         intent.setPackage("com.google.android.apps.maps")
         try {
@@ -516,9 +534,9 @@ class MapFragment : Fragment(), OnMapReadyCallback {
      */
     companion object {
 
-        private const val DEFAULT_ZOOM = 14
-
         private const val LOG_TAG = "MapFragment"
+
+        private const val DEFAULT_ZOOM = 14
 
         @JvmStatic
         fun newInstance(

@@ -1,7 +1,10 @@
 package com.example.app.presentationlayer.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.app.datalayer.models.PlaceDescription
+import com.example.app.datalayer.repositories.LocalPropertiesSecretsRepository
 import com.example.app.domain.providers.MapProvider
 import com.example.app.presentationlayer.adapters.PlaceDescriptionImagesSliderRecyclerViewAdapter
 import com.example.app.presentationlayer.fragments.placedescriptionscreen.PlaceDescriptionFragment
@@ -25,6 +28,7 @@ internal class PlaceDescriptionFragmentViewModel : ViewModel() {
             setDescription(placeDescription.description)
             setRating(placeDescription.rating)
             setRatingCount(placeDescription.ratingCount)
+            setMap(placeDescription.location)
             setAddress(placeDescription.address)
             setWorkingHours(placeDescription.workingHours)
         }
@@ -45,6 +49,22 @@ internal class PlaceDescriptionFragmentViewModel : ViewModel() {
 
     private fun setRatingCount(rating: Int) =
         fragment.onSetRatingCount(rating)
+
+    private fun setMap(location: PlaceDescription.Location) {
+        var staticMapImageUrl = "https://maps.googleapis.com/maps/api/staticmap?center="
+        staticMapImageUrl += "${location.lat},${location.lng}"
+        staticMapImageUrl += "&zoom=13&size=700x350&markers=color:red%7Clabel:S%7C"
+        staticMapImageUrl += "${location.lat},${location.lng}"
+        staticMapImageUrl += "&key=${LocalPropertiesSecretsRepository.MAPS_API_KEY}"
+
+        val googleMapAppDeeplink =
+            "http://maps.google.com/maps?q=loc:${location.lat},${location.lng}"
+
+        Log.d("qwerty123", "setMap - staticMapImageUrl = $staticMapImageUrl")
+        Log.d("qwerty123", "setMap - googleMapAppDeeplink = $googleMapAppDeeplink")
+
+        fragment.onSetMap(staticMapImageUrl, googleMapAppDeeplink)
+    }
 
     private fun setAddress(address: String) =
         fragment.onSetAddress(address)

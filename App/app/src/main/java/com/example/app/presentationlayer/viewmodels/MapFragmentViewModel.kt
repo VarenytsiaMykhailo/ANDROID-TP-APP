@@ -4,8 +4,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.app.domain.providers.MapProvider
-import com.example.app.datalayer.models.NearbyPlace
 import com.example.app.datalayer.models.RouteRequest
+import com.example.app.datalayer.models.SortPlacesRequest
 import com.example.app.presentationlayer.fragments.mapscreen.MapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.PolyUtil
@@ -38,6 +38,52 @@ internal class MapFragmentViewModel : ViewModel() {
                     fragment.addAdvancedMarker(it.location.lat, it.location.lng, it.name)
                 }
             }
+        }
+    }
+
+
+    fun onGoogleMapRoute(start: LatLng, end: LatLng, waypoints: List<LatLng>) {
+        viewModelScope.launch {
+            Log.d("qwerty123", "onGoogleMapRoute - start = $start")
+            Log.d("qwerty123", "onGoogleMapRoute - end = $end")
+            Log.d("qwerty123", "onGoogleMapRoute - waypoints = $waypoints")
+
+            val waypointsRequest = mutableListOf<SortPlacesRequest.Location>()
+            waypoints.forEach {
+                waypointsRequest += SortPlacesRequest.Location(
+                    it.latitude,
+                    it.longitude
+                )
+            }
+            Log.d("qwerty123", "onGoogleMapRoute - waypointsRequest = $waypointsRequest")
+
+            val sortPlacesRequest = SortPlacesRequest(
+                start = SortPlacesRequest.Location(start.latitude, start.longitude),
+                end = SortPlacesRequest.Location(end.latitude, end.longitude),
+                waypoints = waypointsRequest
+            )
+            val sortPlaceResponse = mapProvider.postSuggestRouteSortPlace(sortPlacesRequest)
+            Log.d("qwerty123", "onGoogleMapRoute - sortPlaceResponse = $sortPlaceResponse")
+
+            var requestUrl = "https://www.google.com/maps/dir/?api=1"
+            requestUrl += "&origin=${sortPlacesRequest.start.lat},${sortPlacesRequest.start.lng}"
+            requestUrl += "&destination=${sortPlacesRequest.end.lat},${sortPlacesRequest.end.lng}"
+
+            if (sortPlaceResponse.waypoints.size >= 1) {
+                requestUrl += "&waypoints="
+            }
+            sortPlaceResponse.waypoints.forEachIndexed { index, location ->
+                requestUrl += "${location.lat},${location.lng}"
+                if (index !=  sortPlaceResponse.waypoints.size - 1) {
+                    requestUrl += "|"
+                }
+            }
+            requestUrl += "&travelmode=walk"
+
+            Log.d("qwerty123", "onGoogleMapRoute - requestUrl = $requestUrl")
+
+
+            fragment.launchGoogleMapApp(requestUrl)
         }
     }
 
@@ -172,9 +218,10 @@ internal class MapFragmentViewModel : ViewModel() {
     // TODO придумать способ как улучшить
     fun increaseRadius() {
         MapProvider.increaseRadius()
-        onUpdatePlaces(shouldUseCachedValue = false)}
+        onUpdatePlaces(shouldUseCachedValue = false)
+    }
 
-    fun decreaseRadius():Boolean {
+    fun decreaseRadius(): Boolean {
         onUpdatePlaces(shouldUseCachedValue = false)
         return MapProvider.decreaseRadius()
     }
