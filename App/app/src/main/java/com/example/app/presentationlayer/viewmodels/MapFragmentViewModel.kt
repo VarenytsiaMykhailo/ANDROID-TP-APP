@@ -17,15 +17,14 @@ internal class MapFragmentViewModel : ViewModel() {
 
     lateinit var fragment: MapFragment
 
-    lateinit var placesList: MutableList<NearbyPlace>
-
-    // A default location to use when location permission is not granted. Moscow, Red Square.
-    private val defaultLocation = LatLng(55.753544, 37.621202)
-
-    fun onUpdatePlaces(shouldUseCachedValue: Boolean = true) {
+    fun onUpdatePlaces(
+        shouldUseCachedValue: Boolean = true,
+        shouldRefreshMapBefore: Boolean = true,
+    ) {
+        fragment.refreshMap()
         if (shouldUseCachedValue) {
             mapProvider.placesCachedList.forEach {
-                fragment.onNewLocation(it.location.lat, it.location.lng, it.name)
+                fragment.addAdvancedMarker(it.location.lat, it.location.lng, it.name)
             }
         } else {
             viewModelScope.launch {
@@ -36,14 +35,71 @@ internal class MapFragmentViewModel : ViewModel() {
                     0
                 )
                 placesList.forEach {
-                    fragment.onNewLocation(it.location.lat, it.location.lng, it.name)
+                    fragment.addAdvancedMarker(it.location.lat, it.location.lng, it.name)
                 }
             }
-
         }
     }
 
-    fun onDrawRoute() {
+    fun onDrawRoute(start: LatLng, end: LatLng, waypoints: List<LatLng>) {
+        viewModelScope.launch {
+            Log.d("qwerty123", "onDrawRoute - enter")
+
+            //Log.d("qwerty123", "response route list = $list")
+
+            val waypointsRequest = mutableListOf<RouteRequest.Waypoint>()
+            waypoints.forEach {
+                waypointsRequest += RouteRequest.Waypoint(
+                    "",
+                    RouteRequest.Location(
+                        it.latitude,
+                        it.longitude,
+                    )
+                )
+            }
+
+            Log.d("qwerty123", "waypointsRequest = $waypointsRequest")
+
+            val routeResponseList = mapProvider.postSuggestRoute(
+                RouteRequest(
+                    travelMode = RouteRequest.TravelMode.WALK,
+                    start = RouteRequest.Location(
+                        start.latitude,
+                        start.longitude,
+                    ),
+                    end = RouteRequest.Location(
+                        end.latitude,
+                        end.longitude,
+                    ),
+                    waypoints = waypointsRequest
+                )
+            )
+            Log.d("qwerty123", "response routeResponseList = $routeResponseList")
+
+            val encodedPolylines = mutableListOf<String>()
+            routeResponseList.route.forEach {
+                encodedPolylines += it.polyline
+            }
+
+            Log.d("qwerty123", "response encodedPolylines = $encodedPolylines")
+
+
+            //val encodedPolylines = listOf("uam~FtfbvOlhEayA}vBwIpp@oaA")
+            val pointsList = mutableListOf<LatLng>()
+            encodedPolylines.forEach {
+                val pointsListOfPolyline = PolyUtil.decode(it)
+                Log.d("qwerty123", "polyline = $it pointsListOfPolyline = $pointsListOfPolyline")
+                pointsList.addAll(pointsListOfPolyline)
+            }
+
+            Log.d("qwerty123", "pointsList = $pointsList")
+            Log.d("qwerty123", "last = ${pointsList.last()}")
+
+            fragment.onDrawRoute(pointsList)
+        }
+    }
+
+    fun onDrawRouteOld(start: LatLng, end: LatLng, waypoints: List<LatLng>) {
         viewModelScope.launch {
             Log.d("qwerty123", "onDrawRoute - enter")
 
@@ -94,8 +150,6 @@ internal class MapFragmentViewModel : ViewModel() {
             Log.d("qwerty123", "response encodedPolylines = $encodedPolylines")
 
 
-
-
             //val encodedPolylines = listOf("uam~FtfbvOlhEayA}vBwIpp@oaA")
             val pointsList = mutableListOf<LatLng>()
             encodedPolylines.forEach {
@@ -109,6 +163,11 @@ internal class MapFragmentViewModel : ViewModel() {
             fragment.onDrawRoute(pointsList)
         }
     }
+
+    fun getPlaceIdByLatLng(latLng: LatLng): String? =
+        mapProvider.placesCachedList.firstOrNull() {
+            it.location.lat == latLng.latitude && it.location.lng == latLng.longitude
+        }?.placeId
 
     // TODO придумать способ как улучшить
     fun updateRadius(newRadius: String) {

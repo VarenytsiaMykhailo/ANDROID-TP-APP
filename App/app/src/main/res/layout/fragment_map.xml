@@ -86,4 +86,25 @@
         app:layout_constraintTop_toTopOf="@+id/MapFragment__ImageView_PlacesListButton"
         android:text="Route" />
 
+    <ImageView
+        android:id="@+id/MapFragment__ImageView_PlaceInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/place_info"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_margin="6dp"
+        android:contentDescription="launch place description screen" />
+
+    <ImageView
+        android:id="@+id/MapFragment__ImageView_RefreshMap"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/refresh_map"
+        app:layout_constraintTop_toBottomOf="@+id/MapFragment__ImageView_PlaceInfo"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_margin="6dp"
+        android:contentDescription="refresh map" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
