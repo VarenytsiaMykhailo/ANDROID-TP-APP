@@ -98,16 +98,21 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
         mapFragment.getMapAsync(this)
 
-        binding.MapFragmentEditText.hint = viewModel.giveRadiusString()
-        binding.MapFragmentEditText.setOnEditorActionListener { textView, actionId, event ->
-            viewModel.updateRadius(textView.text.toString())
-            Snackbar.make(
-                textView,
-                "Установлен радиус ${textView.text} км",
-                Snackbar.LENGTH_SHORT
-            ).show()
+        binding.MapFragmentTextViewRadius.text = viewModel.giveRadiusString()
 
-            return@setOnEditorActionListener true
+        binding.MapFragmentButtonRadiusInc.setOnClickListener {
+            viewModel.increaseRadius()
+            binding.MapFragmentTextViewRadius.text = viewModel.giveRadiusString()
+        }
+
+        binding.MapFragmentButtonRadiusDec.setOnClickListener {
+            if (viewModel.decreaseRadius())
+                Snackbar.make(
+                    binding.MapFragmentButtonRadiusDec,
+                    "Установлен минимальный радиус",
+                    Snackbar.LENGTH_SHORT
+                ).show()
+            binding.MapFragmentTextViewRadius.text = viewModel.giveRadiusString()
         }
 
         setPlacesListButtonOnClickListener()
@@ -248,7 +253,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             "routePolylineWithArrow" -> {
                 polyline.startCap = RoundCap()
             }
-
             else -> polyline.startCap = RoundCap()
         }
         /*

@@ -2,10 +2,11 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="368dp"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="21dp"
-    android:layout_marginTop="16dp">
+    android:layout_marginTop="16dp"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/PlacesListFragment__CardView_MainPicRoot"
@@ -32,8 +33,8 @@
         android:id="@+id/PlacesListFragment__ImageView_LikeBack"
         android:layout_width="36dp"
         android:layout_height="36dp"
-        android:clickable="true"
         android:layout_margin="4dp"
+        android:clickable="true"
         app:layout_constraintEnd_toEndOf="@+id/PlacesListFragment__CardView_MainPicRoot"
         app:layout_constraintTop_toTopOf="@+id/PlacesListFragment__CardView_MainPicRoot"
         app:srcCompat="@drawable/like_background" />
@@ -227,6 +228,7 @@
         <TextView
             android:id="@+id/PlacesListFragment__TextView_TimeCloseTxt"
             android:layout_width="wrap_content"
+            android:visibility="gone"
             android:layout_height="24dp"
             android:layout_marginTop="4dp"
             android:gravity="center"
@@ -239,6 +241,7 @@
 
         <TextView
             android:id="@+id/PlacesListFragment__TextView_TimeClose"
+            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="24dp"
             android:gravity="center"
@@ -246,7 +249,6 @@
             android:textColor="@color/dark_grey"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
-
             app:layout_constraintTop_toTopOf="@+id/PlacesListFragment__TextView_TimeCloseTxt" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 

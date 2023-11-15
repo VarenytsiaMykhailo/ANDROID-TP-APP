@@ -170,9 +170,13 @@ internal class MapFragmentViewModel : ViewModel() {
         }?.placeId
 
     // TODO придумать способ как улучшить
-    fun updateRadius(newRadius: String) {
-        mapProvider.updateRadius((newRadius.toDouble() * 1000).toInt())
+    fun increaseRadius() {
+        MapProvider.increaseRadius()
+        onUpdatePlaces(shouldUseCachedValue = false)}
+
+    fun decreaseRadius():Boolean {
         onUpdatePlaces(shouldUseCachedValue = false)
+        return MapProvider.decreaseRadius()
     }
 
     fun giveRadiusString() = ((mapProvider.radius).toDouble() / 1000).toString()

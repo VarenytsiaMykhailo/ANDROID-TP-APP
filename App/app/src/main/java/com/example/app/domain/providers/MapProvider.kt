@@ -78,8 +78,15 @@ object MapProvider {
             routeRequest
         )
 
-    fun updateRadius(newRadius: Int) {
-        radius = newRadius
+    fun increaseRadius() {
+        radius += 500
+        updateListFlag = true
+    }
+
+    fun decreaseRadius():Boolean {
+        return if (radius!=500)  {radius -= 500
+            false
+        } else true
         updateListFlag = true
     }
 }

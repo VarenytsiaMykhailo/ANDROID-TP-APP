@@ -18,73 +18,116 @@
         android:id="@+id/MapFragment__ImageView_PlacesListButton"
         android:layout_width="112dp"
         android:layout_height="60dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginBottom="4dp"
         android:backgroundTint="@color/white"
         android:gravity="end|center_vertical"
         android:paddingEnd="12dp"
         android:text="Список"
         android:textColor="@color/black"
-        android:textSize="18sp"
+        android:textSize="14sp"
         android:textStyle="normal"
         app:cornerRadius="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
-        android:id="@+id/radius_back"
-        android:layout_width="100dp"
-        android:layout_height="88dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/MapFragment__ImageView_PlacesListButton"
-        app:layout_constraintEnd_toEndOf="@+id/MapFragment__ImageView_PlacesListButton"
-        app:srcCompat="@drawable/radius_back" />
-
-    <TextView
-        android:id="@+id/radius_txt"
+        android:id="@+id/MapFragment__imageView_ListIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="14dp"
-        android:text="Радиус:"
-        android:textColor="@color/white"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="@+id/radius_back"
-        app:layout_constraintStart_toStartOf="@+id/radius_back"
-        app:layout_constraintTop_toTopOf="@+id/radius_back" />
-
-    <EditText
-        android:id="@+id/MapFragment__EditText"
-        android:layout_width="50dp"
-        android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
-        android:layout_marginBottom="4dp"
-        android:hint="..."
-        android:gravity="center"
-        android:inputType="numberDecimal"
-        android:textColor="@color/black"
-        android:textColorHint="@color/dark_grey"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="@+id/radius_back"
-        app:layout_constraintStart_toStartOf="@+id/radius_back" />
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="@+id/MapFragment__ImageView_PlacesListButton"
+        app:layout_constraintStart_toStartOf="@+id/MapFragment__ImageView_PlacesListButton"
+        app:layout_constraintTop_toTopOf="@+id/MapFragment__ImageView_PlacesListButton"
+        app:srcCompat="@drawable/list_vector_icon" />
+
+    <Button
+        android:layout_marginTop="1dp"
+        android:id="@+id/MapFragment__Button_RadiusDec"
+        android:layout_width="43dp"
+        android:layout_height="36dp"
+        android:layout_marginStart="4dp"
+        android:foreground="@drawable/minus_button"
+        app:cornerRadius="8dp"
+        app:layout_constraintStart_toStartOf="@+id/radius_back"
+        app:layout_constraintTop_toBottomOf="@+id/radius_back" />
+
+    <Button
+        android:layout_marginTop="1dp"
+        android:id="@+id/MapFragment__Button_RadiusInc"
+        android:layout_width="43dp"
+        android:layout_height="36dp"
+        android:layout_marginEnd="4dp"
+        android:backgroundTint="@color/white"
+        android:foreground="@drawable/plus_button"
+        app:cornerRadius="8dp"
+        app:layout_constraintEnd_toEndOf="@+id/radius_back"
+        app:layout_constraintTop_toBottomOf="@+id/radius_back" />
+
+    <ImageView
+        android:id="@+id/radius_back"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="40dp"
+        app:layout_constraintBottom_toTopOf="@+id/MapFragment__ImageView_PlacesListButton"
+        app:layout_constraintStart_toStartOf="@+id/MapFragment__ImageView_PlacesListButton"
+        app:srcCompat="@drawable/radius_background" />
+
 
     <TextView
         android:id="@+id/km_txt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:text=" км"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="@+id/radius_back"
-        app:layout_constraintEnd_toEndOf="@+id/radius_back"
-        app:layout_constraintStart_toEndOf="@+id/MapFragment__EditText"
-        app:layout_constraintTop_toTopOf="@+id/MapFragment__EditText" />
+        app:layout_constraintStart_toEndOf="@+id/MapFragment__TextView_Radius"
+        app:layout_constraintTop_toTopOf="@+id/radius_back" />
 
-    <Button
-        android:id="@+id/RouteButton"
+    <TextView
+        android:id="@+id/MapFragment__TextView_Radius"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toEndOf="@+id/MapFragment__ImageView_PlacesListButton"
-        app:layout_constraintTop_toTopOf="@+id/MapFragment__ImageView_PlacesListButton"
-        android:text="Route" />
+        android:layout_marginStart="20dp"
+        android:text="3.0"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/radius_back"
+        app:layout_constraintStart_toStartOf="@+id/radius_back"
+        app:layout_constraintTop_toTopOf="@+id/radius_back" />
+
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/MapFragment__Button_Route"
+        android:layout_width="112dp"
+        android:layout_height="60dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="4dp"
+        android:backgroundTint="@color/white"
+        android:gravity="start|center_vertical"
+        android:paddingStart="16dp"
+        android:text="Маршрут"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        android:textStyle="normal"
+        app:cornerRadius="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ImageView
+        android:id="@+id/MapFragment__imageView_RootIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="@+id/MapFragment__Button_Route"
+        app:layout_constraintEnd_toEndOf="@+id/MapFragment__Button_Route"
+        app:layout_constraintTop_toTopOf="@+id/MapFragment__Button_Route"
+        app:srcCompat="@drawable/route_vector_icon" />
+
 
     <ImageView
         android:id="@+id/MapFragment__ImageView_PlaceInfo"
