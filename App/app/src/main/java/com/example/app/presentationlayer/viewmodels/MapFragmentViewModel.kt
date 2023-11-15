@@ -32,7 +32,8 @@ internal class MapFragmentViewModel : ViewModel() {
                     mapProvider.lastUsedLat,
                     mapProvider.lastUsedLng,
                     20,
-                    0
+                    0,
+                    forceRefresh = true,
                 )
                 placesList.forEach {
                     fragment.addAdvancedMarker(it.location.lat, it.location.lng, it.name)
@@ -74,7 +75,7 @@ internal class MapFragmentViewModel : ViewModel() {
             }
             sortPlaceResponse.waypoints.forEachIndexed { index, location ->
                 requestUrl += "${location.lat},${location.lng}"
-                if (index !=  sortPlaceResponse.waypoints.size - 1) {
+                if (index != sortPlaceResponse.waypoints.size - 1) {
                     requestUrl += "|"
                 }
             }
@@ -222,8 +223,9 @@ internal class MapFragmentViewModel : ViewModel() {
     }
 
     fun decreaseRadius(): Boolean {
+        val res = MapProvider.decreaseRadius()
         onUpdatePlaces(shouldUseCachedValue = false)
-        return MapProvider.decreaseRadius()
+        return res
     }
 
     fun giveRadiusString() = ((mapProvider.radius).toDouble() / 1000).toString()

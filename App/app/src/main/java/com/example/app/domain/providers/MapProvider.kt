@@ -90,10 +90,13 @@ object MapProvider {
         updateListFlag = true
     }
 
-    fun decreaseRadius():Boolean {
-        return if (radius!=500)  {radius -= 500
+    fun decreaseRadius(): Boolean {
+        return if (radius != 500) {
+            radius -= 500
             false
-        } else true
-        updateListFlag = true
+        } else {
+            updateListFlag = true
+            true
+        }
     }
 }

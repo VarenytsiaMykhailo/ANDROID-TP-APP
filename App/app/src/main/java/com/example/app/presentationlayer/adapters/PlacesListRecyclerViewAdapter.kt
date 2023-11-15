@@ -105,19 +105,18 @@ internal class PlacesListRecyclerViewAdapter(
             image2.load(place.mainImageUrl)
             image3.load(place.mainImageUrl)
 
-            var expandable = true
+
             mainImage.setOnClickListener {
-                if (expandable) {
+                if (expandableInfo.visibility== View.GONE) {
                     expandableInfo.visibility = View.VISIBLE
                     placeNameWhite.visibility = View.GONE
                     ratingWhite.visibility = View.GONE
 
-                } else {
+                } else if (expandableInfo.visibility== View.VISIBLE) {
                     expandableInfo.visibility = View.GONE
                     placeNameWhite.visibility = View.VISIBLE
                     ratingWhite.visibility = View.VISIBLE
                 }
-                expandable = !expandable
             }
 
             if (onPlaceExists(place)) {

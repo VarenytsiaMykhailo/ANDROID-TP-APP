@@ -88,7 +88,7 @@ class PlacesListFragment : Fragment() {
         super.onResume()
         // TODO здесь пока нужен true чтобы учтелся свайп с экрана рекомендации
         // TODO но это не помогает снять иконку лайка
-        viewModel.onUpdatePlaces(true)
+        viewModel.onUpdatePlaces(false)
         // TODO placesListRecyclerViewAdapter.notifyDataSetChanged() но если добавить это, то лайк ремувнется
         // TODO и тогда в viewModel.onUpdatePlaces() true можно не передавать
         placesListRecyclerViewAdapter.notifyDataSetChanged()

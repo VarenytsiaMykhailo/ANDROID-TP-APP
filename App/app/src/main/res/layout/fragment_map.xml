@@ -43,21 +43,21 @@
         app:srcCompat="@drawable/list_vector_icon" />
 
     <Button
-        android:layout_marginTop="1dp"
         android:id="@+id/MapFragment__Button_RadiusDec"
         android:layout_width="43dp"
         android:layout_height="36dp"
         android:layout_marginStart="4dp"
+        android:layout_marginTop="1dp"
         android:foreground="@drawable/minus_button"
         app:cornerRadius="8dp"
         app:layout_constraintStart_toStartOf="@+id/radius_back"
         app:layout_constraintTop_toBottomOf="@+id/radius_back" />
 
     <Button
-        android:layout_marginTop="1dp"
         android:id="@+id/MapFragment__Button_RadiusInc"
         android:layout_width="43dp"
         android:layout_height="36dp"
+        android:layout_marginTop="1dp"
         android:layout_marginEnd="4dp"
         android:backgroundTint="@color/white"
         android:foreground="@drawable/plus_button"
@@ -104,8 +104,6 @@
         android:id="@+id/MapFragment__Button_Route"
         android:layout_width="112dp"
         android:layout_height="60dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginBottom="64dp"
         android:backgroundTint="@color/white"
         android:gravity="start|center_vertical"
         android:paddingStart="16dp"
@@ -114,8 +112,10 @@
         android:textSize="14sp"
         android:textStyle="normal"
         app:cornerRadius="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/MapFragment__ImageView_PlacesListButton"
+        app:layout_constraintStart_toEndOf="@+id/MapFragment__ImageView_PlacesListButton"
+        app:layout_constraintTop_toTopOf="@+id/MapFragment__ImageView_PlacesListButton" />
 
     <ImageView
         android:id="@+id/MapFragment__imageView_RootIcon"
@@ -131,23 +131,24 @@
 
     <ImageView
         android:id="@+id/MapFragment__ImageView_PlaceInfo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/place_info"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="12dp"
+        android:contentDescription="launch place description screen"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_margin="6dp"
-        android:contentDescription="launch place description screen" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/info_vector_icon" />
 
     <ImageView
         android:id="@+id/MapFragment__ImageView_RefreshMap"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/refresh_map"
-        app:layout_constraintTop_toBottomOf="@+id/MapFragment__ImageView_PlaceInfo"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_margin="14dp"
+        android:contentDescription="refresh map"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_margin="6dp"
-        android:contentDescription="refresh map" />
+        app:layout_constraintTop_toBottomOf="@+id/MapFragment__ImageView_PlaceInfo"
+        app:srcCompat="@drawable/refresh_vector_icon" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
