@@ -97,11 +97,11 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
         mapFragment.getMapAsync(this)
 
-        binding.MapFragmentTextViewRadius.text = viewModel.giveRadiusString()
+        binding.MapFragmentTextViewRadius.text = viewModel.giveRadiusString()+" км"
 
         binding.MapFragmentButtonRadiusInc.setOnClickListener {
             viewModel.increaseRadius()
-            binding.MapFragmentTextViewRadius.text = viewModel.giveRadiusString()
+            binding.MapFragmentTextViewRadius.text = viewModel.giveRadiusString()+" км"
         }
 
         binding.MapFragmentButtonRadiusDec.setOnClickListener {
@@ -111,7 +111,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                     "Установлен минимальный радиус",
                     Snackbar.LENGTH_SHORT
                 ).show()
-            binding.MapFragmentTextViewRadius.text = viewModel.giveRadiusString()
+            binding.MapFragmentTextViewRadius.text = viewModel.giveRadiusString()+" км"
         }
 
         setPlacesListButtonOnClickListener()

@@ -100,7 +100,8 @@
             app:cardCornerRadius="16dp"
             app:cardElevation="0dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="gone">
 
             <ImageView
                 android:id="@+id/PlacesListFragment__ImageView_Pic1"
@@ -118,7 +119,8 @@
             app:cardElevation="0dp"
             app:layout_constraintEnd_toStartOf="@id/PlacesListFragment__CardView_Pic3Root"
             app:layout_constraintStart_toEndOf="@id/PlacesListFragment__CardView_Pic1Root"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="gone">
 
             <ImageView
                 android:id="@+id/PlacesListFragment__ImageView_Pic2"
@@ -135,7 +137,8 @@
             app:cardCornerRadius="16dp"
             app:cardElevation="0dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="gone">
 
             <ImageView
                 android:id="@+id/PlacesListFragment__ImageView_Pic3"
@@ -223,7 +226,8 @@
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="@+id/PlacesListFragment__RatingBar_StarsRate"
             app:layout_constraintTop_toTopOf="@+id/PlacesListFragment__RatingBar_StarsRate"
-            tools:text="Прикол за приколом..." />
+            tools:text="Прикол за приколом..."
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/PlacesListFragment__TextView_TimeCloseTxt"
