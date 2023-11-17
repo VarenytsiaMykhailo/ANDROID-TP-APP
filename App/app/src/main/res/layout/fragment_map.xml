@@ -113,6 +113,35 @@
         app:layout_constraintTop_toTopOf="@+id/MapFragment__Button_Route"
         app:srcCompat="@drawable/route_vector_icon" />
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/MapFragment__Button_GoogleRoute"
+        android:layout_width="44dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="8dp"
+        android:backgroundTint="@color/white"
+        android:gravity="start|center_vertical"
+        android:paddingStart="16dp"
+        android:text=""
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        android:visibility="gone"
+        android:textStyle="normal"
+        app:cornerRadius="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/MapFragment__ImageView_PlacesListButton"
+        app:layout_constraintStart_toEndOf="@+id/MapFragment__ImageView_PlacesListButton"
+        app:layout_constraintTop_toTopOf="@+id/MapFragment__ImageView_PlacesListButton" />
+
+    <ImageView
+        android:id="@+id/MapFragment__imageView_GoogleIcon"
+        android:layout_width="24dp"
+        android:layout_height="34.4dp"
+        android:scaleType="fitCenter"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@+id/MapFragment__Button_GoogleRoute"
+        app:layout_constraintBottom_toBottomOf="@+id/MapFragment__Button_GoogleRoute"
+        app:layout_constraintEnd_toEndOf="@+id/MapFragment__Button_GoogleRoute"
+        app:layout_constraintTop_toTopOf="@+id/MapFragment__Button_GoogleRoute"
+        app:srcCompat="@drawable/google_maps_logo" />
 
     <ImageView
         android:id="@+id/MapFragment__ImageView_PlaceInfo"

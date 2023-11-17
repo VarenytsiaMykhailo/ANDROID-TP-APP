@@ -97,11 +97,11 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
         mapFragment.getMapAsync(this)
 
-        binding.MapFragmentTextViewRadius.text = viewModel.giveRadiusString()+" км"
+        binding.MapFragmentTextViewRadius.text = viewModel.giveRadiusString() + " км"
 
         binding.MapFragmentButtonRadiusInc.setOnClickListener {
             viewModel.increaseRadius()
-            binding.MapFragmentTextViewRadius.text = viewModel.giveRadiusString()+" км"
+            binding.MapFragmentTextViewRadius.text = viewModel.giveRadiusString() + " км"
         }
 
         binding.MapFragmentButtonRadiusDec.setOnClickListener {
@@ -111,7 +111,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                     "Установлен минимальный радиус",
                     Snackbar.LENGTH_SHORT
                 ).show()
-            binding.MapFragmentTextViewRadius.text = viewModel.giveRadiusString()+" км"
+            binding.MapFragmentTextViewRadius.text = viewModel.giveRadiusString() + " км"
         }
 
         setPlacesListButtonOnClickListener()
@@ -252,6 +252,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             "routePolylineWithArrow" -> {
                 polyline.startCap = RoundCap()
             }
+
             else -> polyline.startCap = RoundCap()
         }
         /*
@@ -313,11 +314,19 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private fun setRefreshMapButtonOnClickListener() {
         binding.MapFragmentImageViewRefreshMap.setOnClickListener {
             viewModel.onUpdatePlaces(shouldRefreshMapBefore = true)
+            binding.MapFragmentButtonRoute.visibility=View.VISIBLE
+            binding.MapFragmentImageViewRootIcon.visibility=View.VISIBLE
+            binding.MapFragmentButtonGoogleRoute.visibility=View.GONE
+            binding.MapFragmentImageViewGoogleIcon.visibility=View.GONE
         }
     }
 
     private fun setRouteButtonOnClickListener() {
         binding.MapFragmentButtonRoute.setOnClickListener {
+            it.visibility=View.GONE
+            binding.MapFragmentImageViewRootIcon.visibility=View.GONE
+            binding.MapFragmentButtonGoogleRoute.visibility=View.VISIBLE
+            binding.MapFragmentImageViewGoogleIcon.visibility=View.VISIBLE
             if (markersForRoute.size >= 1) {
 
                 var shouldUseUserSequence = true
@@ -336,7 +345,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                     ) { dialog, which, isChecked ->
                         // The user checked or unchecked a box
                         Log.d("qwerty123", "which = $which, isChecked = $isChecked")
-                        when(which) {
+                        when (which) {
                             0 -> shouldUseUserSequence = isChecked
                             1 -> shouldUseUserGeolocationAsStartLocation = isChecked
                             2 -> shouldOpenGoogleMapsNavigator = isChecked
@@ -354,7 +363,10 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                         }
 
                         Log.d("qwerty123", "shouldUseUserSequence = $shouldUseUserSequence")
-                        Log.d("qwerty123", "shouldUseUserGeolocationAsStartLocation = $shouldUseUserGeolocationAsStartLocation")
+                        Log.d(
+                            "qwerty123",
+                            "shouldUseUserGeolocationAsStartLocation = $shouldUseUserGeolocationAsStartLocation"
+                        )
                         // Example: https://www.google.com/maps/dir/?api=1&origin=18.519513,73.868315&destination=18.518496,73.879259&waypoints=18.520561,73.872435|18.519254,73.876614|18.52152,73.877327|18.52019,73.879935&travelmode=driving
                         var requestUrl = "https://www.google.com/maps/dir/?api=1"
 
@@ -362,8 +374,10 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                         val endLocation = markersForRoute.last()
                         var startLatLng: LatLng // Dont use val
                         requestUrl += if (shouldUseUserGeolocationAsStartLocation) {
-                            val lat = mainActivity.lastKnownLocation?.latitude ?: startLocation.position.latitude
-                            val lng = mainActivity.lastKnownLocation?.longitude ?: startLocation.position.longitude
+                            val lat = mainActivity.lastKnownLocation?.latitude
+                                ?: startLocation.position.latitude
+                            val lng = mainActivity.lastKnownLocation?.longitude
+                                ?: startLocation.position.longitude
                             startLatLng = LatLng(lat, lng)
                             "&origin=$lat,$lng"
                         } else {
@@ -377,10 +391,12 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                         val endLatLng = LatLng(endLat, endLng)
                         requestUrl += "&destination=$endLat,$endLng"
                         val waypointsLatLng = mutableListOf<LatLng>()
-                        val sizeShouldBeMoreThan = if (shouldUseUserGeolocationAsStartLocation) 1 else 2
+                        val sizeShouldBeMoreThan =
+                            if (shouldUseUserGeolocationAsStartLocation) 1 else 2
                         if (markersForRoute.size > sizeShouldBeMoreThan) {
                             requestUrl += "&waypoints="
-                            val shouldIgnoreFirstIndex = if (shouldUseUserGeolocationAsStartLocation) -1 else 0
+                            val shouldIgnoreFirstIndex =
+                                if (shouldUseUserGeolocationAsStartLocation) -1 else 0
                             markersForRoute.forEachIndexed { index, marker ->
                                 if (index != shouldIgnoreFirstIndex && index != markersForRoute.size - 1) {
                                     val lat = marker.position.latitude
@@ -395,7 +411,10 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                         }
                         requestUrl += "&travelmode=walk"
                         Log.d("qwerty123", "requestUrl = $requestUrl")
-                        Log.d("qwerty123", "startLatLng = $startLatLng endLatLng = $endLatLng waypointsLatLng = $waypointsLatLng")
+                        Log.d(
+                            "qwerty123",
+                            "startLatLng = $startLatLng endLatLng = $endLatLng waypointsLatLng = $waypointsLatLng"
+                        )
 
                         removeAllPolylines()
                         viewModel.onDrawRoute(startLatLng, endLatLng, waypointsLatLng)
@@ -420,11 +439,16 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                     val lng = marker.position.longitude
                     waypointsLatLng += LatLng(lat, lng)
                 }
-                Log.d("qwerty123", "startLatLng = $startLatLng endLatLng = $endLatLng waypointsLatLng = $waypointsLatLng")
+                Log.d(
+                    "qwerty123",
+                    "startLatLng = $startLatLng endLatLng = $endLatLng waypointsLatLng = $waypointsLatLng"
+                )
 
                 removeAllPolylines()
                 viewModel.onDrawRoute(startLatLng, endLatLng, waypointsLatLng)
-                viewModel.onGoogleMapRoute(startLatLng, endLatLng, waypointsLatLng)
+                    binding.MapFragmentButtonGoogleRoute.setOnClickListener {
+                        viewModel.onGoogleMapRoute(startLatLng, endLatLng, waypointsLatLng)
+                }
                 /*
                 Snackbar.make(
                     binding.MapFragmentImageViewPlaceInfo,
