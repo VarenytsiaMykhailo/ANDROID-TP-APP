@@ -51,22 +51,8 @@ internal class PlacesListRecyclerViewAdapter(
 
     internal class PlaceViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        private val expandableInfo =
-            view.findViewById<ConstraintLayout>(R.id.PlacesListFragment__ConstraintLayout_ExpandableInfo)
-
         private val mainImage =
             view.findViewById<ImageView>(R.id.PlacesListFragment__ImageView_MainPic)
-        private val image1 =
-            view.findViewById<ImageView>(R.id.PlacesListFragment__ImageView_Pic1)
-        private val image2 =
-            view.findViewById<ImageView>(R.id.PlacesListFragment__ImageView_Pic2)
-        private val image3 =
-            view.findViewById<ImageView>(R.id.PlacesListFragment__ImageView_Pic3)
-
-        private val placeNameWhite =
-            view.findViewById<TextView>(R.id.PlacesListFragment__TextView_NameWhite)
-        private val ratingWhite =
-            view.findViewById<TextView>(R.id.PlacesListFragment__TextView_RateWhite)
 
         private val placeName =
             view.findViewById<TextView>(R.id.PlacesListFragment__TextView_Name)
@@ -76,9 +62,6 @@ internal class PlacesListRecyclerViewAdapter(
             view.findViewById<RatingBar>(R.id.PlacesListFragment__RatingBar_StarsRate)
         private val ratingCount =
             view.findViewById<TextView>(R.id.PlacesListFragment__TextView_RateCount)
-
-        private val placeDescription =
-            view.findViewById<TextView>(R.id.PlacesListFragment__TextView_Description)
 
         private val likeButton =
             view.findViewById<ImageView>(R.id.PlacesListFragment__ImageView_Like)
@@ -90,34 +73,13 @@ internal class PlacesListRecyclerViewAdapter(
             onRemovePlaceFromFavorite: (place: NearbyPlace) -> Unit,
             onPlaceExists: (place: NearbyPlace) -> Boolean,
         ) {
-            placeNameWhite.text = place.name
-            ratingWhite.text = place.rating.toString()
 
             placeName.text = place.name
             rating.text = place.rating.toString()
             ratingStars.rating = place.rating.toFloat()
             ratingCount.text = place.ratingCount.toString()
 
-            placeDescription.text = place.name
-
             mainImage.load(place.mainImageUrl)
-            image1.load(place.mainImageUrl)
-            image2.load(place.mainImageUrl)
-            image3.load(place.mainImageUrl)
-
-
-            mainImage.setOnClickListener {
-                if (expandableInfo.visibility== View.GONE) {
-                    expandableInfo.visibility = View.VISIBLE
-                    placeNameWhite.visibility = View.GONE
-                    ratingWhite.visibility = View.GONE
-
-                } else if (expandableInfo.visibility== View.VISIBLE) {
-                    expandableInfo.visibility = View.GONE
-                    placeNameWhite.visibility = View.VISIBLE
-                    ratingWhite.visibility = View.VISIBLE
-                }
-            }
 
             if (onPlaceExists(place)) {
                 likeButton.setImageResource(R.drawable.like_liked)
