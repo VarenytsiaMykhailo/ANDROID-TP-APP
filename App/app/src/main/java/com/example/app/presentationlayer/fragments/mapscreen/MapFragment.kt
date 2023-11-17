@@ -318,6 +318,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             binding.MapFragmentImageViewRootIcon.visibility=View.VISIBLE
             binding.MapFragmentButtonGoogleRoute.visibility=View.GONE
             binding.MapFragmentImageViewGoogleIcon.visibility=View.GONE
+            it.visibility=View.GONE
         }
     }
 
@@ -327,6 +328,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             binding.MapFragmentImageViewRootIcon.visibility=View.GONE
             binding.MapFragmentButtonGoogleRoute.visibility=View.VISIBLE
             binding.MapFragmentImageViewGoogleIcon.visibility=View.VISIBLE
+            binding.MapFragmentImageViewRefreshMap.visibility=View.VISIBLE
             if (markersForRoute.size >= 1) {
 
                 var shouldUseUserSequence = true
