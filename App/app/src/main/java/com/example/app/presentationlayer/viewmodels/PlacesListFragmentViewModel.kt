@@ -28,7 +28,6 @@ internal class PlacesListFragmentViewModel : ViewModel() {
         forceRefresh: Boolean = false, // Need for ignoring isDataAlreadyLoaded flag,
         shouldUseUserLocation: Boolean = true,
     ) {
-
             fragment.mainActivity.updateDeviceLocation(
                 onSuccess = {
                     viewModelScope.launch {
@@ -51,8 +50,8 @@ internal class PlacesListFragmentViewModel : ViewModel() {
                         withContext(Dispatchers.IO) {
                             placesList =
                                 mapProvider.getSuggestPlaces(
-                                    defaultLocation.latitude,
-                                    defaultLocation.longitude,
+                                    fragment.mainActivity.defaultLocation.latitude,
+                                    fragment.mainActivity.defaultLocation.longitude,
                                     20,
                                     0,
                                     forceRefresh
