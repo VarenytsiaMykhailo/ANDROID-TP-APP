@@ -9,16 +9,23 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.viewModelScope
 import coil.load
 import com.example.app.R
 import com.example.app.databinding.FragmentPlaceDescriptionBinding
+import com.example.app.datalayer.models.NearbyPlace
+import com.example.app.datalayer.models.PlaceDescription
+import com.example.app.datalayer.models.PlaceReaction
+import com.example.app.domain.providers.placeClassesTransformer
 import com.example.app.presentationlayer.adapters.PlaceDescriptionImagesSliderRecyclerViewAdapter
 import com.example.app.presentationlayer.fragments.mapscreen.MapFragment
 import com.example.app.presentationlayer.viewmodels.FavoritePlacesViewModel
 import com.example.app.presentationlayer.viewmodels.PlaceDescriptionFragmentViewModel
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 /**
  * Use the [PlaceDescriptionFragment.newInstance] factory method to
@@ -27,12 +34,15 @@ import kotlinx.coroutines.delay
 class PlaceDescriptionFragment : Fragment() {
 
     private lateinit var binding: FragmentPlaceDescriptionBinding
-
+    lateinit var place: PlaceDescription
     private val viewModel by viewModels<PlaceDescriptionFragmentViewModel>()
     private val favoritePlacesViewModel by viewModels<FavoritePlacesViewModel>()
 
     private val placeDescriptionImagesSliderRecyclerViewAdapter =
         PlaceDescriptionImagesSliderRecyclerViewAdapter()
+
+    var likedFlag = false
+    var visitedFlag = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -60,6 +70,29 @@ class PlaceDescriptionFragment : Fragment() {
 
         binding.PlaceDescriptionFragmentImageViewBackButton.setOnClickListener {
             parentFragmentManager.popBackStack()
+        }
+
+        binding.DescriptionFragmentImageViewLike.setOnClickListener {
+            if (likedFlag) {
+                likedFlag = false
+                onUnSetLike()
+                favoritePlacesViewModel.removePlace(placeClassesTransformer(place))
+            } else {
+                likedFlag = true
+                onSetLike()
+                favoritePlacesViewModel.savePlace(placeClassesTransformer(place))
+            }
+        }
+        binding.DescriptionFragmentImageViewVisit.setOnClickListener {
+            if (visitedFlag) {
+                visitedFlag = false
+                onUnSetVisited()
+                viewModel.postReaction(place.placeId, PlaceReaction.Reaction.UNVISITED)
+            } else {
+                visitedFlag = true
+                onSetVisited()
+                viewModel.postReaction(place.placeId, PlaceReaction.Reaction.VISITED)
+            }
         }
     }
 
@@ -136,38 +169,57 @@ class PlaceDescriptionFragment : Fragment() {
         binding.DescriptionFragmentImageViewVisit.setImageResource(R.drawable.unvisited_icon)
     }
 
-    suspend fun showTag1(text: String) {
-        val textView = binding.PlacesListFragmentTextViewTag1
-        val imageViewRoot= binding.PlaceDescriptionFragmentCardViewTag1Root
-        val imageView= binding.PlaceDescriptionFragmentImageViewTag1
-        imageViewRoot.visibility=View.VISIBLE
-        textView.visibility=View.VISIBLE
-        textView.text=text
-        delay(1000)
-        //ИСПРАВИТЬ
-        Log.d("sss","${textView.width}")
-        imageView.layoutParams.width = textView.width+8
-    }
-    suspend fun showTag2(text: String) {
-        val textView = binding.PlacesListFragmentTextViewTag2
-        val imageViewRoot= binding.PlaceDescriptionFragmentCardViewTag2Root
-        val imageView= binding.PlaceDescriptionFragmentImageViewTag2
-        imageViewRoot.visibility=View.VISIBLE
-        textView.visibility=View.VISIBLE
-        textView.text=text
-        Log.d("sss","${textView.width}")
-        imageView.layoutParams.width = textView.width+8
+    private fun setStartReactions(list: List<String>) {
+        if (list.isNotEmpty())
+            list.forEach { it ->
+                Log.d("sss", it)
+                String
+                if (it == "liked") {
+                    onSetLike()
+                    likedFlag = true
+                }
+
+                if (it == "visited") {
+                    onSetVisited()
+                    visitedFlag = true
+                }
+            }
+
     }
 
-    suspend fun showTag3(text: String) {
+    suspend fun showTag1(text: String) {
+        val textView = binding.PlacesListFragmentTextViewTag1
+        val imageViewRoot = binding.PlaceDescriptionFragmentCardViewTag1Root
+        val imageView = binding.PlaceDescriptionFragmentImageViewTag1
+        imageViewRoot.visibility = View.VISIBLE
+        textView.visibility = View.VISIBLE
+        textView.text = text
+        delay(1000)
+        //ИСПРАВИТЬ
+        Log.d("sss", "${textView.width}")
+        imageView.layoutParams.width = textView.width + 8
+    }
+
+    fun showTag2(text: String) {
+        val textView = binding.PlacesListFragmentTextViewTag2
+        val imageViewRoot = binding.PlaceDescriptionFragmentCardViewTag2Root
+        val imageView = binding.PlaceDescriptionFragmentImageViewTag2
+        imageViewRoot.visibility = View.VISIBLE
+        textView.visibility = View.VISIBLE
+        textView.text = text
+        Log.d("sss", "${textView.width}")
+        imageView.layoutParams.width = textView.width + 8
+    }
+
+    fun showTag3(text: String) {
         val textView = binding.PlacesListFragmentTextViewTag3
-        val imageViewRoot= binding.PlaceDescriptionFragmentCardViewTag3Root
-        val imageView= binding.PlaceDescriptionFragmentImageViewTag3
-        imageViewRoot.visibility=View.VISIBLE
-        textView.visibility=View.VISIBLE
-        textView.text=text
-        Log.d("sss","${textView.width}")
-        imageView.layoutParams.width = textView.width+8
+        val imageViewRoot = binding.PlaceDescriptionFragmentCardViewTag3Root
+        val imageView = binding.PlaceDescriptionFragmentImageViewTag3
+        imageViewRoot.visibility = View.VISIBLE
+        textView.visibility = View.VISIBLE
+        textView.text = text
+        Log.d("sss", "${textView.width}")
+        imageView.layoutParams.width = textView.width + 8
     }
 
 

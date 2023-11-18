@@ -20,7 +20,7 @@ internal class PlacesListFragmentViewModel : ViewModel() {
 
     lateinit var placesListRecyclerViewAdapter: PlacesListRecyclerViewAdapter
 
-    private var isDataAlreadyLoaded = false // TODO Костыль, подумать как сделать лучше
+    // var isDataAlreadyLoaded = false // TODO Костыль, подумать как сделать лучше
 
     lateinit var placesList: MutableList<NearbyPlace>
 
@@ -30,7 +30,7 @@ internal class PlacesListFragmentViewModel : ViewModel() {
     fun onUpdatePlaces(
         forceRefresh: Boolean = false, // Need for ignoring isDataAlreadyLoaded flag
     ) {
-        if (!isDataAlreadyLoaded || forceRefresh) {
+
             fragment.mainActivity.updateDeviceLocation(
                 onSuccess = {
                     viewModelScope.launch {
@@ -45,7 +45,7 @@ internal class PlacesListFragmentViewModel : ViewModel() {
                                 ).toMutableList()
                         }
                         placesListRecyclerViewAdapter.submitList(placesList)
-                        isDataAlreadyLoaded = true
+                       // isDataAlreadyLoaded = true
                     }
                 },
                 onFail = {
@@ -61,13 +61,10 @@ internal class PlacesListFragmentViewModel : ViewModel() {
                                 ).toMutableList()
                         }
                         placesListRecyclerViewAdapter.submitList(placesList)
-                        isDataAlreadyLoaded = true
+                     //   isDataAlreadyLoaded = true
                     }
                 }
             )
-        } else {
-            placesListRecyclerViewAdapter.submitList(placesList)
-        }
     }
 
     fun onRemovePlace(position: Int, placeToDelete: NearbyPlace) {
