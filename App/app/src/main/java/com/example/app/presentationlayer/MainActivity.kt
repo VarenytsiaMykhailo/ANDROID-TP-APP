@@ -1,13 +1,10 @@
 package com.example.app.presentationlayer
 
 import android.Manifest
-import android.R
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -17,8 +14,10 @@ import com.example.app.datalayer.repositories.LocalPropertiesSecretsRepository
 import com.example.app.domain.providers.MapAndroidClient
 import com.example.app.domain.providers.MapProvider
 import com.example.app.presentationlayer.adapters.TabBarAdapter
+import com.example.app.presentationlayer.fragments.placepickermapscreen.PlacePickerMapFragment
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.Places
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
@@ -38,10 +37,13 @@ class MainActivity : AppCompatActivity() {
     // location retrieved by the Fused Location Provider.
     var lastKnownLocation: Location? = null
 
+    // A default location to use when location permission is not granted. Moscow, Red Square.
+    var defaultLocation = LatLng(55.753544, 37.621202)
+
     var onLocationPermissionGrantedForMapFragment: () -> Unit =
         {} // Initializes from MapFragment
-    var onLocationPermissionGrantedForPlacesListFragment: (forceRefresh: Boolean) -> Unit =
-        {} // Initializes from PlacesListFragment
+    var onLocationPermissionGrantedForPlacesListFragment: (forceRefresh: Boolean, shouldUseUserLocation: Boolean) -> Unit =
+        { _: Boolean, _: Boolean -> } // Initializes from PlacesListFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,7 +59,6 @@ class MainActivity : AppCompatActivity() {
         initLocationClient()
 
         requestLocationPermission()
-
     }
 
     private fun generateOrInitializeUserUUID() {
@@ -179,6 +180,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    var isFirstLaunch = true
+
     /**
      * Handles the result of the request for location permissions.
      */
@@ -203,14 +206,29 @@ class MainActivity : AppCompatActivity() {
                         Snackbar.LENGTH_LONG
                     ).show()
                 }
+
+                // TODO костыль переделать
+                if (isFirstLaunch) {
+                    supportFragmentManager.beginTransaction()
+                        .replace(
+                            com.example.app.R.id.PlacesListRootFragment__FragmentContainerView,
+                            PlacePickerMapFragment.newInstance(onLocationPermissionGrantedForPlacesListFragment)
+                        )
+                        .addToBackStack("PlacePickerMapFragment")
+                        .commit()
+
+                    isFirstLaunch = false
+                }
             }
 
             else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
 
+        Log.d("qwerty123", "AAAAAAAA")
+
         // TODO check is fragment instance exists or/and visible or/and attached
         onLocationPermissionGrantedForMapFragment()
-        onLocationPermissionGrantedForPlacesListFragment(true)
+        onLocationPermissionGrantedForPlacesListFragment(true, false)
     }
 
     /**

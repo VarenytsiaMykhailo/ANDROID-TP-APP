@@ -24,47 +24,62 @@ internal class PlacesListFragmentViewModel : ViewModel() {
 
     lateinit var placesList: MutableList<NearbyPlace>
 
-    // A default location to use when location permission is not granted. Moscow, Red Square.
-    private val defaultLocation = LatLng(55.753544, 37.621202)
-
     fun onUpdatePlaces(
-        forceRefresh: Boolean = false, // Need for ignoring isDataAlreadyLoaded flag
+        forceRefresh: Boolean = false, // Need for ignoring isDataAlreadyLoaded flag,
+        shouldUseUserLocation: Boolean = true,
     ) {
         if (!isDataAlreadyLoaded || forceRefresh) {
-            fragment.mainActivity.updateDeviceLocation(
-                onSuccess = {
-                    viewModelScope.launch {
-                        withContext(Dispatchers.IO) {
-                            placesList =
-                                mapProvider.getSuggestPlaces(
-                                    it.latitude,
-                                    it.longitude,
-                                    20,
-                                    0,
-                                    forceRefresh
-                                ).toMutableList()
+            if (shouldUseUserLocation) {
+                fragment.mainActivity.updateDeviceLocation(
+                    onSuccess = {
+                        viewModelScope.launch {
+                            withContext(Dispatchers.IO) {
+                                placesList =
+                                    mapProvider.getSuggestPlaces(
+                                        it.latitude,
+                                        it.longitude,
+                                        20,
+                                        0,
+                                        forceRefresh
+                                    ).toMutableList()
+                            }
+                            placesListRecyclerViewAdapter.submitList(placesList)
+                            isDataAlreadyLoaded = true
                         }
-                        placesListRecyclerViewAdapter.submitList(placesList)
-                        isDataAlreadyLoaded = true
-                    }
-                },
-                onFail = {
-                    viewModelScope.launch {
-                        withContext(Dispatchers.IO) {
-                            placesList =
-                                mapProvider.getSuggestPlaces(
-                                    defaultLocation.latitude,
-                                    defaultLocation.longitude,
-                                    20,
-                                    0,
-                                    forceRefresh
-                                ).toMutableList()
+                    },
+                    onFail = {
+                        viewModelScope.launch {
+                            withContext(Dispatchers.IO) {
+                                placesList =
+                                    mapProvider.getSuggestPlaces(
+                                        fragment.mainActivity.defaultLocation.latitude,
+                                        fragment.mainActivity.defaultLocation.longitude,
+                                        20,
+                                        0,
+                                        forceRefresh
+                                    ).toMutableList()
+                            }
+                            placesListRecyclerViewAdapter.submitList(placesList)
+                            isDataAlreadyLoaded = true
                         }
-                        placesListRecyclerViewAdapter.submitList(placesList)
-                        isDataAlreadyLoaded = true
                     }
+                )
+            } else {
+                viewModelScope.launch {
+                    withContext(Dispatchers.IO) {
+                        placesList =
+                            mapProvider.getSuggestPlaces(
+                                fragment.mainActivity.defaultLocation.latitude,
+                                fragment.mainActivity.defaultLocation.longitude,
+                                20,
+                                0,
+                                forceRefresh
+                            ).toMutableList()
+                    }
+                    placesListRecyclerViewAdapter.submitList(placesList)
+                    isDataAlreadyLoaded = true
                 }
-            )
+            }
         } else {
             placesListRecyclerViewAdapter.submitList(placesList)
         }

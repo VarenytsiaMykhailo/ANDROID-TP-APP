@@ -21,6 +21,7 @@ import com.example.app.R
 import com.example.app.databinding.FragmentMapBinding
 import com.example.app.presentationlayer.MainActivity
 import com.example.app.presentationlayer.fragments.placedescriptionscreen.PlaceDescriptionFragment
+import com.example.app.presentationlayer.fragments.placepickermapscreen.PlacePickerMapFragment
 import com.example.app.presentationlayer.viewmodels.MapFragmentViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -118,6 +119,15 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         setPlaceInfoButtonOnClickListener()
         setRouteButtonOnClickListener()
         setRefreshMapButtonOnClickListener()
+        binding.MapFragmentImageViewChooseNewPlace.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(
+                    com.example.app.R.id.PlacesListRootFragment__FragmentContainerView,
+                    PlacePickerMapFragment.newInstance(mainActivity.onLocationPermissionGrantedForPlacesListFragment)
+                )
+                .addToBackStack("PlacePickerMapFragment")
+                .commit()
+        }
     }
 
     /**
@@ -183,13 +193,11 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
 
         val onFail: () -> Unit = {
-            /*
             googleMap.moveCamera(
-                CameraUpdateFactory
-                    .newLatLngZoom(defaultLocation, DEFAULT_ZOOM.toFloat())
+                CameraUpdateFactory.newLatLngZoom(
+                    mainActivity.defaultLocation, DEFAULT_ZOOM.toFloat()
+                )
             )
-             */
-            //googleMap.uiSettings.isMyLocationButtonEnabled = false
         }
 
         mainActivity.updateDeviceLocation(onSuccess, onFail)
@@ -313,7 +321,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     private fun setRefreshMapButtonOnClickListener() {
         binding.MapFragmentImageViewRefreshMap.setOnClickListener {
-            viewModel.onUpdatePlaces(shouldRefreshMapBefore = true)
+            viewModel.onUpdatePlaces(shouldUseCachedValue = true)
             binding.MapFragmentButtonRoute.visibility=View.VISIBLE
             binding.MapFragmentImageViewRootIcon.visibility=View.VISIBLE
             binding.MapFragmentButtonGoogleRoute.visibility=View.GONE
