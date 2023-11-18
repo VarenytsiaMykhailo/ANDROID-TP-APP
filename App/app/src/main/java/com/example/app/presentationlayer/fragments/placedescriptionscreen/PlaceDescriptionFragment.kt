@@ -14,8 +14,10 @@ import com.example.app.R
 import com.example.app.databinding.FragmentPlaceDescriptionBinding
 import com.example.app.datalayer.models.PlaceDescription
 import com.example.app.presentationlayer.adapters.PlaceDescriptionImagesSliderRecyclerViewAdapter
+import com.example.app.presentationlayer.viewmodels.FavoritePlacesViewModel
 import com.example.app.presentationlayer.viewmodels.PlaceDescriptionFragmentViewModel
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.delay
 
 /**
  * Use the [PlaceDescriptionFragment.newInstance] factory method to
@@ -26,6 +28,7 @@ class PlaceDescriptionFragment : Fragment() {
     private lateinit var binding: FragmentPlaceDescriptionBinding
 
     private val viewModel by viewModels<PlaceDescriptionFragmentViewModel>()
+    private val favoritePlacesViewModel by viewModels<FavoritePlacesViewModel>()
 
     private val placeDescriptionImagesSliderRecyclerViewAdapter =
         PlaceDescriptionImagesSliderRecyclerViewAdapter()
@@ -129,6 +132,57 @@ class PlaceDescriptionFragment : Fragment() {
     fun onSetWorkingHours(workingHours: String) {
         binding.PlaceDescriptionFragmentTextViewWorkingHours.text = workingHours
     }
+
+    fun onSetLike() {
+        binding.DescriptionFragmentImageViewLike.setImageResource(R.drawable.like_liked)
+    }
+
+    fun onUnSetLike() {
+        binding.DescriptionFragmentImageViewLike.setImageResource(R.drawable.like_unliked)
+    }
+
+    fun onSetVisited() {
+        binding.DescriptionFragmentImageViewVisit.setImageResource(R.drawable.visited_icon)
+    }
+
+    fun onUnSetVisited() {
+        binding.DescriptionFragmentImageViewVisit.setImageResource(R.drawable.unvisited_icon)
+    }
+
+    suspend fun showTag1(text: String) {
+        val textView = binding.PlacesListFragmentTextViewTag1
+        val imageViewRoot= binding.PlaceDescriptionFragmentCardViewTag1Root
+        val imageView= binding.PlaceDescriptionFragmentImageViewTag1
+        imageViewRoot.visibility=View.VISIBLE
+        textView.visibility=View.VISIBLE
+        textView.text=text
+        delay(1000)
+        //ИСПРАВИТЬ
+        Log.d("sss","${textView.width}")
+        imageView.layoutParams.width = textView.width+8
+    }
+    suspend fun showTag2(text: String) {
+        val textView = binding.PlacesListFragmentTextViewTag2
+        val imageViewRoot= binding.PlaceDescriptionFragmentCardViewTag2Root
+        val imageView= binding.PlaceDescriptionFragmentImageViewTag2
+        imageViewRoot.visibility=View.VISIBLE
+        textView.visibility=View.VISIBLE
+        textView.text=text
+        Log.d("sss","${textView.width}")
+        imageView.layoutParams.width = textView.width+8
+    }
+
+    suspend fun showTag3(text: String) {
+        val textView = binding.PlacesListFragmentTextViewTag3
+        val imageViewRoot= binding.PlaceDescriptionFragmentCardViewTag3Root
+        val imageView= binding.PlaceDescriptionFragmentImageViewTag3
+        imageViewRoot.visibility=View.VISIBLE
+        textView.visibility=View.VISIBLE
+        textView.text=text
+        Log.d("sss","${textView.width}")
+        imageView.layoutParams.width = textView.width+8
+    }
+
 
     companion object {
 
