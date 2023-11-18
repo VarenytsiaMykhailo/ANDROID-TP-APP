@@ -88,24 +88,22 @@ internal class PlacesListFragmentViewModel : ViewModel() {
 
     fun onRestoreRemovedPlace(position: Int, placeToRestore: NearbyPlace) {
         restorePlace(position, placeToRestore)
-        // TODO поменять на отмену REFUSE, как появится
-        /*
+
         postSuggestReaction(
-            deletedLocation.placeId,
-            PlaceReaction.Reaction.REFUSE
+            placeToRestore.placeId,
+            PlaceReaction.Reaction.UNREFUSE
         )
-         */
+
     }
 
     fun onRestoreVisitedPlace(position: Int, placeToRestore: NearbyPlace) {
         restorePlace(position, placeToRestore)
-        // TODO поменять на отмену VISITED, как появится
-        /*
+
         postSuggestReaction(
-            deletedLocation.placeId,
-            PlaceReaction.Reaction.VISITED
+            placeToRestore.placeId,
+            PlaceReaction.Reaction.UNVISITED
         )
-         */
+
     }
 
     private fun removePlace(position: Int) {

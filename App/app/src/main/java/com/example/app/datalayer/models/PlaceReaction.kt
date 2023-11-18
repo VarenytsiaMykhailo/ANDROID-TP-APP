@@ -18,6 +18,12 @@ data class PlaceReaction (
         VISITED,
         @SerializedName("refuse")
         REFUSE,
+        @SerializedName("unlike")
+        UNLIKE,
+        @SerializedName("unvisited")
+        UNVISITED,
+        @SerializedName("unrefuse")
+        UNREFUSE,
     }
 }
 
