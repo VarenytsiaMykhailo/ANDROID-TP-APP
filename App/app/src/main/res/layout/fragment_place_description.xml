@@ -237,16 +237,14 @@
                 app:layout_constraintStart_toStartOf="@+id/PlaceDescriptionFragment__TextView_Description"
                 app:layout_constraintTop_toBottomOf="@+id/PlaceDescriptionFragment__TextView_Description" />
 
-
-            <ImageView
-                android:id="@+id/PlaceDescriptionFragment__ImageView_StaticMap"
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/PlaceDescriptionFragment__FragmentContainerView_SmallMap"
                 android:layout_width="368dp"
                 android:layout_height="180dp"
                 android:layout_marginTop="8dp"
-                android:contentDescription="@string/image_view_description_map_stub"
                 app:layout_constraintStart_toStartOf="@+id/PlaceDescriptionFragment__TextView_Title"
                 app:layout_constraintTop_toBottomOf="@+id/first_bar"
-                tools:src="@mipmap/map_stub" />
+                tools:context=".presentationlayer.fragments.placedescriptionscreen.SmallMapFragment" />
 
             <TextView
                 android:id="@+id/textView"
@@ -256,8 +254,8 @@
                 android:text="Адрес: "
                 android:textColor="@color/dark_grey"
                 android:textSize="14sp"
-                app:layout_constraintStart_toStartOf="@+id/PlaceDescriptionFragment__ImageView_StaticMap"
-                app:layout_constraintTop_toBottomOf="@+id/PlaceDescriptionFragment__ImageView_StaticMap" />
+                app:layout_constraintStart_toStartOf="@+id/PlaceDescriptionFragment__FragmentContainerView_SmallMap"
+                app:layout_constraintTop_toBottomOf="@+id/PlaceDescriptionFragment__FragmentContainerView_SmallMap" />
 
             <TextView
                 android:id="@+id/PlaceDescriptionFragment__TextView_Address"
