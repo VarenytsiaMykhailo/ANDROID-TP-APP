@@ -19,10 +19,10 @@ internal class MapFragmentViewModel : ViewModel() {
 
     fun onUpdatePlaces(
         shouldUseCachedValue: Boolean = true,
-        shouldRefreshMapBefore: Boolean = true,
     ) {
         fragment.refreshMap()
         if (shouldUseCachedValue) {
+            Log.d("qwerty123", "onUpdatePlaces in map use cache")
             mapProvider.placesCachedList.forEach {
                 fragment.addAdvancedMarker(it.location.lat, it.location.lng, it.name)
             }

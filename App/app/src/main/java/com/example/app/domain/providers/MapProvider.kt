@@ -50,6 +50,8 @@ object MapProvider {
             ).also {
                 Log.d(LOG_TAG, "getSuggestPlaces = $it")
             }.toMutableList()
+            Log.d("qwerty123", "placesCachedList updated in provider")
+
 
             lastUsedLat = lat
             lastUsedLng = lng
