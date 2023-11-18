@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName
 data class NearbyPlace(
 
     @SerializedName("place_id")
-    val placeId: String,
+    var placeId: String,
 
     @SerializedName("name")
     private val _name: String?,
@@ -21,10 +21,10 @@ data class NearbyPlace(
     private val _ratingCount: Int?,
 
     @SerializedName("reaction")
-    val reaction: String,
+    val reactions: List<String>,
 
     @SerializedName("location")
-    val location: Location,
+    val location: PlaceDescription.Location,
 ) {
 
     val name: String

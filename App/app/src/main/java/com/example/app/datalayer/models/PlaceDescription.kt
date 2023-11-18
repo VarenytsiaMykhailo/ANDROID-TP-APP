@@ -34,6 +34,9 @@ data class PlaceDescription(
 
     @SerializedName("location")
     val location: Location,
+
+    @SerializedName("reaction")
+    val _reactions: List<String>?,
 ) {
 
     val name: String
@@ -69,6 +72,13 @@ data class PlaceDescription(
             } else {
                 listOf(LocalPropertiesSecretsRepository.defaultImageUrl)
             }
+    val reactions: List<String>
+        get() =
+            if (!_reactions.isNullOrEmpty()) {
+                _reactions
+            } else {
+                listOf("nothing")
+            }
 
     data class Location(
         @SerializedName("lat")
@@ -77,4 +87,5 @@ data class PlaceDescription(
         @SerializedName("lng")
         val lng: Double,
     )
+
 }

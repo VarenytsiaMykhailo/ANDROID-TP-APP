@@ -2,11 +2,18 @@ package com.example.app.presentationlayer.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.app.datalayer.models.NearbyPlace
 import com.example.app.datalayer.models.PlaceDescription
+import com.example.app.datalayer.models.PlaceReaction
+import com.example.app.datalayer.repositories.LocalPropertiesSecretsRepository
 import com.example.app.domain.providers.MapProvider
+import com.example.app.domain.providers.placeClassesTransformer
 import com.example.app.presentationlayer.adapters.PlaceDescriptionImagesSliderRecyclerViewAdapter
 import com.example.app.presentationlayer.fragments.placedescriptionscreen.PlaceDescriptionFragment
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 internal class PlaceDescriptionFragmentViewModel : ViewModel() {
 
@@ -14,13 +21,13 @@ internal class PlaceDescriptionFragmentViewModel : ViewModel() {
 
     lateinit var fragment: PlaceDescriptionFragment
 
+
     var placeDescriptionImagesSliderRecyclerViewAdapter: PlaceDescriptionImagesSliderRecyclerViewAdapter? =
         null
 
     fun onSetContent(placeId: String) {
         viewModelScope.launch {
             val placeDescription = mapProvider.getPlaceDescription(placeId)
-
             updateImagesSlider(placeDescription.photos)
             setTitle(placeDescription.name)
             setDescription(placeDescription.description)
@@ -30,6 +37,7 @@ internal class PlaceDescriptionFragmentViewModel : ViewModel() {
             setAddress(placeDescription.address)
             setWorkingHours(placeDescription.workingHours)
             setTags(placeDescription.tags)
+            return@launch returnPlace(placeDescription)
         }
     }
 
@@ -73,8 +81,17 @@ internal class PlaceDescriptionFragmentViewModel : ViewModel() {
         fragment.onSetWorkingHours(workingHoursString)
     }
 
-    private fun setStartLike() {
-        fragment.onSetLike()
+
+    fun postReaction(placeId: String, reaction: PlaceReaction.Reaction) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                mapProvider.postSuggestReaction(placeId, reaction)
+            }
+        }
+    }
+
+    private fun returnPlace(placeMV: PlaceDescription) {
+        fragment.place = placeMV
     }
 
     private suspend fun setTags(tagsList: List<String>) {
