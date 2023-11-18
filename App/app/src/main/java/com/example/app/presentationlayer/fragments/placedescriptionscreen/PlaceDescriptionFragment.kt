@@ -20,7 +20,6 @@ import com.example.app.datalayer.models.PlaceDescription
 import com.example.app.datalayer.models.PlaceReaction
 import com.example.app.domain.providers.placeClassesTransformer
 import com.example.app.presentationlayer.adapters.PlaceDescriptionImagesSliderRecyclerViewAdapter
-import com.example.app.presentationlayer.fragments.mapscreen.MapFragment
 import com.example.app.presentationlayer.viewmodels.FavoritePlacesViewModel
 import com.example.app.presentationlayer.viewmodels.PlaceDescriptionFragmentViewModel
 import com.google.android.material.snackbar.Snackbar
@@ -114,13 +113,27 @@ class PlaceDescriptionFragment : Fragment() {
         binding.PlaceDescriptionFragmentTextViewRatingCount.text = "$ratingCount оценок"
     }
 
-    fun onSetMap(staticMapImageUrl: String, googleMapAppDeeplink: String) {
-        binding.PlaceDescriptionFragmentImageViewStaticMap.apply {
-            load(staticMapImageUrl)
-            setOnClickListener {
-                launchGoogleMapApp(googleMapAppDeeplink)
-            }
-        }
+    /*
+   fun onSetMap(staticMapImageUrl: String, googleMapAppDeeplink: String) {
+       binding.PlaceDescriptionFragmentImageViewStaticMap.apply {
+           load(staticMapImageUrl)
+           setOnClickListener {
+               launchGoogleMapApp(googleMapAppDeeplink)
+           }
+       }
+    }
+    */
+
+    fun onSetMap(nearbyPlace: PlaceDescription) {
+        childFragmentManager.beginTransaction()
+            .replace(
+                R.id.PlaceDescriptionFragment__FragmentContainerView_SmallMap,
+                SmallMapFragment.newInstance(
+                    nearbyPlace.location.lat.toString(),
+                    nearbyPlace.location.lng.toString(),
+                )
+            )
+            .commit()
     }
 
     private fun launchGoogleMapApp(requestUrl: String) {
@@ -137,7 +150,7 @@ class PlaceDescriptionFragment : Fragment() {
             } catch (e: ActivityNotFoundException) {
                 Log.e(LOG_TAG, "inner catch e = $e")
                 Snackbar.make(
-                    binding.PlaceDescriptionFragmentImageViewStaticMap,
+                    binding.PlaceDescriptionFragmentFragmentContainerViewSmallMap,
                     "Установите приложение Google Maps",
                     Snackbar.LENGTH_SHORT
                 ).show()
