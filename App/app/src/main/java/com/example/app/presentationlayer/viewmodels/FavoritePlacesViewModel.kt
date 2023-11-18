@@ -3,6 +3,8 @@ package com.example.app.presentationlayer.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.app.datalayer.models.NearbyPlace
+import com.example.app.datalayer.models.PlaceReaction
+import com.example.app.domain.providers.MapProvider
 import io.paperdb.Paper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -10,10 +12,12 @@ import kotlinx.coroutines.withContext
 
 internal class FavoritePlacesViewModel : ViewModel() {
 
+    private val mapProvider = MapProvider
     fun savePlace(place: NearbyPlace) =
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 Paper.book(FAVORITE_PLACES).write(place.placeId, place)
+                mapProvider.postSuggestReaction(place.placeId, PlaceReaction.Reaction.LIKE)
             }
         }
 
@@ -21,6 +25,7 @@ internal class FavoritePlacesViewModel : ViewModel() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 Paper.book(FAVORITE_PLACES).delete(place.placeId)
+                mapProvider.postSuggestReaction(place.placeId, PlaceReaction.Reaction.UNLIKE)
             }
         }
 

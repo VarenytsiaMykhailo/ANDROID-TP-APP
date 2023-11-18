@@ -31,6 +31,7 @@ internal class PlaceDescriptionFragmentViewModel : ViewModel() {
             setMap(placeDescription.location)
             setAddress(placeDescription.address)
             setWorkingHours(placeDescription.workingHours)
+            setTags(placeDescription.tags)
         }
     }
 
@@ -73,5 +74,21 @@ internal class PlaceDescriptionFragmentViewModel : ViewModel() {
         // TODO Вынести преобразование списка в строку в usecase
         val workingHoursString = workingHours.joinToString("\n")
         fragment.onSetWorkingHours(workingHoursString)
+    }
+
+    private fun setStartLike() {
+        fragment.onSetLike()
+    }
+
+    private suspend fun setTags(tagsList: List<String>) {
+        if (tagsList.isNotEmpty()) {
+            fragment.showTag1(tagsList[0])
+            if (tagsList.size >= 2) {
+                fragment.showTag2(tagsList[1])
+                if (tagsList.size >= 3) {
+                    fragment.showTag3(tagsList[2])
+                }
+            }
+        }
     }
 }
