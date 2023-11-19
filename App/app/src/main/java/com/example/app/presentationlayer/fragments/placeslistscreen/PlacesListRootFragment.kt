@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import com.example.app.R
+import com.example.app.presentationlayer.fragments.placepickermapscreen.PlacePickerMapFragment
 
 /**
  * Use the [PlacesListRootFragment.newInstance] factory method to
@@ -45,6 +46,11 @@ class PlacesListRootFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        launchPlacesListFragment()
+        launchPlacePickerMapFragment()
+    }
+
+    private fun launchPlacesListFragment() {
         // Нужно использовать именно child т.к. можно наткнуться на краш при выбивании фрагмента.
         // Но с ним не работает системная кнопка назад (выходит из приложения)
         // Поэтому переопределил колбэк обработки кнопки "назад"
@@ -54,6 +60,20 @@ class PlacesListRootFragment : Fragment() {
                 R.id.PlacesListRootFragment__FragmentContainerView,
                 PlacesListFragment.newInstance()
             ).commit()
+    }
+
+    private fun launchPlacePickerMapFragment() {
+        // Нужно использовать именно child т.к. можно наткнуться на краш при выбивании фрагмента.
+        // Но с ним не работает системная кнопка назад (выходит из приложения)
+        // Поэтому переопределил колбэк обработки кнопки "назад"
+        childFragmentManager
+            .beginTransaction()
+            .replace(
+                R.id.PlacesListRootFragment__FragmentContainerView,
+                PlacePickerMapFragment.newInstance()
+            )
+            .addToBackStack("PlacePickerMapFragment")
+            .commit()
     }
 
     companion object {

@@ -16,13 +16,9 @@ object MapProvider {
 
     private val mapRepository = MapRepository.mapRepository
 
-    private var updateListFlag = true
+    private var updateListByRadiusFlag = true
 
     var radius = 3000
-
-    var lastUsedLat: Double = 0.0
-
-    var lastUsedLng: Double = 0.0
 
     lateinit var placesCachedList: MutableList<NearbyPlace>
 
@@ -41,7 +37,7 @@ object MapProvider {
         offset: Int,
         forceRefresh: Boolean = false, // Need for ignoring updateListFlag
     ): List<NearbyPlace> {
-        if (updateListFlag || forceRefresh) {
+        if (updateListByRadiusFlag || forceRefresh || placesCachedList.isEmpty()) {
             placesCachedList = mapRepository.getSuggestPlaces(
                 "$lat,$lng",
                 radius.toString(),
@@ -50,12 +46,8 @@ object MapProvider {
             ).also {
                 Log.d(LOG_TAG, "getSuggestPlaces = $it")
             }.toMutableList()
-            Log.d("qwerty123", "placesCachedList updated in provider")
 
-
-            lastUsedLat = lat
-            lastUsedLng = lng
-            updateListFlag = false
+            updateListByRadiusFlag = false
         }
 
         return placesCachedList
@@ -89,7 +81,7 @@ object MapProvider {
 
     fun increaseRadius() {
         radius += 500
-        updateListFlag = true
+        updateListByRadiusFlag = true
     }
 
     fun decreaseRadius(): Boolean {
@@ -97,7 +89,7 @@ object MapProvider {
             radius -= 500
             false
         } else {
-            updateListFlag = true
+            updateListByRadiusFlag = true
             true
         }
     }

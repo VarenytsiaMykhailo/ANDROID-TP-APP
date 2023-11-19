@@ -38,12 +38,12 @@ class MainActivity : AppCompatActivity() {
     var lastKnownLocation: Location? = null
 
     // A default location to use when location permission is not granted. Moscow, Red Square.
-    var defaultLocation = LatLng(55.753544, 37.621202)
+    var usersChosenLocation = LatLng(55.753544, 37.621202)
 
     var onLocationPermissionGrantedForMapFragment: () -> Unit =
         {} // Initializes from MapFragment
-    var onLocationPermissionGrantedForPlacesListFragment: (forceRefresh: Boolean, shouldUseUserLocation: Boolean) -> Unit =
-        { _: Boolean, _: Boolean -> } // Initializes from PlacesListFragment
+    var onLocationPermissionGrantedForPlacePickerMapFragment: () -> Unit =
+        {} // Initializes from lacePickerMapFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,7 +58,13 @@ class MainActivity : AppCompatActivity() {
         initMapAndroidClient()
         initLocationClient()
 
-        requestLocationPermission()
+        //requestLocationPermission() // Calls from PlacePickerMapFragment
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        //launchPlacePickerMapFragment()
     }
 
     private fun generateOrInitializeUserUUID() {
@@ -180,8 +186,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    var isFirstLaunch = true
-
     /**
      * Handles the result of the request for location permissions.
      */
@@ -206,29 +210,14 @@ class MainActivity : AppCompatActivity() {
                         Snackbar.LENGTH_LONG
                     ).show()
                 }
-
-                // TODO костыль переделать
-                if (isFirstLaunch) {
-                    supportFragmentManager.beginTransaction()
-                        .replace(
-                            com.example.app.R.id.PlacesListRootFragment__FragmentContainerView,
-                            PlacePickerMapFragment.newInstance(onLocationPermissionGrantedForPlacesListFragment)
-                        )
-                        .addToBackStack("PlacePickerMapFragment")
-                        .commit()
-
-                    isFirstLaunch = false
-                }
             }
 
             else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
 
-        Log.d("qwerty123", "AAAAAAAA")
-
         // TODO check is fragment instance exists or/and visible or/and attached
         onLocationPermissionGrantedForMapFragment()
-        onLocationPermissionGrantedForPlacesListFragment(true, false)
+        onLocationPermissionGrantedForPlacePickerMapFragment()
     }
 
     /**

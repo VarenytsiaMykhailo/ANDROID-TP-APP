@@ -2,12 +2,13 @@ package com.example.app.presentationlayer.fragments.placepickermapscreen
 
 import android.location.Address
 import android.location.Geocoder
+import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
 import com.example.app.R
 import com.example.app.databinding.FragmentPlacePickerMapBinding
@@ -21,7 +22,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
-import java.io.IOException
 import java.util.Locale
 
 
@@ -29,7 +29,7 @@ import java.util.Locale
  * Use the [PlacePickerMapFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class PlacePickerMapFragment() :
+class PlacePickerMapFragment :
     Fragment(),
     OnMapReadyCallback,
     GoogleMap.OnCameraMoveListener,
@@ -62,14 +62,13 @@ class PlacePickerMapFragment() :
         super.onViewCreated(view, savedInstanceState)
 
         mainActivity = requireActivity() as MainActivity
-
+        mainActivity.onLocationPermissionGrantedForPlacePickerMapFragment = this::updateGeolocationUI
         mapFragment =
             childFragmentManager.findFragmentById(R.id.PlacePickerMapFragment__FragmentContainerView) as SupportMapFragment
 
         // Initialize the AutocompleteSupportFragment.
         autocompleteFragment =
             childFragmentManager.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment
-        Log.d("qwerty123", "found autocomplete fragment = $autocompleteFragment")
 
         // Specify the types of place data to return.
         autocompleteFragment.setPlaceFields(listOf(Place.Field.LAT_LNG, Place.Field.NAME))
@@ -93,9 +92,7 @@ class PlacePickerMapFragment() :
         })
 
         binding.PlacePickerMapFragmentButtonSelect.setOnClickListener {
-            Log.d("qwerty123", "select button clicked")
-            mainActivity.defaultLocation = choosedLocation
-            mainActivity.onLocationPermissionGrantedForPlacesListFragment(true, false)
+            mainActivity.usersChosenLocation = choosedLocation
             parentFragmentManager.popBackStack()
         }
 
@@ -113,9 +110,55 @@ class PlacePickerMapFragment() :
         googleMap.setOnCameraMoveStartedListener(this)
         googleMap.setOnCameraIdleListener(this)
 
-        googleMap.moveCamera(
-            CameraUpdateFactory.newLatLngZoom(mainActivity.defaultLocation, DEFAULT_ZOOM.toFloat())
-        )
+        mainActivity.requestLocationPermission()
+
+        updateGeolocationUI()
+    }
+
+    /**
+     * Updates the map's UI settings based on whether the user has granted location permission.
+     */
+    private fun updateGeolocationUI() {
+        try {
+            if (mainActivity.locationPermissionGranted) {
+                googleMap.isMyLocationEnabled = true
+                googleMap.uiSettings.isMyLocationButtonEnabled = true
+                configureUserLocationButtonPosition()
+            } else {
+                //googleMap.isMyLocationEnabled = false
+                //googleMap.uiSettings.isMyLocationButtonEnabled = false
+                //mainActivity.lastKnownLocation = null
+            }
+            updateDeviceLocationPoint()
+        } catch (e: SecurityException) {
+            Log.e(LOG_TAG, e.message, e)
+        }
+    }
+
+    /**
+     * Gets the current location of the device, and positions the map's camera.
+     */
+    private fun updateDeviceLocationPoint() {
+        val onSuccess: (location: Location) -> Unit = {
+            googleMap.moveCamera(
+                CameraUpdateFactory.newLatLngZoom(
+                    LatLng(
+                        it.latitude,
+                        it.longitude
+                    ), DEFAULT_ZOOM.toFloat()
+                )
+            )
+        }
+
+        val onFail: () -> Unit = {
+            googleMap.moveCamera(
+                CameraUpdateFactory.newLatLngZoom(
+                    mainActivity.usersChosenLocation, DEFAULT_ZOOM.toFloat()
+                )
+            )
+        }
+
+        mainActivity.updateDeviceLocation(onSuccess, onFail)
     }
 
     override fun onCameraMove() {
@@ -128,7 +171,6 @@ class PlacePickerMapFragment() :
         val cameraPosition = googleMap.cameraPosition
         val lat = cameraPosition.target.latitude
         val lng = cameraPosition.target.longitude
-        Log.d("qwerty123", "$lat $lng")
         choosedLocation = LatLng(lat, lng)
         updateAddressInAutocomplete(lat, lng)
     }
@@ -139,14 +181,25 @@ class PlacePickerMapFragment() :
             val addresses: List<Address>? = geocoder.getFromLocation(lat, lng, 1)
             val obj: Address = addresses!![0]
             val add: String = obj.getAddressLine(0)
-            Log.d("qwerty123", "add before = $add")
-            //Log.d("qwerty123", "add before = ${obj.na}")
             autocompleteFragment.setText(add)
-        } catch (e: IOException) {
+        } catch (e: Exception) {
             // TODO Переделать
             e.printStackTrace()
-            Toast.makeText(this.requireContext(), e.message, Toast.LENGTH_SHORT).show()
+            //Toast.makeText(this.requireContext(), e.message, Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun configureUserLocationButtonPosition() {
+        val locationButton = mapFragment.view?.findViewWithTag<View>("GoogleMapMyLocationButton")
+        val layoutParams = RelativeLayout.LayoutParams(
+            RelativeLayout.LayoutParams.WRAP_CONTENT,
+            RelativeLayout.LayoutParams.WRAP_CONTENT
+        ).apply {
+            addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE)
+            addRule(RelativeLayout.CENTER_VERTICAL)
+            marginEnd = 18
+        }
+        locationButton?.layoutParams = layoutParams
     }
 
     /**
@@ -161,22 +214,13 @@ class PlacePickerMapFragment() :
 
         private const val LOG_TAG = "PlacePickerMapFragment"
 
-        private const val DEFAULT_ZOOM = 15
-
-        // TODO костыль переделать
-        var onLocationPermissionGrantedForPlacesListFragment: (forceRefresh: Boolean, shouldUseUserLocation: Boolean) -> Unit =
-            { _: Boolean, _: Boolean ->
-                Log.d("qwerty123", "ERROR PWNZ")
-            } // Initializes from PlacesListFragment
+        private const val DEFAULT_ZOOM = 12
 
         @JvmStatic
         fun newInstance(
-            onLocationPermissionGrantedForPlacesListFragment: (forceRefresh: Boolean, shouldUseUserLocation: Boolean) -> Unit
             //param1: String,
             //param2: String,
         ) = PlacePickerMapFragment().apply {
-            PlacePickerMapFragment.onLocationPermissionGrantedForPlacesListFragment =
-                onLocationPermissionGrantedForPlacesListFragment
             arguments = Bundle().apply {
                 //putString(ARG_PARAM1, param1)
                 //putString(ARG_PARAM2, param2)
