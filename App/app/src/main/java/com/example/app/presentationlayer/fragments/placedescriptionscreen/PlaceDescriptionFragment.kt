@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.example.app.R
 import com.example.app.databinding.FragmentPlaceDescriptionBinding
 import com.example.app.datalayer.models.PlaceDescription
@@ -19,7 +20,9 @@ import com.example.app.presentationlayer.adapters.PlaceDescriptionImagesSliderRe
 import com.example.app.presentationlayer.viewmodels.FavoritePlacesViewModel
 import com.example.app.presentationlayer.viewmodels.PlaceDescriptionFragmentViewModel
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 /**
  * Use the [PlaceDescriptionFragment.newInstance] factory method to
@@ -40,6 +43,7 @@ class PlaceDescriptionFragment : Fragment() {
 
     private var likedFlag = false
     private var visitedFlag = false
+    var placeID: String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -59,11 +63,26 @@ class PlaceDescriptionFragment : Fragment() {
         binding.PlaceDescriptionFragmentViewPager2PlaceImage.adapter =
             placeDescriptionImagesSliderRecyclerViewAdapter
 
-        viewModel.placeDescriptionImagesSliderRecyclerViewAdapter =
-            placeDescriptionImagesSliderRecyclerViewAdapter
 
-        val placeId: String = arguments?.getString(PLACE_ID_KEY)!!
-        viewModel.onSetContent(placeId)
+        placeID = arguments?.getString(PLACE_ID_KEY)!!
+
+        lifecycleScope.launch {
+            viewModel.place.onEach { placeDescription ->
+                onSetTitle(placeDescription.name)
+                placeDescriptionImagesSliderRecyclerViewAdapter.submitList(placeDescription.photos)
+                onSetDescription(placeDescription.description)
+                onSetRating(placeDescription.rating)
+                onSetRatingCount(placeDescription.ratingCount)
+                onSetMap(placeDescription)
+                onSetAddress(placeDescription.address)
+                onSetWorkingHours(placeDescription.workingHours)
+                onSetTags(placeDescription.tags)
+                onSetStartReactions(placeDescription.reactions)
+                place = placeDescription
+            }.collect()
+        }
+
+        showTags()
 
         binding.PlaceDescriptionFragmentImageViewBackButton.setOnClickListener {
             parentFragmentManager.popBackStack()
@@ -91,23 +110,24 @@ class PlaceDescriptionFragment : Fragment() {
                 viewModel.postReaction(place.placeId, PlaceReaction.Reaction.VISITED)
             }
         }
+
     }
 
-    fun onSetTitle(title: String) {
+    private fun onSetTitle(title: String) {
         binding.PlaceDescriptionFragmentTextViewTitle.text = title
     }
 
-    fun onSetDescription(description: String) {
+    private fun onSetDescription(description: String) {
         binding.PlaceDescriptionFragmentTextViewDescription.setIsExpanded(false)
         binding.PlaceDescriptionFragmentTextViewDescription.text = description
     }
 
-    fun onSetRating(rating: Double) {
+    private fun onSetRating(rating: Double) {
         binding.PlaceDescriptionFragmentTextViewRating.text = rating.toString()
         binding.PlaceDescriptionFragmentRatingBar.rating = rating.toFloat()
     }
 
-    fun onSetRatingCount(ratingCount: Int) {
+    private fun onSetRatingCount(ratingCount: Int) {
         binding.PlaceDescriptionFragmentTextViewRatingCount.text = "$ratingCount оценок"
     }
 
@@ -121,8 +141,19 @@ class PlaceDescriptionFragment : Fragment() {
        }
     }
     */
+    private fun onSetTags(tagsList: List<String>) {
+        if (tagsList.isNotEmpty()) {
+            setTag1(tagsList[0])
+            if (tagsList.size >= 2) {
+                setTag2(tagsList[1])
+                if (tagsList.size >= 3) {
+                    setTag3(tagsList[2])
+                }
+            }
+        }
+    }
 
-    fun onSetMap(nearbyPlace: PlaceDescription) {
+    private fun onSetMap(nearbyPlace: PlaceDescription) {
         childFragmentManager.beginTransaction()
             .replace(
                 R.id.PlaceDescriptionFragment__FragmentContainerView_SmallMap,
@@ -156,36 +187,37 @@ class PlaceDescriptionFragment : Fragment() {
         }
     }
 
-    fun onSetAddress(address: String) {
+    private fun onSetAddress(address: String) {
         binding.PlaceDescriptionFragmentTextViewAddress.text = address
     }
 
-    fun onSetWorkingHours(workingHours: String) {
-        binding.PlaceDescriptionFragmentTextViewWorkingHours.text = workingHours
+    private fun onSetWorkingHours(workingHours: List<String>) {
+        val workingHoursString = workingHours.joinToString("\n")
+        binding.PlaceDescriptionFragmentTextViewWorkingHours.text = workingHoursString
     }
 
-    fun onSetLike() {
+    private fun onSetLike() {
         binding.DescriptionFragmentImageViewLike.setImageResource(R.drawable.like_liked)
     }
 
-    fun onUnSetLike() {
+    private fun onUnSetLike() {
         binding.DescriptionFragmentImageViewLike.setImageResource(R.drawable.like_unliked)
     }
 
-    fun onSetVisited() {
+    private fun onSetVisited() {
         binding.DescriptionFragmentImageViewVisit.setImageResource(R.drawable.visited_icon)
     }
 
-    fun onUnSetVisited() {
+    private fun onUnSetVisited() {
         binding.DescriptionFragmentImageViewVisit.setImageResource(R.drawable.unvisited_icon)
     }
 
-    private fun setStartReactions(list: List<String>) {
+    private fun onSetStartReactions(list: List<String>) {
         if (list.isNotEmpty())
             list.forEach { it ->
                 Log.d("sss", it)
                 String
-                if (it == "liked") {
+                if (it == "like") {
                     onSetLike()
                     likedFlag = true
                 }
@@ -198,39 +230,34 @@ class PlaceDescriptionFragment : Fragment() {
 
     }
 
-    suspend fun showTag1(text: String) {
-        val textView = binding.PlacesListFragmentTextViewTag1
-        val imageViewRoot = binding.PlaceDescriptionFragmentCardViewTag1Root
+    private fun setTag1(text: String) {
+        val textView = binding.PlaceDescriptionFragmentTextViewTag1
         val imageView = binding.PlaceDescriptionFragmentImageViewTag1
-        imageViewRoot.visibility = View.VISIBLE
-        textView.visibility = View.VISIBLE
         textView.text = text
-        delay(1000)
-        //ИСПРАВИТЬ
-        Log.d("sss", "${textView.width}")
-        imageView.layoutParams.width = textView.width + 8
+        imageView.layoutParams.width = text.length + 8
     }
 
-    fun showTag2(text: String) {
-        val textView = binding.PlacesListFragmentTextViewTag2
-        val imageViewRoot = binding.PlaceDescriptionFragmentCardViewTag2Root
+    private fun setTag2(text: String) {
+        val textView = binding.PlaceDescriptionFragmentTextViewTag2
         val imageView = binding.PlaceDescriptionFragmentImageViewTag2
-        imageViewRoot.visibility = View.VISIBLE
-        textView.visibility = View.VISIBLE
         textView.text = text
-        Log.d("sss", "${textView.width}")
-        imageView.layoutParams.width = textView.width + 8
+        imageView.layoutParams.width = text.length + 8
     }
 
-    fun showTag3(text: String) {
-        val textView = binding.PlacesListFragmentTextViewTag3
-        val imageViewRoot = binding.PlaceDescriptionFragmentCardViewTag3Root
+    private fun setTag3(text: String) {
+        val textView = binding.PlaceDescriptionFragmentTextViewTag3
         val imageView = binding.PlaceDescriptionFragmentImageViewTag3
-        imageViewRoot.visibility = View.VISIBLE
-        textView.visibility = View.VISIBLE
         textView.text = text
-        Log.d("sss", "${textView.width}")
-        imageView.layoutParams.width = textView.width + 8
+        imageView.layoutParams.width = text.length + 8
+    }
+
+    private fun showTags() {
+        binding.PlaceDescriptionFragmentTextViewTag1.visibility = View.VISIBLE
+        binding.PlaceDescriptionFragmentCardViewTag1Root.visibility = View.VISIBLE
+        binding.PlaceDescriptionFragmentTextViewTag2.visibility = View.VISIBLE
+        binding.PlaceDescriptionFragmentCardViewTag2Root.visibility = View.VISIBLE
+        binding.PlaceDescriptionFragmentTextViewTag3.visibility = View.VISIBLE
+        binding.PlaceDescriptionFragmentCardViewTag3Root.visibility = View.VISIBLE
     }
 
 
