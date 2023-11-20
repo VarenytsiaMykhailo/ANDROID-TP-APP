@@ -2,16 +2,12 @@ package com.example.app.presentationlayer.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.app.datalayer.models.NearbyPlace
 import com.example.app.datalayer.models.PlaceDescription
 import com.example.app.datalayer.models.PlaceReaction
-import com.example.app.datalayer.repositories.LocalPropertiesSecretsRepository
 import com.example.app.domain.providers.MapProvider
-import com.example.app.domain.providers.placeClassesTransformer
 import com.example.app.presentationlayer.adapters.PlaceDescriptionImagesSliderRecyclerViewAdapter
 import com.example.app.presentationlayer.fragments.placedescriptionscreen.PlaceDescriptionFragment
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 

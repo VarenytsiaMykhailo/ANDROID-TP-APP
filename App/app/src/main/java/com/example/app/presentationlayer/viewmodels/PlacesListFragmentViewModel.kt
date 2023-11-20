@@ -7,7 +7,6 @@ import com.example.app.datalayer.models.NearbyPlace
 import com.example.app.datalayer.models.PlaceReaction
 import com.example.app.presentationlayer.adapters.PlacesListRecyclerViewAdapter
 import com.example.app.presentationlayer.fragments.placeslistscreen.PlacesListFragment
-import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -20,48 +19,24 @@ internal class PlacesListFragmentViewModel : ViewModel() {
 
     lateinit var placesListRecyclerViewAdapter: PlacesListRecyclerViewAdapter
 
-    // var isDataAlreadyLoaded = false // TODO Костыль, подумать как сделать лучше
-
     lateinit var placesList: MutableList<NearbyPlace>
 
     fun onUpdatePlaces(
         forceRefresh: Boolean = false, // Need for ignoring isDataAlreadyLoaded flag,
-        shouldUseUserLocation: Boolean = true,
     ) {
-            fragment.mainActivity.updateDeviceLocation(
-                onSuccess = {
-                    viewModelScope.launch {
-                        withContext(Dispatchers.IO) {
-                            placesList =
-                                mapProvider.getSuggestPlaces(
-                                    it.latitude,
-                                    it.longitude,
-                                    20,
-                                    0,
-                                    forceRefresh
-                                ).toMutableList()
-                        }
-                        placesListRecyclerViewAdapter.submitList(placesList)
-                       // isDataAlreadyLoaded = true
-                    }
-                },
-                onFail = {
-                    viewModelScope.launch {
-                        withContext(Dispatchers.IO) {
-                            placesList =
-                                mapProvider.getSuggestPlaces(
-                                    fragment.mainActivity.defaultLocation.latitude,
-                                    fragment.mainActivity.defaultLocation.longitude,
-                                    20,
-                                    0,
-                                    forceRefresh
-                                ).toMutableList()
-                        }
-                        placesListRecyclerViewAdapter.submitList(placesList)
-                     //   isDataAlreadyLoaded = true
-                    }
-                }
-            )
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                placesList =
+                    mapProvider.getSuggestPlaces(
+                        fragment.mainActivity.usersChosenLocation.latitude,
+                        fragment.mainActivity.usersChosenLocation.longitude,
+                        20,
+                        0,
+                        forceRefresh
+                    ).toMutableList()
+            }
+            placesListRecyclerViewAdapter.submitList(placesList)
+        }
     }
 
     fun onRemovePlace(position: Int, placeToDelete: NearbyPlace) {
@@ -97,7 +72,6 @@ internal class PlacesListFragmentViewModel : ViewModel() {
             placeToRestore.placeId,
             PlaceReaction.Reaction.UNVISITED
         )
-
     }
 
     private fun removePlace(position: Int) {

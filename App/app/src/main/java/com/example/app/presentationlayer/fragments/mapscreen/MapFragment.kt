@@ -52,7 +52,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     private val viewModel by viewModels<MapFragmentViewModel>()
 
-    private lateinit var mainActivity: MainActivity
+    lateinit var mainActivity: MainActivity
 
     private lateinit var mapFragment: SupportMapFragment
 
@@ -94,7 +94,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
         viewModel.fragment = this
 
-        viewModel.onUpdatePlaces()
+        // Нужен true т.к. корневая локация могла измениться из PlacePickerMapFragment
+        viewModel.onUpdatePlaces(shouldUpdateCachedValue = true)
 
         mapFragment.getMapAsync(this)
 
@@ -120,10 +121,11 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         setRouteButtonOnClickListener()
         setRefreshMapButtonOnClickListener()
         binding.MapFragmentImageViewChooseNewPlace.setOnClickListener {
-            parentFragmentManager.beginTransaction()
+            parentFragmentManager
+                .beginTransaction()
                 .replace(
-                    com.example.app.R.id.PlacesListRootFragment__FragmentContainerView,
-                    PlacePickerMapFragment.newInstance(mainActivity.onLocationPermissionGrantedForPlacesListFragment)
+                    R.id.PlacesListRootFragment__FragmentContainerView,
+                    PlacePickerMapFragment.newInstance()
                 )
                 .addToBackStack("PlacePickerMapFragment")
                 .commit()
@@ -142,6 +144,12 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         setOnMarkerClickListener()
 
         updateGeolocationUI()
+
+        googleMap.moveCamera(
+            CameraUpdateFactory.newLatLngZoom(
+                mainActivity.usersChosenLocation, DEFAULT_ZOOM.toFloat()
+            )
+        )
     }
 
     /**
@@ -182,6 +190,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
      */
     private fun updateDeviceLocationPoint() {
         val onSuccess: (location: Location) -> Unit = {
+            /*
             googleMap.moveCamera(
                 CameraUpdateFactory.newLatLngZoom(
                     LatLng(
@@ -190,12 +199,13 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                     ), DEFAULT_ZOOM.toFloat()
                 )
             )
+             */
         }
 
         val onFail: () -> Unit = {
             googleMap.moveCamera(
                 CameraUpdateFactory.newLatLngZoom(
-                    mainActivity.defaultLocation, DEFAULT_ZOOM.toFloat()
+                    mainActivity.usersChosenLocation, DEFAULT_ZOOM.toFloat()
                 )
             )
         }
@@ -225,7 +235,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 markers.add(it)
                 it.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
             }
-            Log.d("qwerty123", "markers.size = ${markers.size} markers = $markers")
         }
 
         mapFragment.getMapAsync(onMapReadyCallback)
@@ -239,9 +248,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             googleMap.moveCamera(
                 CameraUpdateFactory.newLatLngZoom(locationStart, DEFAULT_ZOOM.toFloat())
             )
-
-            //val pointsList = PolyUtil.decode("ipkcFjgchVd@@@cF]@@oCK?")
-            //Log.d("qwerty123", "$pointsList")
 
             val routePolyline = googleMap.addPolyline(
                 PolylineOptions()
@@ -321,7 +327,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     private fun setRefreshMapButtonOnClickListener() {
         binding.MapFragmentImageViewRefreshMap.setOnClickListener {
-            viewModel.onUpdatePlaces(shouldUseCachedValue = true)
+            viewModel.onUpdatePlaces(shouldUpdateCachedValue = false)
             binding.MapFragmentButtonRoute.visibility=View.VISIBLE
             binding.MapFragmentImageViewRootIcon.visibility=View.VISIBLE
             binding.MapFragmentButtonGoogleRoute.visibility=View.GONE
@@ -354,7 +360,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                         booleanArrayOf(true, false, false)
                     ) { dialog, which, isChecked ->
                         // The user checked or unchecked a box
-                        Log.d("qwerty123", "which = $which, isChecked = $isChecked")
                         when (which) {
                             0 -> shouldUseUserSequence = isChecked
                             1 -> shouldUseUserGeolocationAsStartLocation = isChecked
@@ -372,17 +377,12 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                             return@setPositiveButton
                         }
 
-                        Log.d("qwerty123", "shouldUseUserSequence = $shouldUseUserSequence")
-                        Log.d(
-                            "qwerty123",
-                            "shouldUseUserGeolocationAsStartLocation = $shouldUseUserGeolocationAsStartLocation"
-                        )
                         // Example: https://www.google.com/maps/dir/?api=1&origin=18.519513,73.868315&destination=18.518496,73.879259&waypoints=18.520561,73.872435|18.519254,73.876614|18.52152,73.877327|18.52019,73.879935&travelmode=driving
                         var requestUrl = "https://www.google.com/maps/dir/?api=1"
 
                         val startLocation = markersForRoute.first()
                         val endLocation = markersForRoute.last()
-                        var startLatLng: LatLng // Dont use val
+                        val startLatLng: LatLng // Dont use val
                         requestUrl += if (shouldUseUserGeolocationAsStartLocation) {
                             val lat = mainActivity.lastKnownLocation?.latitude
                                 ?: startLocation.position.latitude
@@ -420,11 +420,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                             }
                         }
                         requestUrl += "&travelmode=walk"
-                        Log.d("qwerty123", "requestUrl = $requestUrl")
-                        Log.d(
-                            "qwerty123",
-                            "startLatLng = $startLatLng endLatLng = $endLatLng waypointsLatLng = $waypointsLatLng"
-                        )
 
                         removeAllPolylines()
                         viewModel.onDrawRoute(startLatLng, endLatLng, waypointsLatLng)
@@ -449,10 +444,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                     val lng = marker.position.longitude
                     waypointsLatLng += LatLng(lat, lng)
                 }
-                Log.d(
-                    "qwerty123",
-                    "startLatLng = $startLatLng endLatLng = $endLatLng waypointsLatLng = $waypointsLatLng"
-                )
 
                 removeAllPolylines()
                 viewModel.onDrawRoute(startLatLng, endLatLng, waypointsLatLng)
@@ -530,26 +521,20 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         val onMapReadyCallback = OnMapReadyCallback { googleMap ->
             googleMap.setOnMarkerClickListener {
 
-                Log.d("qwerty123", "setOnMarkerClickListener enter")
                 if (it == previouslyClickedMarker) {
                     if (!markersForRoute.contains(it)) {
-                        Log.d("qwerty123", "setOnMarkerClickListener !markersForRoute.contains(it)")
                         it.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
                         //it.setIcon(BitmapDescriptorFactory.fromPinConfig(pinConfig))
                         markersForRoute += it
                     } else {
-                        Log.d("qwerty123", "setOnMarkerClickListener markersForRoute.contains(it)")
                         markersForRoute -= it
                         it.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
                     }
                     previouslyClickedMarker = null
-                    Log.d("qwerty123", "markersForRoute $markersForRoute")
                     true
 
                 } else {
                     previouslyClickedMarker = it
-                    Log.d("qwerty123", "setOnMarkerClickListener (clicksCount == 1)")
-                    Log.d("qwerty123", "markersForRoute $markersForRoute")
                     false
                 }
             }
@@ -570,7 +555,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
         private const val LOG_TAG = "MapFragment"
 
-        private const val DEFAULT_ZOOM = 14
+        private const val DEFAULT_ZOOM = 12
 
         @JvmStatic
         fun newInstance(

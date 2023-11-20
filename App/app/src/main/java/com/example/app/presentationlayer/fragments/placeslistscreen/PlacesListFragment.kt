@@ -1,7 +1,6 @@
 package com.example.app.presentationlayer.fragments.placeslistscreen
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -76,7 +75,6 @@ class PlacesListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         mainActivity = requireActivity() as MainActivity
-        mainActivity.onLocationPermissionGrantedForPlacesListFragment = viewModel::onUpdatePlaces
 
         viewModel.fragment = this
 
@@ -89,8 +87,7 @@ class PlacesListFragment : Fragment() {
         super.onResume()
         // TODO здесь пока нужен true чтобы учтелся свайп с экрана рекомендации
         // TODO но это не помогает снять иконку лайка
-        viewModel.onUpdatePlaces(false)
-        Log.d("qwerty123", "PlacesListFragment onResume")
+        viewModel.onUpdatePlaces(forceRefresh = false)
         // TODO placesListRecyclerViewAdapter.notifyDataSetChanged() но если добавить это, то лайк ремувнется
         // TODO и тогда в viewModel.onUpdatePlaces() true можно не передавать
         placesListRecyclerViewAdapter.notifyDataSetChanged()
