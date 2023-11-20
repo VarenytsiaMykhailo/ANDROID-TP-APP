@@ -135,7 +135,7 @@
             </androidx.cardview.widget.CardView>
 
             <TextView
-                android:id="@+id/PlacesListFragment__TextView_Tag1"
+                android:id="@+id/PlaceDescriptionFragment__TextView_Tag1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Парк"
@@ -167,7 +167,7 @@
             </androidx.cardview.widget.CardView>
 
             <TextView
-                android:id="@+id/PlacesListFragment__TextView_Tag2"
+                android:id="@+id/PlaceDescriptionFragment__TextView_Tag2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Парк"
@@ -199,7 +199,7 @@
             </androidx.cardview.widget.CardView>
 
             <TextView
-                android:id="@+id/PlacesListFragment__TextView_Tag3"
+                android:id="@+id/PlaceDescriptionFragment__TextView_Tag3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Парк"
