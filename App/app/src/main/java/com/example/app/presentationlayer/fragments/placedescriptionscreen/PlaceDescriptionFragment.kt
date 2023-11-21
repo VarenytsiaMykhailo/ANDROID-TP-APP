@@ -1,14 +1,16 @@
 package com.example.app.presentationlayer.fragments.placedescriptionscreen
 
+import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.app.R
@@ -20,9 +22,11 @@ import com.example.app.presentationlayer.adapters.PlaceDescriptionImagesSliderRe
 import com.example.app.presentationlayer.viewmodels.FavoritePlacesViewModel
 import com.example.app.presentationlayer.viewmodels.PlaceDescriptionFragmentViewModel
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+
 
 /**
  * Use the [PlaceDescriptionFragment.newInstance] factory method to
@@ -55,6 +59,7 @@ class PlaceDescriptionFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -62,6 +67,7 @@ class PlaceDescriptionFragment : Fragment() {
 
         binding.PlaceDescriptionFragmentViewPager2PlaceImage.adapter =
             placeDescriptionImagesSliderRecyclerViewAdapter
+
 
 
         placeID = arguments?.getString(PLACE_ID_KEY)!!
@@ -83,6 +89,10 @@ class PlaceDescriptionFragment : Fragment() {
         }
 
         showTags()
+
+        TabLayoutMediator(binding.PlaceDescriptionFragmentTabLayout,binding.PlaceDescriptionFragmentViewPager2PlaceImage){tab, position->
+
+        }.attach()
 
         binding.PlaceDescriptionFragmentImageViewBackButton.setOnClickListener {
             parentFragmentManager.popBackStack()
@@ -110,7 +120,15 @@ class PlaceDescriptionFragment : Fragment() {
                 viewModel.postReaction(place.placeId, PlaceReaction.Reaction.VISITED)
             }
         }
+        val mapFragmentContainer=binding.PlaceDescriptionFragmentFragmentContainerViewSmallMap
 
+
+
+
+
+    }
+    fun disableScroll(){
+        binding.PlaceDescriptionFragmentScrollView.requestDisallowInterceptTouchEvent(true)
     }
 
     private fun onSetTitle(title: String) {
@@ -144,9 +162,12 @@ class PlaceDescriptionFragment : Fragment() {
     private fun onSetTags(tagsList: List<String>) {
         if (tagsList.isNotEmpty()) {
             setTag1(tagsList[0])
+            Log.d("sss", "${tagsList[0]}")
             if (tagsList.size >= 2) {
+                Log.d("sss", "${tagsList[1]}")
                 setTag2(tagsList[1])
                 if (tagsList.size >= 3) {
+                    Log.d("sss", "${tagsList[2]}")
                     setTag3(tagsList[2])
                 }
             }
@@ -206,16 +227,17 @@ class PlaceDescriptionFragment : Fragment() {
 
     private fun onSetVisited() {
         binding.DescriptionFragmentImageViewVisit.setImageResource(R.drawable.visited_icon)
+        binding.PlaceDescriptionFragmentTextViewUnvisited.visibility=View.GONE
     }
 
     private fun onUnSetVisited() {
         binding.DescriptionFragmentImageViewVisit.setImageResource(R.drawable.unvisited_icon)
+        binding.PlaceDescriptionFragmentTextViewUnvisited.visibility=View.VISIBLE
     }
 
     private fun onSetStartReactions(list: List<String>) {
         if (list.isNotEmpty())
             list.forEach { it ->
-                Log.d("sss", it)
                 String
                 if (it == "like") {
                     onSetLike()
@@ -230,25 +252,30 @@ class PlaceDescriptionFragment : Fragment() {
 
     }
 
+    private fun Int.toPx()=(this*resources.displayMetrics.density).toInt()
+
     private fun setTag1(text: String) {
         val textView = binding.PlaceDescriptionFragmentTextViewTag1
         val imageView = binding.PlaceDescriptionFragmentImageViewTag1
         textView.text = text
-        imageView.layoutParams.width = text.length + 8
+        imageView.layoutParams.width = (text.length*12 + 8).toPx()
+        imageView.requestLayout()
     }
 
     private fun setTag2(text: String) {
         val textView = binding.PlaceDescriptionFragmentTextViewTag2
         val imageView = binding.PlaceDescriptionFragmentImageViewTag2
         textView.text = text
-        imageView.layoutParams.width = text.length + 8
+        imageView.layoutParams.width = (text.length*12 + 8).toPx()
+        imageView.requestLayout()
     }
 
     private fun setTag3(text: String) {
         val textView = binding.PlaceDescriptionFragmentTextViewTag3
         val imageView = binding.PlaceDescriptionFragmentImageViewTag3
         textView.text = text
-        imageView.layoutParams.width = text.length + 8
+        imageView.layoutParams.width = (text.length*12 + 8).toPx()
+        imageView.requestLayout()
     }
 
     private fun showTags() {

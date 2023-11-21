@@ -20,6 +20,7 @@
         app:srcCompat="@drawable/back_button" />
 
     <ScrollView
+        android:id="@+id/PlaceDescriptionFragment__ScrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="@+id/PlaceDescriptionFragment__ConstraintLayout_Root"
@@ -36,7 +37,22 @@
                 android:layout_height="320dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/PlaceDescriptionFragment__TabLayout"
+                app:tabBackground="@drawable/tab_selector"
+                android:background="@drawable/tab_background"
+                app:tabGravity="center"
+                app:tabIndicatorHeight="0dp"
+                android:layout_width="wrap_content"
+                android:layout_height="12dp"
+                android:layout_marginBottom="8dp"
+                android:layout_gravity="bottom"
+                app:layout_constraintBottom_toBottomOf="@+id/PlaceDescriptionFragment__ViewPager2_PlaceImage"
+                app:layout_constraintEnd_toEndOf="@+id/PlaceDescriptionFragment__ViewPager2_PlaceImage"
+                app:layout_constraintStart_toStartOf="@+id/PlaceDescriptionFragment__ViewPager2_PlaceImage" />
+
 
 
             <TextView
@@ -57,21 +73,31 @@
                 android:layout_width="24dp"
                 android:layout_height="21.2dp"
                 android:clickable="true"
-                app:layout_constraintBottom_toBottomOf="@+id/DescriptionFragment__ImageView_Visit"
+                app:layout_constraintBottom_toBottomOf="@+id/PlaceDescriptionFragment__TextView_RatingCount"
                 app:layout_constraintEnd_toEndOf="@+id/PlaceDescriptionFragment__TextView_Title"
-                app:layout_constraintTop_toTopOf="@+id/DescriptionFragment__ImageView_Visit"
+                app:layout_constraintTop_toTopOf="@+id/PlaceDescriptionFragment__TextView_RatingCount"
                 app:srcCompat="@drawable/like_unliked" />
 
             <ImageView
                 android:id="@+id/DescriptionFragment__ImageView_Visit"
                 android:layout_width="24dp"
                 android:layout_height="21.2dp"
-                android:layout_marginEnd="8dp"
                 android:clickable="true"
-                app:layout_constraintBottom_toBottomOf="@+id/PlaceDescriptionFragment__TextView_RatingCount"
-                app:layout_constraintEnd_toStartOf="@+id/DescriptionFragment__ImageView_Like"
-                app:layout_constraintTop_toTopOf="@+id/PlaceDescriptionFragment__TextView_RatingCount"
+                app:layout_constraintBottom_toBottomOf="@+id/PlaceDescriptionFragment__CardView_Tag1Root"
+                app:layout_constraintEnd_toEndOf="@+id/DescriptionFragment__ImageView_Like"
+                app:layout_constraintTop_toTopOf="@+id/PlaceDescriptionFragment__CardView_Tag1Root"
                 app:srcCompat="@drawable/unvisited_icon" />
+
+            <TextView
+                android:id="@+id/PlaceDescriptionFragment__TextView_Unvisited"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Не посещено  "
+                android:textColor="@color/dark_grey"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@+id/DescriptionFragment__ImageView_Visit"
+                app:layout_constraintEnd_toStartOf="@+id/DescriptionFragment__ImageView_Visit"
+                app:layout_constraintTop_toTopOf="@+id/DescriptionFragment__ImageView_Visit" />
 
             <RatingBar
                 android:id="@+id/PlaceDescriptionFragment__RatingBar"
@@ -128,7 +154,7 @@
 
                 <ImageView
                     android:id="@+id/PlaceDescriptionFragment__ImageView_Tag1"
-                    android:layout_width="68dp"
+                    android:layout_width="0dp"
                     android:layout_height="24dp"
                     android:src="@color/light_green" />
 
@@ -138,7 +164,6 @@
                 android:id="@+id/PlaceDescriptionFragment__TextView_Tag1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Парк"
                 android:textColor="@color/main_green"
                 android:textSize="16sp"
                 android:visibility="gone"
@@ -161,7 +186,7 @@
 
                 <ImageView
                     android:id="@+id/PlaceDescriptionFragment__ImageView_Tag2"
-                    android:layout_width="68dp"
+                    android:layout_width="0dp"
                     android:layout_height="24dp"
                     android:src="@color/light_green" />
             </androidx.cardview.widget.CardView>
@@ -170,7 +195,6 @@
                 android:id="@+id/PlaceDescriptionFragment__TextView_Tag2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Парк"
                 android:textColor="@color/main_green"
                 android:textSize="16sp"
                 android:visibility="gone"
@@ -193,7 +217,7 @@
 
                 <ImageView
                     android:id="@+id/PlaceDescriptionFragment__ImageView_Tag3"
-                    android:layout_width="68dp"
+                    android:layout_width="0dp"
                     android:layout_height="24dp"
                     android:src="@color/light_green" />
             </androidx.cardview.widget.CardView>
@@ -202,7 +226,6 @@
                 android:id="@+id/PlaceDescriptionFragment__TextView_Tag3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Парк"
                 android:textColor="@color/main_green"
                 android:textSize="16sp"
                 android:visibility="gone"
@@ -240,11 +263,13 @@
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/PlaceDescriptionFragment__FragmentContainerView_SmallMap"
                 android:layout_width="368dp"
+                android:clickable="true"
                 android:layout_height="180dp"
                 android:layout_marginTop="8dp"
                 app:layout_constraintStart_toStartOf="@+id/PlaceDescriptionFragment__TextView_Title"
                 app:layout_constraintTop_toBottomOf="@+id/first_bar"
                 tools:context=".presentationlayer.fragments.placedescriptionscreen.SmallMapFragment" />
+
 
             <TextView
                 android:id="@+id/textView"

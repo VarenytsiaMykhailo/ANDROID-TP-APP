@@ -1,6 +1,7 @@
 package com.example.app.presentationlayer.fragments.placedescriptionscreen
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -43,15 +44,19 @@ class SmallMapFragment : Fragment(), OnMapReadyCallback {
         return binding.root
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         mainActivity = requireActivity() as MainActivity
 
+
         mapFragment =
             childFragmentManager.findFragmentById(R.id.SmallMapFragment__FragmentContainerView) as SupportMapFragment
 
         mapFragment.getMapAsync(this)
+
+
     }
 
     /**
@@ -63,8 +68,10 @@ class SmallMapFragment : Fragment(), OnMapReadyCallback {
 
         val lat = requireArguments().getString(LAT)!!
         val lng = requireArguments().getString(LNG)!!
-
         val location = LatLng(lat.toDouble(), lng.toDouble())
+
+        googleMap.setOnCameraMoveListener { (parentFragment as PlaceDescriptionFragment).disableScroll() }
+
         addAdvancedMarker(location.latitude, location.longitude)
         googleMap.moveCamera(
             CameraUpdateFactory.newLatLngZoom(
@@ -111,6 +118,7 @@ class SmallMapFragment : Fragment(), OnMapReadyCallback {
         private const val LAT = "lat"
 
         private const val LNG = "lng"
+        private const val ID = "id"
 
         @JvmStatic
         fun newInstance(

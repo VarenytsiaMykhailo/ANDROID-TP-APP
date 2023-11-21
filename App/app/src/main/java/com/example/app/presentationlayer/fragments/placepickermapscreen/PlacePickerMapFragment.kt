@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
 import com.example.app.R
@@ -72,7 +73,7 @@ class PlacePickerMapFragment :
 
         // Specify the types of place data to return.
         autocompleteFragment.setPlaceFields(listOf(Place.Field.LAT_LNG, Place.Field.NAME))
-
+        //autocompleteFragment.view?.findViewById<EditText>(R.id.autocomplete_fragment)?.setTextColor(resources.getColor(R.color.white,null))
         //autocompleteFragment.setCountries("RU")
 
         // Set up a PlaceSelectionListener to handle the response.
