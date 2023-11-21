@@ -182,7 +182,7 @@
         android:contentDescription="refresh map"
         android:visibility="gone"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/MapFragment__ImageView_PlaceInfo"
+        app:layout_constraintTop_toBottomOf="@+id/MapFragment__Button_RadiusDec"
         app:srcCompat="@drawable/refresh_vector_icon" />
 
     <com.google.android.material.button.MaterialButton
