@@ -57,22 +57,31 @@
                 android:layout_width="24dp"
                 android:layout_height="21.2dp"
                 android:clickable="true"
-                app:layout_constraintBottom_toBottomOf="@+id/DescriptionFragment__ImageView_Visit"
+                app:layout_constraintBottom_toBottomOf="@+id/PlaceDescriptionFragment__TextView_RatingCount"
                 app:layout_constraintEnd_toEndOf="@+id/PlaceDescriptionFragment__TextView_Title"
-                app:layout_constraintTop_toTopOf="@+id/DescriptionFragment__ImageView_Visit"
+                app:layout_constraintTop_toTopOf="@+id/PlaceDescriptionFragment__TextView_RatingCount"
                 app:srcCompat="@drawable/like_unliked" />
 
             <ImageView
                 android:id="@+id/DescriptionFragment__ImageView_Visit"
                 android:layout_width="24dp"
                 android:layout_height="21.2dp"
-                android:layout_marginEnd="8dp"
                 android:clickable="true"
-                app:layout_constraintBottom_toBottomOf="@+id/PlaceDescriptionFragment__TextView_RatingCount"
-                app:layout_constraintEnd_toStartOf="@+id/DescriptionFragment__ImageView_Like"
-                app:layout_constraintTop_toTopOf="@+id/PlaceDescriptionFragment__TextView_RatingCount"
+                app:layout_constraintBottom_toBottomOf="@+id/PlaceDescriptionFragment__CardView_Tag1Root"
+                app:layout_constraintEnd_toEndOf="@+id/DescriptionFragment__ImageView_Like"
+                app:layout_constraintTop_toTopOf="@+id/PlaceDescriptionFragment__CardView_Tag1Root"
                 app:srcCompat="@drawable/unvisited_icon" />
 
+            <TextView
+                android:id="@+id/PlaceDescriptionFragment__TextView_Unvisited"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Непосещено  "
+                android:textColor="@color/dark_grey"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@+id/DescriptionFragment__ImageView_Visit"
+                app:layout_constraintEnd_toStartOf="@+id/DescriptionFragment__ImageView_Visit"
+                app:layout_constraintTop_toTopOf="@+id/DescriptionFragment__ImageView_Visit" />
             <RatingBar
                 android:id="@+id/PlaceDescriptionFragment__RatingBar"
                 android:layout_width="wrap_content"
@@ -128,7 +137,7 @@
 
                 <ImageView
                     android:id="@+id/PlaceDescriptionFragment__ImageView_Tag1"
-                    android:layout_width="68dp"
+                    android:layout_width="0dp"
                     android:layout_height="24dp"
                     android:src="@color/light_green" />
 
@@ -138,7 +147,6 @@
                 android:id="@+id/PlaceDescriptionFragment__TextView_Tag1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Парк"
                 android:textColor="@color/main_green"
                 android:textSize="16sp"
                 android:visibility="gone"
@@ -161,7 +169,7 @@
 
                 <ImageView
                     android:id="@+id/PlaceDescriptionFragment__ImageView_Tag2"
-                    android:layout_width="68dp"
+                    android:layout_width="0dp"
                     android:layout_height="24dp"
                     android:src="@color/light_green" />
             </androidx.cardview.widget.CardView>
@@ -170,7 +178,6 @@
                 android:id="@+id/PlaceDescriptionFragment__TextView_Tag2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Парк"
                 android:textColor="@color/main_green"
                 android:textSize="16sp"
                 android:visibility="gone"
@@ -193,7 +200,7 @@
 
                 <ImageView
                     android:id="@+id/PlaceDescriptionFragment__ImageView_Tag3"
-                    android:layout_width="68dp"
+                    android:layout_width="0dp"
                     android:layout_height="24dp"
                     android:src="@color/light_green" />
             </androidx.cardview.widget.CardView>
@@ -202,7 +209,6 @@
                 android:id="@+id/PlaceDescriptionFragment__TextView_Tag3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Парк"
                 android:textColor="@color/main_green"
                 android:textSize="16sp"
                 android:visibility="gone"

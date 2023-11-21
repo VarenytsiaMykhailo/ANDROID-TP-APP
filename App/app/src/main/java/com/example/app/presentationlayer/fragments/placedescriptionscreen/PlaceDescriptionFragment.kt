@@ -3,6 +3,7 @@ package com.example.app.presentationlayer.fragments.placedescriptionscreen
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
+import android.opengl.Visibility
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -144,9 +145,12 @@ class PlaceDescriptionFragment : Fragment() {
     private fun onSetTags(tagsList: List<String>) {
         if (tagsList.isNotEmpty()) {
             setTag1(tagsList[0])
+            Log.d("sss", "${tagsList[0]}")
             if (tagsList.size >= 2) {
+                Log.d("sss", "${tagsList[1]}")
                 setTag2(tagsList[1])
                 if (tagsList.size >= 3) {
+                    Log.d("sss", "${tagsList[2]}")
                     setTag3(tagsList[2])
                 }
             }
@@ -206,16 +210,17 @@ class PlaceDescriptionFragment : Fragment() {
 
     private fun onSetVisited() {
         binding.DescriptionFragmentImageViewVisit.setImageResource(R.drawable.visited_icon)
+        binding.PlaceDescriptionFragmentTextViewUnvisited.visibility=View.GONE
     }
 
     private fun onUnSetVisited() {
         binding.DescriptionFragmentImageViewVisit.setImageResource(R.drawable.unvisited_icon)
+        binding.PlaceDescriptionFragmentTextViewUnvisited.visibility=View.VISIBLE
     }
 
     private fun onSetStartReactions(list: List<String>) {
         if (list.isNotEmpty())
             list.forEach { it ->
-                Log.d("sss", it)
                 String
                 if (it == "like") {
                     onSetLike()
@@ -230,25 +235,30 @@ class PlaceDescriptionFragment : Fragment() {
 
     }
 
+    private fun Int.toPx()=(this*resources.displayMetrics.density).toInt()
+
     private fun setTag1(text: String) {
         val textView = binding.PlaceDescriptionFragmentTextViewTag1
         val imageView = binding.PlaceDescriptionFragmentImageViewTag1
         textView.text = text
-        imageView.layoutParams.width = text.length + 8
+        imageView.layoutParams.width = (text.length*12 + 8).toPx()
+        imageView.requestLayout()
     }
 
     private fun setTag2(text: String) {
         val textView = binding.PlaceDescriptionFragmentTextViewTag2
         val imageView = binding.PlaceDescriptionFragmentImageViewTag2
         textView.text = text
-        imageView.layoutParams.width = text.length + 8
+        imageView.layoutParams.width = (text.length*12 + 8).toPx()
+        imageView.requestLayout()
     }
 
     private fun setTag3(text: String) {
         val textView = binding.PlaceDescriptionFragmentTextViewTag3
         val imageView = binding.PlaceDescriptionFragmentImageViewTag3
         textView.text = text
-        imageView.layoutParams.width = text.length + 8
+        imageView.layoutParams.width = (text.length*12 + 8).toPx()
+        imageView.requestLayout()
     }
 
     private fun showTags() {

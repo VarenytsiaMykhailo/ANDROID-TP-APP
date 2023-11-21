@@ -22,7 +22,8 @@
         android:layout_marginBottom="4dp"
         android:backgroundTint="@color/white"
         android:gravity="end|center_vertical"
-        android:paddingEnd="12dp"
+        android:paddingStart="0dp"
+        android:paddingEnd="8dp"
         android:text="Список"
         android:textColor="@color/black"
         android:textSize="14sp"
@@ -35,7 +36,7 @@
         android:id="@+id/MapFragment__imageView_ListIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
+        android:layout_marginStart="14dp"
         android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="@+id/MapFragment__ImageView_PlacesListButton"
         app:layout_constraintStart_toStartOf="@+id/MapFragment__ImageView_PlacesListButton"
@@ -92,7 +93,8 @@
         android:layout_marginStart="8dp"
         android:backgroundTint="@color/white"
         android:gravity="start|center_vertical"
-        android:paddingStart="16dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="0dp"
         android:text="Маршрут"
         android:textColor="@color/black"
         android:textSize="14sp"
@@ -106,7 +108,7 @@
         android:id="@+id/MapFragment__imageView_RootIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="10dp"
+        android:layout_marginEnd="12dp"
         android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="@+id/MapFragment__Button_Route"
         app:layout_constraintEnd_toEndOf="@+id/MapFragment__Button_Route"
@@ -115,13 +117,14 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/MapFragment__Button_GoogleRoute"
-        android:layout_width="44dp"
+        android:layout_width="112dp"
         android:layout_height="60dp"
         android:layout_marginStart="8dp"
         android:backgroundTint="@color/white"
         android:gravity="start|center_vertical"
-        android:paddingStart="16dp"
-        android:text=""
+        android:paddingStart="8dp"
+        android:paddingEnd="0dp"
+        android:text="Навигатор"
         android:textColor="@color/black"
         android:textSize="14sp"
         android:textStyle="normal"
@@ -133,13 +136,13 @@
 
     <ImageView
         android:id="@+id/MapFragment__imageView_GoogleIcon"
-        android:layout_width="24dp"
-        android:layout_height="34.4dp"
+        android:layout_width="20dp"
+        android:layout_height="28.6dp"
+        android:layout_marginEnd="4dp"
         android:scaleType="fitCenter"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/MapFragment__Button_GoogleRoute"
         app:layout_constraintEnd_toEndOf="@+id/MapFragment__Button_GoogleRoute"
-        app:layout_constraintStart_toStartOf="@+id/MapFragment__Button_GoogleRoute"
         app:layout_constraintTop_toTopOf="@+id/MapFragment__Button_GoogleRoute"
         app:srcCompat="@drawable/google_maps_logo" />
 
@@ -157,8 +160,8 @@
 
     <ImageView
         android:id="@+id/MapFragment__ImageView_RefreshMap"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
         android:layout_margin="16dp"
         android:contentDescription="refresh map"
         android:visibility="gone"
@@ -171,8 +174,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Новое место"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="@+id/MapFragment__FragmentContainerView"
+        app:layout_constraintTop_toTopOf="@+id/MapFragment__FragmentContainerView" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

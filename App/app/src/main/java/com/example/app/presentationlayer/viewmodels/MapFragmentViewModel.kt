@@ -18,9 +18,9 @@ internal class MapFragmentViewModel : ViewModel() {
     lateinit var fragment: MapFragment
 
     fun onUpdatePlaces(
-        shouldUpdateCachedValue: Boolean = true,
+        shouldUpdateCachedValue: Boolean
     ) {
-        Log.d("qwerty123", "onUpdatePlaces shouldUpdateCachedValue = $shouldUpdateCachedValue")
+
         fragment.refreshMap()
 
         if (shouldUpdateCachedValue) {

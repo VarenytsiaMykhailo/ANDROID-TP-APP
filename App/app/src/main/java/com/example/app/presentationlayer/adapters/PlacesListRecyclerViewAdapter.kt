@@ -99,6 +99,9 @@ internal class PlacesListRecyclerViewAdapter(
             placeName.setOnClickListener {
                 onLaunchPlaceDescriptionFragment(place.placeId)
             }
+            mainImage.setOnClickListener {
+                onLaunchPlaceDescriptionFragment(place.placeId)
+            }
         }
     }
 }
