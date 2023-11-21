@@ -45,6 +45,7 @@
         android:backgroundTint="@color/white"
         android:gravity="end|center_vertical"
         android:paddingEnd="12dp"
+        android:paddingStart="0dp"
         android:text="Карта"
         android:textColor="@color/black"
         android:textSize="18sp"
