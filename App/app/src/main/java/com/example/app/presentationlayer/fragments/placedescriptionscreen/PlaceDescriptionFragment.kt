@@ -1,15 +1,16 @@
 package com.example.app.presentationlayer.fragments.placedescriptionscreen
 
+import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
-import android.opengl.Visibility
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.app.R
@@ -25,6 +26,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+
 
 /**
  * Use the [PlaceDescriptionFragment.newInstance] factory method to
@@ -57,6 +59,7 @@ class PlaceDescriptionFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -117,7 +120,15 @@ class PlaceDescriptionFragment : Fragment() {
                 viewModel.postReaction(place.placeId, PlaceReaction.Reaction.VISITED)
             }
         }
+        val mapFragmentContainer=binding.PlaceDescriptionFragmentFragmentContainerViewSmallMap
 
+
+
+
+
+    }
+    fun disableScroll(){
+        binding.PlaceDescriptionFragmentScrollView.requestDisallowInterceptTouchEvent(true)
     }
 
     private fun onSetTitle(title: String) {

@@ -20,6 +20,7 @@
         app:srcCompat="@drawable/back_button" />
 
     <ScrollView
+        android:id="@+id/PlaceDescriptionFragment__ScrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="@+id/PlaceDescriptionFragment__ConstraintLayout_Root"
@@ -46,7 +47,7 @@
                 app:tabIndicatorHeight="0dp"
                 android:layout_width="wrap_content"
                 android:layout_height="12dp"
-                android:layout_marginBottom="6dp"
+                android:layout_marginBottom="8dp"
                 android:layout_gravity="bottom"
                 app:layout_constraintBottom_toBottomOf="@+id/PlaceDescriptionFragment__ViewPager2_PlaceImage"
                 app:layout_constraintEnd_toEndOf="@+id/PlaceDescriptionFragment__ViewPager2_PlaceImage"
@@ -91,7 +92,7 @@
                 android:id="@+id/PlaceDescriptionFragment__TextView_Unvisited"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Непосещено  "
+                android:text="Не посещено  "
                 android:textColor="@color/dark_grey"
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="@+id/DescriptionFragment__ImageView_Visit"
@@ -262,11 +263,13 @@
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/PlaceDescriptionFragment__FragmentContainerView_SmallMap"
                 android:layout_width="368dp"
+                android:clickable="true"
                 android:layout_height="180dp"
                 android:layout_marginTop="8dp"
                 app:layout_constraintStart_toStartOf="@+id/PlaceDescriptionFragment__TextView_Title"
                 app:layout_constraintTop_toBottomOf="@+id/first_bar"
                 tools:context=".presentationlayer.fragments.placedescriptionscreen.SmallMapFragment" />
+
 
             <TextView
                 android:id="@+id/textView"
