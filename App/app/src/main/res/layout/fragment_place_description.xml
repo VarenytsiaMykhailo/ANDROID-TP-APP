@@ -36,7 +36,22 @@
                 android:layout_height="320dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/PlaceDescriptionFragment__TabLayout"
+                app:tabBackground="@drawable/tab_selector"
+                android:background="@drawable/tab_background"
+                app:tabGravity="center"
+                app:tabIndicatorHeight="0dp"
+                android:layout_width="wrap_content"
+                android:layout_height="12dp"
+                android:layout_marginBottom="6dp"
+                android:layout_gravity="bottom"
+                app:layout_constraintBottom_toBottomOf="@+id/PlaceDescriptionFragment__ViewPager2_PlaceImage"
+                app:layout_constraintEnd_toEndOf="@+id/PlaceDescriptionFragment__ViewPager2_PlaceImage"
+                app:layout_constraintStart_toStartOf="@+id/PlaceDescriptionFragment__ViewPager2_PlaceImage" />
+
 
 
             <TextView
@@ -82,6 +97,7 @@
                 app:layout_constraintBottom_toBottomOf="@+id/DescriptionFragment__ImageView_Visit"
                 app:layout_constraintEnd_toStartOf="@+id/DescriptionFragment__ImageView_Visit"
                 app:layout_constraintTop_toTopOf="@+id/DescriptionFragment__ImageView_Visit" />
+
             <RatingBar
                 android:id="@+id/PlaceDescriptionFragment__RatingBar"
                 android:layout_width="wrap_content"

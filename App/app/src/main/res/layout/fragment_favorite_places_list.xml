@@ -17,7 +17,7 @@
         android:id="@+id/FavouritePlacesFragment__TextView_TopText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="12dp"
+        android:padding="8dp"
         android:paddingStart="16dp"
         android:paddingEnd="0dp"
         android:text="Избранные места:"

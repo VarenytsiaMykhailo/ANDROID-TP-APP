@@ -21,6 +21,7 @@ import com.example.app.presentationlayer.adapters.PlaceDescriptionImagesSliderRe
 import com.example.app.presentationlayer.viewmodels.FavoritePlacesViewModel
 import com.example.app.presentationlayer.viewmodels.PlaceDescriptionFragmentViewModel
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -65,6 +66,7 @@ class PlaceDescriptionFragment : Fragment() {
             placeDescriptionImagesSliderRecyclerViewAdapter
 
 
+
         placeID = arguments?.getString(PLACE_ID_KEY)!!
 
         lifecycleScope.launch {
@@ -84,6 +86,10 @@ class PlaceDescriptionFragment : Fragment() {
         }
 
         showTags()
+
+        TabLayoutMediator(binding.PlaceDescriptionFragmentTabLayout,binding.PlaceDescriptionFragmentViewPager2PlaceImage){tab, position->
+
+        }.attach()
 
         binding.PlaceDescriptionFragmentImageViewBackButton.setOnClickListener {
             parentFragmentManager.popBackStack()
