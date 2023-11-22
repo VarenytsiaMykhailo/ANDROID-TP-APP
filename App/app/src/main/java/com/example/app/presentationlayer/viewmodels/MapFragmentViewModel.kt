@@ -1,6 +1,5 @@
 package com.example.app.presentationlayer.viewmodels
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.app.domain.providers.MapProvider
@@ -26,8 +25,8 @@ internal class MapFragmentViewModel : ViewModel() {
         if (shouldUpdateCachedValue) {
             viewModelScope.launch {
                 val placesList = mapProvider.getSuggestPlaces(
-                    fragment.mainActivity.usersChosenLocation.latitude,
-                    fragment.mainActivity.usersChosenLocation.longitude,
+                    fragment.mainActivity.usersLastChosenLocation.latitude,
+                    fragment.mainActivity.usersLastChosenLocation.longitude,
                     20,
                     0,
                     forceRefresh = true,
