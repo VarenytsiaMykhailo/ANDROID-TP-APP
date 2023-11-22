@@ -127,9 +127,10 @@ internal class MapFragmentViewModel : ViewModel() {
         }?.placeId
 
     // TODO придумать способ как улучшить
-    fun increaseRadius() {
-        MapProvider.increaseRadius()
+    fun increaseRadius(): Boolean {
+        val res = MapProvider.increaseRadius()
         onUpdatePlaces(shouldUpdateCachedValue = true)
+        return res
     }
 
     fun decreaseRadius(): Boolean {

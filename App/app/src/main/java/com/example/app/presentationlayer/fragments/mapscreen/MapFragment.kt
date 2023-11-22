@@ -107,7 +107,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         binding.MapFragmentTextViewRadius.text = viewModel.giveRadiusString() + " км"
 
         binding.MapFragmentButtonRadiusInc.setOnClickListener {
-            if (viewModel.decreaseRadius())
+            if (viewModel.increaseRadius())
                 Snackbar.make(
                     binding.MapFragmentButtonRadiusDec,
                     "Установлен максимальный радиус",

@@ -236,7 +236,7 @@
 
             <io.github.glailton.expandabletextview.ExpandableTextView
                 android:id="@+id/PlaceDescriptionFragment__TextView_Description"
-                android:layout_width="368dp"
+                android:layout_width="360dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:textColor="@color/black"
@@ -253,7 +253,7 @@
 
             <View
                 android:id="@+id/first_bar"
-                android:layout_width="368dp"
+                android:layout_width="360dp"
                 android:layout_height="2dp"
                 android:layout_marginTop="12dp"
                 android:background="@color/gray"
@@ -262,12 +262,13 @@
 
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/PlaceDescriptionFragment__FragmentContainerView_SmallMap"
-                android:layout_width="368dp"
+                android:layout_width="360dp"
                 android:clickable="true"
                 android:layout_height="180dp"
                 android:layout_marginTop="8dp"
                 app:layout_constraintStart_toStartOf="@+id/PlaceDescriptionFragment__TextView_Title"
                 app:layout_constraintTop_toBottomOf="@+id/first_bar"
+
                 tools:context=".presentationlayer.fragments.placedescriptionscreen.SmallMapFragment" />
 
 
@@ -295,7 +296,7 @@
 
             <View
                 android:id="@+id/second_bar"
-                android:layout_width="368dp"
+                android:layout_width="360dp"
                 android:layout_height="2dp"
                 android:layout_marginTop="12dp"
                 android:background="@color/gray"
