@@ -205,14 +205,14 @@
 
     <ImageView
         android:id="@+id/MapFragment__imageView_Change"
-        android:layout_width="16dp"
-        android:layout_height="20dp"
-        android:layout_marginEnd="8dp"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_marginEnd="4dp"
         android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="@+id/MapFragment__ImageView_ChooseNewPlace"
         app:layout_constraintEnd_toEndOf="@+id/MapFragment__ImageView_ChooseNewPlace"
         app:layout_constraintTop_toTopOf="@+id/MapFragment__ImageView_ChooseNewPlace"
-        app:srcCompat="@drawable/current_location_icon" />
+        app:srcCompat="@drawable/map_pin" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

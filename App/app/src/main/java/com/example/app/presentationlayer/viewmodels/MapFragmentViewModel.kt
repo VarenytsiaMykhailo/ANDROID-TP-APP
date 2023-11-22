@@ -19,7 +19,6 @@ internal class MapFragmentViewModel : ViewModel() {
     fun onUpdatePlaces(
         shouldUpdateCachedValue: Boolean
     ) {
-
         fragment.refreshMap()
 
         if (shouldUpdateCachedValue) {
@@ -40,6 +39,7 @@ internal class MapFragmentViewModel : ViewModel() {
                 fragment.addAdvancedMarker(it.location.lat, it.location.lng, it.name)
             }
         }
+       fragment.addCenterRouteMarker()
     }
 
     fun onGoogleMapRoute(start: LatLng, end: LatLng, waypoints: List<LatLng>) {

@@ -1,7 +1,6 @@
 package com.example.app.presentationlayer.fragments.placedescriptionscreen
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -55,8 +54,6 @@ class SmallMapFragment : Fragment(), OnMapReadyCallback {
             childFragmentManager.findFragmentById(R.id.SmallMapFragment__FragmentContainerView) as SupportMapFragment
 
         mapFragment.getMapAsync(this)
-
-
     }
 
     /**
@@ -113,7 +110,7 @@ class SmallMapFragment : Fragment(), OnMapReadyCallback {
 
         private const val LOG_TAG = "SmallMapFragment"
 
-        private const val DEFAULT_ZOOM = 10
+        private const val DEFAULT_ZOOM = 11
 
         private const val LAT = "lat"
 
