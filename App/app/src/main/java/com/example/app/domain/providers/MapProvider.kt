@@ -80,11 +80,15 @@ object MapProvider {
             sortPlacesRequest
         )
 
-    fun increaseRadius() {
-        radius += 500
-        updateListByRadiusFlag = true
+    fun increaseRadius(): Boolean {
+        return if (radius < 6000) {
+            radius += 500
+            false
+        } else {
+            updateListByRadiusFlag = true
+            true
+        }
     }
-
     fun decreaseRadius(): Boolean {
         return if (radius != 500) {
             radius -= 500
