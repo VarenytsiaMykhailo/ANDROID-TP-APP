@@ -118,6 +118,7 @@ internal class MapFragmentViewModel : ViewModel() {
             }
 
             fragment.onDrawRoute(pointsList)
+            fragment.addCenterRouteMarker(start.latitude, start.longitude)
         }
     }
 

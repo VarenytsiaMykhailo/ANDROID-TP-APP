@@ -23,7 +23,6 @@ import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.runBlocking
 import java.util.UUID
 
-
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding

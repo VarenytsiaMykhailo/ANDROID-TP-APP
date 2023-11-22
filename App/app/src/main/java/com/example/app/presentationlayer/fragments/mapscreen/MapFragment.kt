@@ -266,6 +266,28 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         mapFragment.getMapAsync(onMapReadyCallback)
     }
 
+    fun addCenterRouteMarker(
+        latitude: Double,
+        longitude: Double,
+    ) {
+        val onMapReadyCallback = OnMapReadyCallback { googleMap ->
+            val position = LatLng(latitude, longitude)
+            val advancedMarkerOptions = AdvancedMarkerOptions()
+                .position(position)
+
+            val bitmap = BitmapFactory.decodeResource(
+                this.mainActivity.applicationContext.resources,
+                R.drawable.map_pin
+            )
+            googleMap.addMarker(advancedMarkerOptions)?.let {
+                markers.add(it)
+                it.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap))
+            }
+        }
+
+        mapFragment.getMapAsync(onMapReadyCallback)
+    }
+
     private fun stylePolyline(polyline: Polyline) {
         when (polyline.tag?.toString() ?: "") {
             "routePolylineWithArrow" -> {
@@ -438,8 +460,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                     .create()
                     .show()
             } else {
-                val startEndLat = mainActivity.lastKnownLocation?.latitude!!
-                val startEndLng = mainActivity.lastKnownLocation?.longitude!!
+                val startEndLat = mainActivity.usersLastChosenLocation.latitude
+                val startEndLng = mainActivity.usersLastChosenLocation.longitude
                 val startLatLng = LatLng(startEndLat, startEndLng)
                 val endLatLng = LatLng(startEndLat, startEndLng)
 
