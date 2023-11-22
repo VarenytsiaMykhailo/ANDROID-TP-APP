@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.app.R
 import com.example.app.datalayer.models.NearbyPlace
 import com.example.app.presentationlayer.MainActivity
@@ -81,6 +82,12 @@ class PlacesListFragment : Fragment() {
         setupRecyclerView(view)
 
         setChangeFragmentButtonClickListener(view)
+
+       val swipeLayout= view.findViewById<SwipeRefreshLayout>(R.id.swiperefresh)
+        swipeLayout.setOnRefreshListener {
+            viewModel.onUpdatePlaces(forceRefresh = true)
+            swipeLayout.isRefreshing = false;
+        }
     }
 
     override fun onResume() {
@@ -171,6 +178,8 @@ class PlacesListFragment : Fragment() {
                 }
             }
         }
+
+
 
     /**
      * Use this factory method to create a new instance of
