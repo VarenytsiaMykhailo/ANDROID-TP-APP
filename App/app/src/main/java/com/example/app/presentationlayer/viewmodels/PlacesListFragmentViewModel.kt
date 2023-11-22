@@ -35,6 +35,8 @@ internal class PlacesListFragmentViewModel : ViewModel() {
                         forceRefresh
                     ).toMutableList()
             }
+            fragment.mainActivity.usersPreviousChosenLocation =
+                fragment.mainActivity.usersLastChosenLocation
             placesListRecyclerViewAdapter.submitList(placesList)
         }
     }
