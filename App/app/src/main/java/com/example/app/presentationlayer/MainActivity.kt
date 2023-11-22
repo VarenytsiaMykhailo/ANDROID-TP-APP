@@ -14,7 +14,6 @@ import com.example.app.datalayer.repositories.LocalPropertiesSecretsRepository
 import com.example.app.domain.providers.MapAndroidClient
 import com.example.app.domain.providers.MapProvider
 import com.example.app.presentationlayer.adapters.TabBarAdapter
-import com.example.app.presentationlayer.fragments.placepickermapscreen.PlacePickerMapFragment
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
@@ -38,7 +37,10 @@ class MainActivity : AppCompatActivity() {
     var lastKnownLocation: Location? = null
 
     // A default location to use when location permission is not granted. Moscow, Red Square.
-    var usersChosenLocation = LatLng(55.753544, 37.621202)
+    var usersPreviousChosenLocation = LatLng(55.753544, 37.621202)
+
+    // A default location to use when location permission is not granted. Moscow, Red Square.
+    var usersLastChosenLocation = LatLng(55.753544, 37.621202)
 
     var onLocationPermissionGrantedForMapFragment: () -> Unit =
         {} // Initializes from MapFragment
@@ -59,12 +61,6 @@ class MainActivity : AppCompatActivity() {
         initLocationClient()
 
         //requestLocationPermission() // Calls from PlacePickerMapFragment
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        //launchPlacePickerMapFragment()
     }
 
     private fun generateOrInitializeUserUUID() {

@@ -28,13 +28,15 @@ internal class PlacesListFragmentViewModel : ViewModel() {
             withContext(Dispatchers.IO) {
                 placesList =
                     mapProvider.getSuggestPlaces(
-                        fragment.mainActivity.usersChosenLocation.latitude,
-                        fragment.mainActivity.usersChosenLocation.longitude,
+                        fragment.mainActivity.usersLastChosenLocation.latitude,
+                        fragment.mainActivity.usersLastChosenLocation.longitude,
                         20,
                         0,
                         forceRefresh
                     ).toMutableList()
             }
+            fragment.mainActivity.usersPreviousChosenLocation =
+                fragment.mainActivity.usersLastChosenLocation
             placesListRecyclerViewAdapter.submitList(placesList)
         }
     }

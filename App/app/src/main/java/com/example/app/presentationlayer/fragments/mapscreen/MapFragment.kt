@@ -95,7 +95,12 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         viewModel.fragment = this
 
         // Нужен true т.к. корневая локация могла измениться из PlacePickerMapFragment
-        viewModel.onUpdatePlaces(shouldUpdateCachedValue = true)
+        if (mainActivity.usersLastChosenLocation == mainActivity.usersPreviousChosenLocation) {
+            viewModel.onUpdatePlaces(shouldUpdateCachedValue = false)
+        } else {
+            mainActivity.usersPreviousChosenLocation = mainActivity.usersLastChosenLocation
+            viewModel.onUpdatePlaces(shouldUpdateCachedValue = true)
+        }
 
         mapFragment.getMapAsync(this)
 
@@ -147,7 +152,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
         googleMap.moveCamera(
             CameraUpdateFactory.newLatLngZoom(
-                mainActivity.usersChosenLocation, DEFAULT_ZOOM.toFloat()
+                mainActivity.usersLastChosenLocation, DEFAULT_ZOOM.toFloat()
             )
         )
     }
@@ -205,7 +210,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         val onFail: () -> Unit = {
             googleMap.moveCamera(
                 CameraUpdateFactory.newLatLngZoom(
-                    mainActivity.usersChosenLocation, DEFAULT_ZOOM.toFloat()
+                    mainActivity.usersLastChosenLocation, DEFAULT_ZOOM.toFloat()
                 )
             )
         }
