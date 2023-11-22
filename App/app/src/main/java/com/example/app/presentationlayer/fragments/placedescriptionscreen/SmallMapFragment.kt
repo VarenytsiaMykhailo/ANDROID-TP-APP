@@ -54,8 +54,6 @@ class SmallMapFragment : Fragment(), OnMapReadyCallback {
             childFragmentManager.findFragmentById(R.id.SmallMapFragment__FragmentContainerView) as SupportMapFragment
 
         mapFragment.getMapAsync(this)
-
-
     }
 
     /**

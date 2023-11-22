@@ -266,12 +266,12 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         mapFragment.getMapAsync(onMapReadyCallback)
     }
 
-    fun addCenterRouteMarker(
-        latitude: Double,
-        longitude: Double,
-    ) {
+    fun addCenterRouteMarker() {
         val onMapReadyCallback = OnMapReadyCallback { googleMap ->
-            val position = LatLng(latitude, longitude)
+            val position = LatLng(
+                mainActivity.usersLastChosenLocation.latitude,
+                mainActivity.usersLastChosenLocation.longitude,
+            )
             val advancedMarkerOptions = AdvancedMarkerOptions()
                 .position(position)
 
