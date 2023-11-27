@@ -29,6 +29,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.AdvancedMarkerOptions
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.Dot
 import com.google.android.gms.maps.model.Gap
 import com.google.android.gms.maps.model.JointType
@@ -266,7 +267,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         mapFragment.getMapAsync(onMapReadyCallback)
     }
 
-    fun addCenterRouteMarker() {
+    fun addCenterPlaceMarker() {
         val onMapReadyCallback = OnMapReadyCallback { googleMap ->
             val position = LatLng(
                 mainActivity.usersLastChosenLocation.latitude,
@@ -283,6 +284,24 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 markers.add(it)
                 it.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap))
             }
+        }
+
+        mapFragment.getMapAsync(onMapReadyCallback)
+    }
+
+    fun addCircleOfRadiusAroundCenterPlace() {
+        val onMapReadyCallback = OnMapReadyCallback { googleMap ->
+            val circle = CircleOptions()
+                .center(mainActivity.usersLastChosenLocation)
+                .radius(viewModel.giveRadiusString().toDouble() * 1000)
+                .strokeWidth(1.0f)
+                //.strokeColor(Color.parseColor("#2271cce7"))
+                .fillColor(Color.parseColor("#2271cce7"))
+            //.strokeColor(Color.RED)
+            //.fillColor(0x220000FF)
+            //.strokeWidth(5.0f)
+
+            googleMap.addCircle(circle)
         }
 
         mapFragment.getMapAsync(onMapReadyCallback)
@@ -355,21 +374,21 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private fun setRefreshMapButtonOnClickListener() {
         binding.MapFragmentImageViewRefreshMap.setOnClickListener {
             viewModel.onUpdatePlaces(shouldUpdateCachedValue = false)
-            binding.MapFragmentButtonRoute.visibility=View.VISIBLE
-            binding.MapFragmentImageViewRootIcon.visibility=View.VISIBLE
-            binding.MapFragmentButtonGoogleRoute.visibility=View.GONE
-            binding.MapFragmentImageViewGoogleIcon.visibility=View.GONE
-            it.visibility=View.GONE
+            binding.MapFragmentButtonRoute.visibility = View.VISIBLE
+            binding.MapFragmentImageViewRootIcon.visibility = View.VISIBLE
+            binding.MapFragmentButtonGoogleRoute.visibility = View.GONE
+            binding.MapFragmentImageViewGoogleIcon.visibility = View.GONE
+            it.visibility = View.GONE
         }
     }
 
     private fun setRouteButtonOnClickListener() {
         binding.MapFragmentButtonRoute.setOnClickListener {
-            it.visibility=View.GONE
-            binding.MapFragmentImageViewRootIcon.visibility=View.GONE
-            binding.MapFragmentButtonGoogleRoute.visibility=View.VISIBLE
-            binding.MapFragmentImageViewGoogleIcon.visibility=View.VISIBLE
-            binding.MapFragmentImageViewRefreshMap.visibility=View.VISIBLE
+            it.visibility = View.GONE
+            binding.MapFragmentImageViewRootIcon.visibility = View.GONE
+            binding.MapFragmentButtonGoogleRoute.visibility = View.VISIBLE
+            binding.MapFragmentImageViewGoogleIcon.visibility = View.VISIBLE
+            binding.MapFragmentImageViewRefreshMap.visibility = View.VISIBLE
             if (markersForRoute.size >= 1) {
 
                 var shouldUseUserSequence = true
@@ -474,8 +493,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
                 removeAllPolylines()
                 viewModel.onDrawRoute(startLatLng, endLatLng, waypointsLatLng)
-                    binding.MapFragmentButtonGoogleRoute.setOnClickListener {
-                        viewModel.onGoogleMapRoute(startLatLng, endLatLng, waypointsLatLng)
+                binding.MapFragmentButtonGoogleRoute.setOnClickListener {
+                    viewModel.onGoogleMapRoute(startLatLng, endLatLng, waypointsLatLng)
                 }
                 /*
                 Snackbar.make(
