@@ -44,7 +44,8 @@ internal class MapFragmentViewModel : ViewModel() {
                 fragment.addAdvancedMarker(it.location.lat, it.location.lng, it.name)
             }
         }
-        fragment.addCenterRouteMarker()
+        fragment.addCenterPlaceMarker()
+        fragment.addCircleOfRadiusAroundCenterPlace()
     }
 
     fun onGoogleMapRoute(start: LatLng, end: LatLng, waypoints: List<LatLng>) {

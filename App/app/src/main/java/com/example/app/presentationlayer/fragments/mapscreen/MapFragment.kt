@@ -34,6 +34,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.AdvancedMarkerOptions
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.Dot
 import com.google.android.gms.maps.model.Gap
 import com.google.android.gms.maps.model.JointType
@@ -294,7 +295,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         mapFragment.getMapAsync(onMapReadyCallback)
     }
 
-    fun addCenterRouteMarker() {
+    fun addCenterPlaceMarker() {
         val onMapReadyCallback = OnMapReadyCallback { googleMap ->
             val position = LatLng(
                 mainActivity.usersLastChosenLocation.latitude,
@@ -312,6 +313,24 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 centerRouteMarker = it
                 it.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap))
             }
+        }
+
+        mapFragment.getMapAsync(onMapReadyCallback)
+    }
+
+    fun addCircleOfRadiusAroundCenterPlace() {
+        val onMapReadyCallback = OnMapReadyCallback { googleMap ->
+            val circle = CircleOptions()
+                .center(mainActivity.usersLastChosenLocation)
+                .radius(viewModel.giveRadiusString().toDouble() * 1000)
+                .strokeWidth(1.0f)
+                //.strokeColor(Color.parseColor("#2271cce7"))
+                .fillColor(Color.parseColor("#2271cce7"))
+            //.strokeColor(Color.RED)
+            //.fillColor(0x220000FF)
+            //.strokeWidth(5.0f)
+
+            googleMap.addCircle(circle)
         }
 
         mapFragment.getMapAsync(onMapReadyCallback)
@@ -371,7 +390,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             parentFragmentManager.popBackStack()
         }
     }
-
 
     private fun setRefreshMapButtonOnClickListener() {
         binding.MapFragmentImageViewRefreshMap.setOnClickListener {

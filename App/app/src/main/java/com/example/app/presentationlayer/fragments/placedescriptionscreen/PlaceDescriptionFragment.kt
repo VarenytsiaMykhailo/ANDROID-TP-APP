@@ -71,21 +71,7 @@ class PlaceDescriptionFragment : Fragment() {
 
         placeID = arguments?.getString(PLACE_ID_KEY)!!
 
-        lifecycleScope.launch {
-            viewModel.place.onEach { placeDescription ->
-                onSetTitle(placeDescription.name)
-                placeDescriptionImagesSliderRecyclerViewAdapter.submitList(placeDescription.photos)
-                onSetDescription(placeDescription.description)
-                onSetRating(placeDescription.rating)
-                onSetRatingCount(placeDescription.ratingCount)
-                onSetMap(placeDescription)
-                onSetAddress(placeDescription.address)
-                onSetWorkingHours(placeDescription.workingHours)
-                onSetTags(placeDescription.tags)
-                onSetStartReactions(placeDescription.reactions)
-                place = placeDescription
-            }.collect()
-        }
+
 
         showTags()
 
@@ -123,6 +109,27 @@ class PlaceDescriptionFragment : Fragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        lifecycleScope.launch {
+            viewModel.place.onEach { placeDescription ->
+                onSetTitle(placeDescription.name)
+                placeDescriptionImagesSliderRecyclerViewAdapter.submitList(placeDescription.photos)
+                onSetDescription(placeDescription.description)
+                onSetRating(placeDescription.rating)
+                onSetRatingCount(placeDescription.ratingCount)
+                onSetMap(placeDescription)
+                onSetAddress(placeDescription.address)
+                onSetWorkingHours(placeDescription.workingHours)
+                onSetTags(placeDescription.tags)
+                onSetStartReactions(placeDescription.reactions)
+                place = placeDescription
+            }.collect()
+        }
+
+
+    }
+
     fun disableScroll() {
         binding.PlaceDescriptionFragmentScrollView.requestDisallowInterceptTouchEvent(true)
     }
@@ -158,12 +165,9 @@ class PlaceDescriptionFragment : Fragment() {
     private fun onSetTags(tagsList: List<String>) {
         if (tagsList.isNotEmpty()) {
             setTag1(tagsList[0])
-            Log.d("sss", "${tagsList[0]}")
             if (tagsList.size >= 2) {
-                Log.d("sss", "${tagsList[1]}")
                 setTag2(tagsList[1])
                 if (tagsList.size >= 3) {
-                    Log.d("sss", "${tagsList[2]}")
                     setTag3(tagsList[2])
                 }
             }
@@ -235,16 +239,28 @@ class PlaceDescriptionFragment : Fragment() {
         if (list.isNotEmpty())
             list.forEach { it ->
                 String
-                if (it == "like") {
+                likedFlag = if (it == "like") {
                     onSetLike()
-                    likedFlag = true
+                    true
+                } else {
+                    onUnSetLike()
+                    false
                 }
 
-                if (it == "visited") {
+                visitedFlag = if (it == "visited") {
                     onSetVisited()
-                    visitedFlag = true
+                    true
+                } else {
+                    onUnSetVisited()
+                    false
                 }
             }
+        else {
+            onUnSetLike()
+            likedFlag = false
+            onUnSetVisited()
+            visitedFlag = false
+        }
 
     }
 
