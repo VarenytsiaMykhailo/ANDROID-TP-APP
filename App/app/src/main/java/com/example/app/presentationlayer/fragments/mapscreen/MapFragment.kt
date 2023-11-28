@@ -379,6 +379,12 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             removeAllMarkers()
             removeAllPolylines()
             isRouteMode = false
+
+            binding.MapFragmentButtonRoute.visibility = View.VISIBLE
+            binding.MapFragmentImageViewRootIcon.visibility = View.VISIBLE
+            binding.MapFragmentButtonGoogleRoute.visibility = View.GONE
+            binding.MapFragmentImageViewGoogleIcon.visibility = View.GONE
+            binding.MapFragmentImageViewRefreshMap.visibility = View.GONE
         }
 
         mapFragment.getMapAsync(onMapReadyCallback)
@@ -394,11 +400,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private fun setRefreshMapButtonOnClickListener() {
         binding.MapFragmentImageViewRefreshMap.setOnClickListener {
             viewModel.onUpdatePlaces(shouldUpdateCachedValue = false)
-            binding.MapFragmentButtonRoute.visibility = View.VISIBLE
-            binding.MapFragmentImageViewRootIcon.visibility = View.VISIBLE
-            binding.MapFragmentButtonGoogleRoute.visibility = View.GONE
-            binding.MapFragmentImageViewGoogleIcon.visibility = View.GONE
-            it.visibility = View.GONE
         }
     }
 
