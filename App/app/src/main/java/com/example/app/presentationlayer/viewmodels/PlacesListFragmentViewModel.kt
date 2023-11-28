@@ -64,7 +64,6 @@ internal class PlacesListFragmentViewModel : ViewModel() {
             placeToRestore.placeId,
             PlaceReaction.Reaction.UNREFUSE
         )
-
     }
 
     fun onRestoreVisitedPlace(position: Int, placeToRestore: NearbyPlace) {
