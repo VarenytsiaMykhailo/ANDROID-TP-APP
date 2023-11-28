@@ -4,36 +4,34 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="16dp"
-    android:layout_marginEnd="16dp"
     android:background="@color/white"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/PlaceDescriptionFragment__CardView_Tag1Root"
-        android:layout_width="match_parent"
-        android:layout_height="148dp"
-        android:layout_marginTop="8dp"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="0dp"
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/MapFragment__ViewPager2_PlaceImage"
+        android:layout_width="388dp"
+        android:layout_height="180dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/PlacesListFragment__ImageView_MainPic"
-            android:layout_width="match_parent"
-            android:layout_height="148dp"
-            android:clickable="true"
-            android:scaleType="centerCrop"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.cardview.widget.CardView>
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/PlaceDescriptionFragment__TabLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="12dp"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/tab_background"
+        app:layout_constraintBottom_toBottomOf="@+id/MapFragment__ViewPager2_PlaceImage"
+        app:layout_constraintEnd_toEndOf="@+id/MapFragment__ViewPager2_PlaceImage"
+        app:layout_constraintStart_toStartOf="@+id/MapFragment__ViewPager2_PlaceImage"
+        app:tabBackground="@drawable/tab_selector"
+        app:tabGravity="center"
+        app:tabIndicatorHeight="0dp" />
 
     <TextView
-        android:id="@+id/PlacesListFragment__TextView_Name"
+        android:id="@+id/MapFragment__TextView_PlaceName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
@@ -42,12 +40,12 @@
         android:maxLines="1"
         android:textColor="@color/black"
         android:textSize="24sp"
-        app:layout_constraintStart_toStartOf="@+id/PlaceDescriptionFragment__CardView_Tag1Root"
-        app:layout_constraintTop_toBottomOf="@+id/PlaceDescriptionFragment__CardView_Tag1Root"
+        app:layout_constraintStart_toStartOf="@+id/MapFragment__ViewPager2_PlaceImage"
+        app:layout_constraintTop_toBottomOf="@+id/MapFragment__ViewPager2_PlaceImage"
         tools:text="Looool" />
 
     <RatingBar
-        android:id="@+id/PlacesListFragment__RatingBar_StarsRate"
+        android:id="@+id/MapFragment__RatingBar_StarsRate"
         android:layout_width="wrap_content"
         android:layout_height="42dp"
         android:layout_marginStart="4dp"
@@ -64,52 +62,59 @@
         android:stepSize="0.1"
         android:transformPivotX="0dp"
         android:transformPivotY="0dp"
-        app:layout_constraintStart_toStartOf="@+id/PlaceDescriptionFragment__CardView_Tag1Root"
-        app:layout_constraintTop_toBottomOf="@+id/PlacesListFragment__TextView_Name" />
+        app:layout_constraintStart_toStartOf="@+id/MapFragment__ViewPager2_PlaceImage"
+        app:layout_constraintTop_toBottomOf="@+id/MapFragment__TextView_PlaceName" />
 
     <TextView
-        android:id="@+id/PlacesListFragment__TextView_Rate"
+        android:id="@+id/MapFragment__TextView_Rate"
         android:layout_width="32dp"
         android:layout_height="24dp"
         android:layout_marginStart="132dp"
         android:gravity="center"
         android:textColor="@color/black"
         android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="@+id/PlacesListFragment__RatingBar_StarsRate"
-        app:layout_constraintTop_toTopOf="@+id/PlacesListFragment__RatingBar_StarsRate"
+        app:layout_constraintStart_toStartOf="@+id/MapFragment__RatingBar_StarsRate"
+        app:layout_constraintTop_toTopOf="@+id/MapFragment__RatingBar_StarsRate"
         tools:text="4.8" />
 
     <TextView
-        android:id="@+id/PlacesListFragment__TextView_RateCount"
+        android:id="@+id/MapFragment__TextView_RateCount"
         android:layout_width="wrap_content"
         android:layout_height="24dp"
         android:layout_marginStart="8dp"
         android:gravity="center"
         android:textColor="@color/dark_grey"
         android:textSize="16sp"
-        app:layout_constraintStart_toEndOf="@+id/PlacesListFragment__TextView_Rate"
-        app:layout_constraintTop_toTopOf="@+id/PlacesListFragment__RatingBar_StarsRate"
+        app:layout_constraintStart_toEndOf="@+id/MapFragment__TextView_Rate"
+        app:layout_constraintTop_toTopOf="@+id/MapFragment__RatingBar_StarsRate"
         tools:text="1488" />
 
     <TextView
-        android:id="@+id/PlacesListFragment__TextView_RateCountTxt"
+        android:id="@+id/MapFragment__TextView_RateCountTxt"
         android:layout_width="wrap_content"
         android:layout_height="24dp"
         android:gravity="center"
         android:text=" оценок"
         android:textColor="@color/dark_grey"
         android:textSize="16sp"
-        app:layout_constraintStart_toEndOf="@+id/PlacesListFragment__TextView_RateCount"
-        app:layout_constraintTop_toTopOf="@+id/PlacesListFragment__RatingBar_StarsRate" />
+        app:layout_constraintStart_toEndOf="@+id/MapFragment__TextView_RateCount"
+        app:layout_constraintTop_toTopOf="@+id/MapFragment__RatingBar_StarsRate" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="34dp"
+        android:text="delete"
+        app:layout_constraintEnd_toStartOf="@+id/MapFragment__ImageView_Like"
+        app:layout_constraintTop_toTopOf="@+id/MapFragment__TextView_Rate"/>
 
     <ImageView
-        android:id="@+id/PlacesListFragment__ImageView_Like"
+        android:id="@+id/MapFragment__ImageView_Like"
         android:layout_width="24dp"
         android:layout_height="21.2dp"
         android:layout_marginEnd="4dp"
         android:clickable="true"
-        app:layout_constraintEnd_toEndOf="@+id/PlaceDescriptionFragment__CardView_Tag1Root"
-        app:layout_constraintTop_toTopOf="@+id/PlacesListFragment__TextView_Rate"
+        app:layout_constraintEnd_toEndOf="@+id/MapFragment__ViewPager2_PlaceImage"
+        app:layout_constraintTop_toTopOf="@+id/MapFragment__TextView_Rate"
         app:srcCompat="@drawable/like_unliked" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -19,7 +19,7 @@ internal class PlaceDescriptionImagesSliderRecyclerViewAdapter :
         ImageCardViewHolder(
             LayoutInflater
                 .from(parent.context)
-                .inflate(R.layout.slider_item, parent, false)
+                .inflate(R.layout.place_description_slider_item, parent, false)
         )
 
 

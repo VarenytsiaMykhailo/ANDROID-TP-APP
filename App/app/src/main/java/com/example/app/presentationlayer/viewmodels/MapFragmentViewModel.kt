@@ -2,9 +2,11 @@ package com.example.app.presentationlayer.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.app.datalayer.models.NearbyPlace
 import com.example.app.domain.providers.MapProvider
 import com.example.app.datalayer.models.RouteRequest
 import com.example.app.datalayer.models.SortPlacesRequest
+import com.example.app.presentationlayer.adapters.PlaceDescriptionImagesSliderRecyclerViewAdapter
 import com.example.app.presentationlayer.fragments.mapscreen.MapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.PolyUtil
@@ -39,7 +41,7 @@ internal class MapFragmentViewModel : ViewModel() {
                 fragment.addAdvancedMarker(it.location.lat, it.location.lng, it.name)
             }
         }
-       fragment.addCenterRouteMarker()
+        fragment.addCenterRouteMarker()
     }
 
     fun onGoogleMapRoute(start: LatLng, end: LatLng, waypoints: List<LatLng>) {
@@ -121,10 +123,20 @@ internal class MapFragmentViewModel : ViewModel() {
         }
     }
 
-    fun getPlaceIdByLatLng(latLng: LatLng): String? =
+    fun updateImageSlider(
+        placeId: String,
+        placeDescriptionImagesSliderRecyclerViewAdapter: PlaceDescriptionImagesSliderRecyclerViewAdapter,
+    ) {
+        viewModelScope.launch {
+            val placeDescription = mapProvider.getPlaceDescription(placeId)
+            placeDescriptionImagesSliderRecyclerViewAdapter.submitList(placeDescription.photos)
+        }
+    }
+
+    fun getPlaceByLatLng(latLng: LatLng): NearbyPlace? =
         mapProvider.placesCachedList.firstOrNull() {
             it.location.lat == latLng.latitude && it.location.lng == latLng.longitude
-        }?.placeId
+        }
 
     // TODO придумать способ как улучшить
     fun increaseRadius() {

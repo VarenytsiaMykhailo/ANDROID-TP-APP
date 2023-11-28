@@ -1,5 +1,7 @@
 package com.example.app.presentationlayer.fragments.mapscreen
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Intent
@@ -19,7 +21,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.app.R
 import com.example.app.databinding.FragmentMapBinding
+import com.example.app.datalayer.models.NearbyPlace
 import com.example.app.presentationlayer.MainActivity
+import com.example.app.presentationlayer.adapters.PlaceDescriptionImagesSliderRecyclerViewAdapter
 import com.example.app.presentationlayer.fragments.placedescriptionscreen.PlaceDescriptionFragment
 import com.example.app.presentationlayer.fragments.placepickermapscreen.PlacePickerMapFragment
 import com.example.app.presentationlayer.viewmodels.MapFragmentViewModel
@@ -40,6 +44,7 @@ import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.gms.maps.model.RoundCap
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.tabs.TabLayoutMediator
 
 
 /**
@@ -66,6 +71,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     private var previouslyClickedMarker: Marker? = null
 
+    private var previouslyClickedPlace: NearbyPlace? = null
+
     // Uses for AdvancedMarker
     // Does not work. Bug from google?
     private val pinConfig = PinConfig.builder()
@@ -73,6 +80,9 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         .setBorderColor(Color.WHITE)
         .setGlyph(PinConfig.Glyph("A", Color.WHITE))
         .build()
+
+    private val placeInfoImagesSliderRecyclerViewAdapter =
+        PlaceDescriptionImagesSliderRecyclerViewAdapter()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -122,9 +132,10 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
 
         setPlacesListButtonOnClickListener()
-        setPlaceInfoButtonOnClickListener()
+        setPlaceDescriptionButtonOnClickListener()
         setRouteButtonOnClickListener()
         setRefreshMapButtonOnClickListener()
+        setOnMapClickListener()
         binding.MapFragmentImageViewChooseNewPlace.setOnClickListener {
             parentFragmentManager
                 .beginTransaction()
@@ -135,6 +146,14 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 .addToBackStack("PlacePickerMapFragment")
                 .commit()
         }
+
+        binding.MapFragmentIncludedPlaceCard.MapFragmentViewPager2PlaceImage.adapter =
+            placeInfoImagesSliderRecyclerViewAdapter
+        TabLayoutMediator(
+            binding.MapFragmentIncludedPlaceCard.PlaceDescriptionFragmentTabLayout,
+            binding.MapFragmentIncludedPlaceCard.MapFragmentViewPager2PlaceImage
+        ) { tab, position ->
+        }.attach()
     }
 
     /**
@@ -296,16 +315,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
             else -> polyline.startCap = RoundCap()
         }
-        /*
-        polyline.endCap = CustomCap(
-            BitmapDescriptorFactory.fromResource(R.drawable.flag), 10f
-        )
-         */
-        val flagBitmap = BitmapFactory.decodeResource(
-            this.mainActivity.applicationContext.resources,
-            R.drawable.flag
-        )
-        //markersForRoute.last().setIcon(BitmapDescriptorFactory.fromBitmap(flagBitmap))
         polyline.width = 12.0F
         polyline.color = ContextCompat.getColor(requireContext(), R.color.route_polyline_color)
         polyline.jointType = JointType.ROUND
@@ -355,21 +364,21 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private fun setRefreshMapButtonOnClickListener() {
         binding.MapFragmentImageViewRefreshMap.setOnClickListener {
             viewModel.onUpdatePlaces(shouldUpdateCachedValue = false)
-            binding.MapFragmentButtonRoute.visibility=View.VISIBLE
-            binding.MapFragmentImageViewRootIcon.visibility=View.VISIBLE
-            binding.MapFragmentButtonGoogleRoute.visibility=View.GONE
-            binding.MapFragmentImageViewGoogleIcon.visibility=View.GONE
-            it.visibility=View.GONE
+            binding.MapFragmentButtonRoute.visibility = View.VISIBLE
+            binding.MapFragmentImageViewRootIcon.visibility = View.VISIBLE
+            binding.MapFragmentButtonGoogleRoute.visibility = View.GONE
+            binding.MapFragmentImageViewGoogleIcon.visibility = View.GONE
+            it.visibility = View.GONE
         }
     }
 
     private fun setRouteButtonOnClickListener() {
         binding.MapFragmentButtonRoute.setOnClickListener {
-            it.visibility=View.GONE
-            binding.MapFragmentImageViewRootIcon.visibility=View.GONE
-            binding.MapFragmentButtonGoogleRoute.visibility=View.VISIBLE
-            binding.MapFragmentImageViewGoogleIcon.visibility=View.VISIBLE
-            binding.MapFragmentImageViewRefreshMap.visibility=View.VISIBLE
+            it.visibility = View.GONE
+            binding.MapFragmentImageViewRootIcon.visibility = View.GONE
+            binding.MapFragmentButtonGoogleRoute.visibility = View.VISIBLE
+            binding.MapFragmentImageViewGoogleIcon.visibility = View.VISIBLE
+            binding.MapFragmentImageViewRefreshMap.visibility = View.VISIBLE
             if (markersForRoute.size >= 1) {
 
                 var shouldUseUserSequence = true
@@ -474,8 +483,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
                 removeAllPolylines()
                 viewModel.onDrawRoute(startLatLng, endLatLng, waypointsLatLng)
-                    binding.MapFragmentButtonGoogleRoute.setOnClickListener {
-                        viewModel.onGoogleMapRoute(startLatLng, endLatLng, waypointsLatLng)
+                binding.MapFragmentButtonGoogleRoute.setOnClickListener {
+                    viewModel.onGoogleMapRoute(startLatLng, endLatLng, waypointsLatLng)
                 }
                 /*
                 Snackbar.make(
@@ -510,36 +519,17 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    private fun setPlaceInfoButtonOnClickListener() {
-        binding.MapFragmentImageViewPlaceInfo.setOnClickListener {
-            if (previouslyClickedMarker != null) {
-                val placeId = viewModel.getPlaceIdByLatLng(
-                    previouslyClickedMarker!!.position
+    private fun setPlaceDescriptionButtonOnClickListener() {
+        binding.MapFragmentIncludedPlaceCard.MapFragmentTextViewPlaceName.setOnClickListener {
+            parentFragmentManager
+                .beginTransaction()
+                .replace(
+                    R.id.PlacesListRootFragment__FragmentContainerView,
+                    PlaceDescriptionFragment.newInstance(previouslyClickedPlace!!.placeId)
                 )
-                if (placeId != null) {
-                    parentFragmentManager
-                        .beginTransaction()
-                        .replace(
-                            R.id.PlacesListRootFragment__FragmentContainerView,
-                            PlaceDescriptionFragment.newInstance(placeId)
-                        )
-                        //.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                        .addToBackStack("PlaceDescriptionFragment")
-                        .commit()
-                } else {
-                    Snackbar.make(
-                        binding.MapFragmentImageViewPlaceInfo,
-                        "Не удалось получить описание",
-                        Snackbar.LENGTH_SHORT
-                    ).show()
-                }
-            } else {
-                Snackbar.make(
-                    binding.MapFragmentImageViewPlaceInfo,
-                    "Выберите место",
-                    Snackbar.LENGTH_SHORT
-                ).show()
-            }
+                //.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .addToBackStack("PlaceDescriptionFragment")
+                .commit()
         }
     }
 
@@ -547,6 +537,9 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     fun setOnMarkerClickListener() {
         val onMapReadyCallback = OnMapReadyCallback { googleMap ->
             googleMap.setOnMarkerClickListener {
+                previouslyClickedPlace = viewModel.getPlaceByLatLng(it.position)
+
+                showPlaceInfo()
 
                 if (it == previouslyClickedMarker) {
                     if (!markersForRoute.contains(it)) {
@@ -568,6 +561,97 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
 
         mapFragment.getMapAsync(onMapReadyCallback)
+    }
+
+    private fun setOnMapClickListener() {
+        val onMapReadyCallback = OnMapReadyCallback { googleMap ->
+            googleMap.setOnMapClickListener {
+                hidePlaceInfo()
+            }
+        }
+
+        mapFragment.getMapAsync(onMapReadyCallback)
+    }
+
+    private fun hidePlaceInfo() {
+        if (binding.PlaceDescriptionFragmentCardViewPlaceInfo.visibility == View.VISIBLE) {
+            // Скрываем PlaceInfo с анимацией
+            // https://stackoverflow.com/questions/19765938/show-and-hide-a-view-with-a-slide-up-down-animation
+            binding.PlaceDescriptionFragmentCardViewPlaceInfo.apply {
+                animate()
+                    .translationY(-1 * this.height.toFloat())
+                    .alpha(0F)
+                    .setListener(
+                        object : AnimatorListenerAdapter() {
+                            override fun onAnimationEnd(animation: Animator) {
+                                super.onAnimationEnd(animation)
+                                this@apply.visibility = View.GONE
+                            }
+                        }
+                    )
+            }
+
+            showHideTopButtons(true)
+        }
+    }
+
+    private fun showPlaceInfo() {
+        if (previouslyClickedPlace != null) {
+            setPlaceInfoData()
+
+            showHideTopButtons(false)
+
+            // Показываем PlaceInfo с анимацией
+            // https://stackoverflow.com/questions/19765938/show-and-hide-a-view-with-a-slide-up-down-animation
+            binding.PlaceDescriptionFragmentCardViewPlaceInfo.alpha = 0F
+            binding.PlaceDescriptionFragmentCardViewPlaceInfo.visibility = View.VISIBLE
+            binding.PlaceDescriptionFragmentCardViewPlaceInfo.apply {
+                animate()
+                    .translationY(0F)
+                    .alpha(1F)
+                    .setListener(null)
+            }
+        } else {
+            Snackbar.make(
+                binding.MapFragmentImageViewPlaceInfo,
+                "Не удалось получить описание",
+                Snackbar.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    /**
+     * @param [shouldShow] true - show top buttons, false - hide top buttons.
+     */
+    private fun showHideTopButtons(shouldShow: Boolean) {
+        val visibilityFlag = if (shouldShow) View.VISIBLE else View.GONE
+
+        // TODO объединить эти кнопки в группу и показывать сразу группу
+        binding.MapFragmentImageViewChooseNewPlace.visibility = visibilityFlag
+        binding.MapFragmentButtonRadiusDec.visibility = visibilityFlag
+        binding.MapFragmentButtonRadiusInc.visibility = visibilityFlag
+        binding.radiusBack.visibility = visibilityFlag
+        binding.MapFragmentTextViewRadius.visibility = visibilityFlag
+        binding.MapFragmentTextViewRadiusTxt.visibility = visibilityFlag
+    }
+
+    private fun setPlaceInfoData() {
+        binding.MapFragmentIncludedPlaceCard.MapFragmentTextViewPlaceName.text =
+            previouslyClickedPlace!!.name
+
+        // Чтобы на мгновение не показывались фотки с предыдущего кликнутого места
+        placeInfoImagesSliderRecyclerViewAdapter.submitList(emptyList())
+
+        viewModel.updateImageSlider(
+            previouslyClickedPlace!!.placeId,
+            placeInfoImagesSliderRecyclerViewAdapter
+        )
+        binding.MapFragmentIncludedPlaceCard.MapFragmentRatingBarStarsRate.rating =
+            previouslyClickedPlace!!.rating.toFloat()
+        binding.MapFragmentIncludedPlaceCard.MapFragmentTextViewRate.text =
+            previouslyClickedPlace!!.rating.toString()
+        binding.MapFragmentIncludedPlaceCard.MapFragmentTextViewRateCount.text =
+            previouslyClickedPlace!!.ratingCount.toString()
     }
 
     /**

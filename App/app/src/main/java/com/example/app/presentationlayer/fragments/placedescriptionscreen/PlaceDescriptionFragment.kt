@@ -7,7 +7,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
@@ -90,8 +89,10 @@ class PlaceDescriptionFragment : Fragment() {
 
         showTags()
 
-        TabLayoutMediator(binding.PlaceDescriptionFragmentTabLayout,binding.PlaceDescriptionFragmentViewPager2PlaceImage){tab, position->
-
+        TabLayoutMediator(
+            binding.PlaceDescriptionFragmentTabLayout,
+            binding.PlaceDescriptionFragmentViewPager2PlaceImage
+        ) { tab, position ->
         }.attach()
 
         binding.PlaceDescriptionFragmentImageViewBackButton.setOnClickListener {
@@ -120,14 +121,9 @@ class PlaceDescriptionFragment : Fragment() {
                 viewModel.postReaction(place.placeId, PlaceReaction.Reaction.VISITED)
             }
         }
-        val mapFragmentContainer=binding.PlaceDescriptionFragmentFragmentContainerViewSmallMap
-
-
-
-
-
     }
-    fun disableScroll(){
+
+    fun disableScroll() {
         binding.PlaceDescriptionFragmentScrollView.requestDisallowInterceptTouchEvent(true)
     }
 
@@ -150,7 +146,7 @@ class PlaceDescriptionFragment : Fragment() {
     }
 
     /*
-   fun onSetMap(staticMapImageUrl: String, googleMapAppDeeplink: String) {
+    fun onSetMap(staticMapImageUrl: String, googleMapAppDeeplink: String) {
        binding.PlaceDescriptionFragmentImageViewStaticMap.apply {
            load(staticMapImageUrl)
            setOnClickListener {
@@ -227,12 +223,12 @@ class PlaceDescriptionFragment : Fragment() {
 
     private fun onSetVisited() {
         binding.DescriptionFragmentImageViewVisit.setImageResource(R.drawable.visited_icon)
-        binding.PlaceDescriptionFragmentTextViewUnvisited.visibility=View.GONE
+        binding.PlaceDescriptionFragmentTextViewUnvisited.visibility = View.GONE
     }
 
     private fun onUnSetVisited() {
         binding.DescriptionFragmentImageViewVisit.setImageResource(R.drawable.unvisited_icon)
-        binding.PlaceDescriptionFragmentTextViewUnvisited.visibility=View.VISIBLE
+        binding.PlaceDescriptionFragmentTextViewUnvisited.visibility = View.VISIBLE
     }
 
     private fun onSetStartReactions(list: List<String>) {
@@ -252,13 +248,13 @@ class PlaceDescriptionFragment : Fragment() {
 
     }
 
-    private fun Int.toPx()=(this*resources.displayMetrics.density).toInt()
+    private fun Int.toPx() = (this * resources.displayMetrics.density).toInt()
 
     private fun setTag1(text: String) {
         val textView = binding.PlaceDescriptionFragmentTextViewTag1
         val imageView = binding.PlaceDescriptionFragmentImageViewTag1
         textView.text = text
-        imageView.layoutParams.width = (text.length*12 + 8).toPx()
+        imageView.layoutParams.width = (text.length * 12 + 8).toPx()
         imageView.requestLayout()
     }
 
@@ -266,7 +262,7 @@ class PlaceDescriptionFragment : Fragment() {
         val textView = binding.PlaceDescriptionFragmentTextViewTag2
         val imageView = binding.PlaceDescriptionFragmentImageViewTag2
         textView.text = text
-        imageView.layoutParams.width = (text.length*12 + 8).toPx()
+        imageView.layoutParams.width = (text.length * 12 + 8).toPx()
         imageView.requestLayout()
     }
 
@@ -274,7 +270,7 @@ class PlaceDescriptionFragment : Fragment() {
         val textView = binding.PlaceDescriptionFragmentTextViewTag3
         val imageView = binding.PlaceDescriptionFragmentImageViewTag3
         textView.text = text
-        imageView.layoutParams.width = (text.length*12 + 8).toPx()
+        imageView.layoutParams.width = (text.length * 12 + 8).toPx()
         imageView.requestLayout()
     }
 
