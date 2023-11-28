@@ -72,25 +72,14 @@ class PlaceDescriptionFragment : Fragment() {
 
         placeID = arguments?.getString(PLACE_ID_KEY)!!
 
-        lifecycleScope.launch {
-            viewModel.place.onEach { placeDescription ->
-                onSetTitle(placeDescription.name)
-                placeDescriptionImagesSliderRecyclerViewAdapter.submitList(placeDescription.photos)
-                onSetDescription(placeDescription.description)
-                onSetRating(placeDescription.rating)
-                onSetRatingCount(placeDescription.ratingCount)
-                onSetMap(placeDescription)
-                onSetAddress(placeDescription.address)
-                onSetWorkingHours(placeDescription.workingHours)
-                onSetTags(placeDescription.tags)
-                onSetStartReactions(placeDescription.reactions)
-                place = placeDescription
-            }.collect()
-        }
+
 
         showTags()
 
-        TabLayoutMediator(binding.PlaceDescriptionFragmentTabLayout,binding.PlaceDescriptionFragmentViewPager2PlaceImage){tab, position->
+        TabLayoutMediator(
+            binding.PlaceDescriptionFragmentTabLayout,
+            binding.PlaceDescriptionFragmentViewPager2PlaceImage
+        ) { tab, position ->
 
         }.attach()
 
@@ -120,14 +109,32 @@ class PlaceDescriptionFragment : Fragment() {
                 viewModel.postReaction(place.placeId, PlaceReaction.Reaction.VISITED)
             }
         }
-        val mapFragmentContainer=binding.PlaceDescriptionFragmentFragmentContainerViewSmallMap
+        val mapFragmentContainer = binding.PlaceDescriptionFragmentFragmentContainerViewSmallMap
 
+    }
 
-
+    override fun onResume() {
+        super.onResume()
+        lifecycleScope.launch {
+            viewModel.place.onEach { placeDescription ->
+                onSetTitle(placeDescription.name)
+                placeDescriptionImagesSliderRecyclerViewAdapter.submitList(placeDescription.photos)
+                onSetDescription(placeDescription.description)
+                onSetRating(placeDescription.rating)
+                onSetRatingCount(placeDescription.ratingCount)
+                onSetMap(placeDescription)
+                onSetAddress(placeDescription.address)
+                onSetWorkingHours(placeDescription.workingHours)
+                onSetTags(placeDescription.tags)
+                onSetStartReactions(placeDescription.reactions)
+                place = placeDescription
+            }.collect()
+        }
 
 
     }
-    fun disableScroll(){
+
+    fun disableScroll() {
         binding.PlaceDescriptionFragmentScrollView.requestDisallowInterceptTouchEvent(true)
     }
 
@@ -162,12 +169,9 @@ class PlaceDescriptionFragment : Fragment() {
     private fun onSetTags(tagsList: List<String>) {
         if (tagsList.isNotEmpty()) {
             setTag1(tagsList[0])
-            Log.d("sss", "${tagsList[0]}")
             if (tagsList.size >= 2) {
-                Log.d("sss", "${tagsList[1]}")
                 setTag2(tagsList[1])
                 if (tagsList.size >= 3) {
-                    Log.d("sss", "${tagsList[2]}")
                     setTag3(tagsList[2])
                 }
             }
@@ -227,38 +231,50 @@ class PlaceDescriptionFragment : Fragment() {
 
     private fun onSetVisited() {
         binding.DescriptionFragmentImageViewVisit.setImageResource(R.drawable.visited_icon)
-        binding.PlaceDescriptionFragmentTextViewUnvisited.visibility=View.GONE
+        binding.PlaceDescriptionFragmentTextViewUnvisited.visibility = View.GONE
     }
 
     private fun onUnSetVisited() {
         binding.DescriptionFragmentImageViewVisit.setImageResource(R.drawable.unvisited_icon)
-        binding.PlaceDescriptionFragmentTextViewUnvisited.visibility=View.VISIBLE
+        binding.PlaceDescriptionFragmentTextViewUnvisited.visibility = View.VISIBLE
     }
 
     private fun onSetStartReactions(list: List<String>) {
         if (list.isNotEmpty())
             list.forEach { it ->
                 String
-                if (it == "like") {
+                likedFlag = if (it == "like") {
                     onSetLike()
-                    likedFlag = true
+                    true
+                } else {
+                    onUnSetLike()
+                    false
                 }
 
-                if (it == "visited") {
+                visitedFlag = if (it == "visited") {
                     onSetVisited()
-                    visitedFlag = true
+                    true
+                } else {
+                    onUnSetVisited()
+                    false
                 }
             }
+        else {
+            onUnSetLike()
+            likedFlag = false
+            onUnSetVisited()
+            visitedFlag = false
+        }
 
     }
 
-    private fun Int.toPx()=(this*resources.displayMetrics.density).toInt()
+    private fun Int.toPx() = (this * resources.displayMetrics.density).toInt()
 
     private fun setTag1(text: String) {
         val textView = binding.PlaceDescriptionFragmentTextViewTag1
         val imageView = binding.PlaceDescriptionFragmentImageViewTag1
         textView.text = text
-        imageView.layoutParams.width = (text.length*12 + 8).toPx()
+        imageView.layoutParams.width = (text.length * 12 + 8).toPx()
         imageView.requestLayout()
     }
 
@@ -266,7 +282,7 @@ class PlaceDescriptionFragment : Fragment() {
         val textView = binding.PlaceDescriptionFragmentTextViewTag2
         val imageView = binding.PlaceDescriptionFragmentImageViewTag2
         textView.text = text
-        imageView.layoutParams.width = (text.length*12 + 8).toPx()
+        imageView.layoutParams.width = (text.length * 12 + 8).toPx()
         imageView.requestLayout()
     }
 
@@ -274,7 +290,7 @@ class PlaceDescriptionFragment : Fragment() {
         val textView = binding.PlaceDescriptionFragmentTextViewTag3
         val imageView = binding.PlaceDescriptionFragmentImageViewTag3
         textView.text = text
-        imageView.layoutParams.width = (text.length*12 + 8).toPx()
+        imageView.layoutParams.width = (text.length * 12 + 8).toPx()
         imageView.requestLayout()
     }
 
