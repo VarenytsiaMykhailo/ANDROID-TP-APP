@@ -258,12 +258,14 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             val position = LatLng(latitude, longitude)
             val advancedMarkerOptions = AdvancedMarkerOptions()
                 .position(position)
+                /*
                 .title(placeTitle)
                 .apply {
                     if (placeDescription.isNotBlank()) {
                         snippet(placeDescription)
                     }
                 }
+                 */
 
             googleMap.addMarker(advancedMarkerOptions)?.let {
                 markers.add(it)
