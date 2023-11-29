@@ -46,8 +46,6 @@
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-
-
     <com.google.android.material.button.MaterialButton
         android:id="@+id/change_fragment_button"
         android:layout_width="112dp"
@@ -56,7 +54,6 @@
         android:backgroundTint="@color/white"
         android:gravity="end|center_vertical"
         android:paddingEnd="12dp"
-        android:paddingStart="0dp"
         android:text="Карта"
         android:textColor="@color/black"
         android:textSize="18sp"
@@ -76,5 +73,18 @@
         app:layout_constraintTop_toTopOf="@+id/change_fragment_button"
         app:srcCompat="@drawable/map_vector_icon" />
 
+    <ImageView
+        android:id="@+id/PlacesListFragment__ImageView_Filters"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:scaleType="centerCrop"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:paddingEnd="24dp"
+        android:paddingStart="20dp"
+        app:srcCompat="@drawable/filters_button"
+        android:background="@color/white"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -83,11 +85,51 @@ class PlacesListFragment : Fragment() {
 
         setChangeFragmentButtonClickListener(view)
 
-       val swipeLayout= view.findViewById<SwipeRefreshLayout>(R.id.swiperefresh)
+        val swipeLayout = view.findViewById<SwipeRefreshLayout>(R.id.swiperefresh)
         swipeLayout.setOnRefreshListener {
             viewModel.onUpdatePlaces(forceRefresh = true)
             swipeLayout.isRefreshing = false;
         }
+
+        view.findViewById<ImageView>(R.id.PlacesListFragment__ImageView_Filters)
+            .setOnClickListener {
+                var shouldUseParks = true
+                var shouldUseChurches = true
+                AlertDialog.Builder(this.requireContext()).apply {
+                    setTitle("Фильтр мест")
+                    setMultiChoiceItems(
+                        arrayOf(
+                            "Парки",
+                            "Церкви",
+                        ),
+                        booleanArrayOf(true, true)
+                    ) { dialog, which, isChecked ->
+                        // The user checked or unchecked a box
+                        when (which) {
+                            0 -> shouldUseParks = isChecked
+                            1 -> shouldUseChurches = isChecked
+                        }
+                    }
+                    setPositiveButton("OK") { dialog, which ->
+                        var placesTypes = ""
+                        if (shouldUseParks) {
+                            placesTypes += "Парк"
+                        }
+                        if (shouldUseChurches) {
+                            if (placesTypes.isNotEmpty()) {
+                                placesTypes += ","
+                            }
+                            placesTypes += "Церковь"
+                        }
+                        viewModel.onUpdatePlaces(
+                            forceRefresh = true,
+                            placesTypes = placesTypes.ifEmpty { null }
+                        )
+                    }
+                }
+                    .create()
+                    .show()
+            }
     }
 
     override fun onResume() {
@@ -144,7 +186,8 @@ class PlacesListFragment : Fragment() {
                     ItemTouchHelper.LEFT -> {
                         val placeToDelete = viewModel.placesList[position]
                         viewModel.onRemovePlace(position, placeToDelete)
-                        val placeExistsInFavoriteDb = favoritePlacesViewModel.placeExists(placeToDelete)
+                        val placeExistsInFavoriteDb =
+                            favoritePlacesViewModel.placeExists(placeToDelete)
                         favoritePlacesViewModel.removePlace(placeToDelete)
 
                         view?.let {
@@ -178,7 +221,6 @@ class PlacesListFragment : Fragment() {
                 }
             }
         }
-
 
 
     /**

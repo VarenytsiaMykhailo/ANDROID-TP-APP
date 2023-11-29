@@ -23,6 +23,7 @@ internal class PlacesListFragmentViewModel : ViewModel() {
 
     fun onUpdatePlaces(
         forceRefresh: Boolean = false, // Need for ignoring isDataAlreadyLoaded flag,
+        placesTypes: String? = null,
     ) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
@@ -32,7 +33,8 @@ internal class PlacesListFragmentViewModel : ViewModel() {
                         fragment.mainActivity.usersLastChosenLocation.longitude,
                         20,
                         0,
-                        forceRefresh
+                        forceRefresh,
+                        placesTypes
                     ).toMutableList()
             }
             fragment.mainActivity.usersPreviousChosenLocation =

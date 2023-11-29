@@ -1,6 +1,7 @@
 package com.example.app.domain.providers
 
 import android.util.Log
+import com.example.app.datalayer.models.CategoriesList
 import com.example.app.datalayer.models.NearbyPlace
 import com.example.app.datalayer.models.PlaceDescription
 import com.example.app.datalayer.models.PlaceReaction
@@ -35,15 +36,17 @@ object MapProvider {
         lng: Double,
         limit: Int,
         offset: Int,
-        forceRefresh: Boolean = false, // Need for ignoring updateListFlag
+        forceRefresh: Boolean = false, // Need for ignoring updateListFlag,
+        placesTypes: String? = null,
     ): List<NearbyPlace> {
-       // Log.d("sss","$updateListByRadiusFlag $forceRefresh")
+        // Log.d("sss","$updateListByRadiusFlag $forceRefresh")
         if (updateListByRadiusFlag || forceRefresh) {
             placesCachedList = mapRepository.getSuggestPlaces(
                 "$lat,$lng",
                 radius.toString(),
                 limit,
                 offset,
+                placesTypes,
             ).also {
                 Log.d(LOG_TAG, "getSuggestPlaces = $it")
             }.toMutableList()
@@ -53,6 +56,11 @@ object MapProvider {
 
         return placesCachedList
     }
+
+    suspend fun getSuggestCategoriesList(): CategoriesList =
+        mapRepository.getSuggestCategoriesList().also {
+            Log.d(LOG_TAG, "getSuggestCategoriesList = $it")
+        }
 
     /**
      * @param placeId Example: "ChIJfRJDflpKtUYRl0UbgcrmUUk".

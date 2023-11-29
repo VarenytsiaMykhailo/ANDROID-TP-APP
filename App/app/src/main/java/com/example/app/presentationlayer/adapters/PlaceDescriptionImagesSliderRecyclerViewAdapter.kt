@@ -62,7 +62,7 @@ internal class PlaceDescriptionImagesSliderRecyclerViewAdapter :
                     Uri.parse("https://cdn.fotosklad.ru/unsafe/24d33472d338457ebe3ed0f8cc0ba6a9/image.jpg"),
                     "image/*"
                 )
-                //startActivity(itemView.context, intent, null)
+                startActivity(itemView.context, intent, null)
             }
         }
     }
