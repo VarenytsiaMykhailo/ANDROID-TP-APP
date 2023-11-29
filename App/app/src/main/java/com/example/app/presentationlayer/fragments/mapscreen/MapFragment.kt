@@ -166,6 +166,14 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }.attach()
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        if (previouslyClickedPlace != null) {
+            updateLikeButtonState()
+        }
+    }
+
     /**
      * Manipulates the map when it's available.
      * This callback is triggered when the map is ready to be used.
@@ -730,8 +738,10 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         binding.MapFragmentIncludedPlaceCard.MapFragmentTextViewRateCount.text =
             previouslyClickedPlace!!.ratingCount.toString()
 
+        updateLikeButtonState()
+    }
 
-        // Likes
+    private fun updateLikeButtonState() {
         val likeButton = binding.MapFragmentIncludedPlaceCard.MapFragmentImageViewLike
         if (favoritePlacesViewModel.placeExists(previouslyClickedPlace!!)) {
             likeButton.setImageResource(R.drawable.like_liked)
