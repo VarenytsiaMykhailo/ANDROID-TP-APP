@@ -6,11 +6,9 @@
     android:layout_height="wrap_content"
     android:layout_marginStart="16dp"
     android:layout_marginEnd="16dp"
+    android:background="@color/white"
     app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    android:background="@color/white">
-
-
+    app:layout_constraintStart_toStartOf="parent">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/PlaceDescriptionFragment__CardView_Tag1Root"
@@ -34,26 +32,25 @@
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.cardview.widget.CardView>
 
-
     <TextView
         android:id="@+id/PlacesListFragment__TextView_Name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
         android:layout_marginTop="4dp"
         android:ellipsize="end"
         android:maxLines="1"
         android:textColor="@color/black"
         android:textSize="24sp"
-android:layout_marginStart="4dp"
         app:layout_constraintStart_toStartOf="@+id/PlaceDescriptionFragment__CardView_Tag1Root"
         app:layout_constraintTop_toBottomOf="@+id/PlaceDescriptionFragment__CardView_Tag1Root"
         tools:text="Looool" />
 
     <RatingBar
-        android:layout_marginStart="4dp"
         android:id="@+id/PlacesListFragment__RatingBar_StarsRate"
         android:layout_width="wrap_content"
         android:layout_height="42dp"
+        android:layout_marginStart="4dp"
         android:layout_marginTop="4dp"
         android:isIndicator="true"
         android:max="5"
@@ -111,10 +108,8 @@ android:layout_marginStart="4dp"
         android:layout_height="21.2dp"
         android:layout_marginEnd="4dp"
         android:clickable="true"
-
         app:layout_constraintEnd_toEndOf="@+id/PlaceDescriptionFragment__CardView_Tag1Root"
         app:layout_constraintTop_toTopOf="@+id/PlacesListFragment__TextView_Rate"
         app:srcCompat="@drawable/like_unliked" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

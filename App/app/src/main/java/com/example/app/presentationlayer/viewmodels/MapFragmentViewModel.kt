@@ -2,13 +2,18 @@ package com.example.app.presentationlayer.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.app.datalayer.models.NearbyPlace
+import com.example.app.datalayer.models.PlaceReaction
 import com.example.app.domain.providers.MapProvider
 import com.example.app.datalayer.models.RouteRequest
 import com.example.app.datalayer.models.SortPlacesRequest
+import com.example.app.presentationlayer.adapters.PlaceDescriptionImagesSliderRecyclerViewAdapter
 import com.example.app.presentationlayer.fragments.mapscreen.MapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.PolyUtil
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 internal class MapFragmentViewModel : ViewModel() {
 
@@ -122,10 +127,20 @@ internal class MapFragmentViewModel : ViewModel() {
         }
     }
 
-    fun getPlaceIdByLatLng(latLng: LatLng): String? =
+    fun updateImageSlider(
+        placeId: String,
+        placeDescriptionImagesSliderRecyclerViewAdapter: PlaceDescriptionImagesSliderRecyclerViewAdapter,
+    ) {
+        viewModelScope.launch {
+            val placeDescription = mapProvider.getPlaceDescription(placeId)
+            placeDescriptionImagesSliderRecyclerViewAdapter.submitList(placeDescription.photos)
+        }
+    }
+
+    fun getPlaceByLatLng(latLng: LatLng): NearbyPlace? =
         mapProvider.placesCachedList.firstOrNull() {
             it.location.lat == latLng.latitude && it.location.lng == latLng.longitude
-        }?.placeId
+        }
 
     // TODO придумать способ как улучшить
     fun increaseRadius() {
@@ -140,4 +155,40 @@ internal class MapFragmentViewModel : ViewModel() {
     }
 
     fun giveRadiusString() = ((mapProvider.radius).toDouble() / 1000).toString()
+
+    fun onRemovePlace(placeToDelete: NearbyPlace) {
+        removePlace(placeToDelete)
+        postSuggestReaction(
+            placeToDelete.placeId,
+            PlaceReaction.Reaction.REFUSE
+        )
+    }
+
+    fun onRestoreRemovedPlace(placeToRestore: NearbyPlace) {
+        restorePlace(placeToRestore)
+
+        postSuggestReaction(
+            placeToRestore.placeId,
+            PlaceReaction.Reaction.UNREFUSE
+        )
+    }
+
+    private fun removePlace(placeToDelete: NearbyPlace) {
+        //placesList.removeAt(position)
+        mapProvider.placesCachedList.remove(placeToDelete)
+        onUpdatePlaces(false)
+    }
+
+    private fun restorePlace(placeToRestore: NearbyPlace) {
+        //placesList.add(position, placeToRestore)
+        mapProvider.placesCachedList.add(placeToRestore)
+        onUpdatePlaces(false)
+    }
+
+    private fun postSuggestReaction(placeId: String, reaction: PlaceReaction.Reaction) =
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                mapProvider.postSuggestReaction(placeId, reaction)
+            }
+        }
 }

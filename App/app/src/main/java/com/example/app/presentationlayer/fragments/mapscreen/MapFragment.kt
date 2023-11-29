@@ -1,5 +1,7 @@
 package com.example.app.presentationlayer.fragments.mapscreen
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Intent
@@ -19,9 +21,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.app.R
 import com.example.app.databinding.FragmentMapBinding
+import com.example.app.datalayer.models.NearbyPlace
 import com.example.app.presentationlayer.MainActivity
+import com.example.app.presentationlayer.adapters.PlaceDescriptionImagesSliderRecyclerViewAdapter
 import com.example.app.presentationlayer.fragments.placedescriptionscreen.PlaceDescriptionFragment
 import com.example.app.presentationlayer.fragments.placepickermapscreen.PlacePickerMapFragment
+import com.example.app.presentationlayer.viewmodels.FavoritePlacesViewModel
 import com.example.app.presentationlayer.viewmodels.MapFragmentViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -41,17 +46,25 @@ import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.gms.maps.model.RoundCap
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.tabs.TabLayoutMediator
 
 
 /**
  * Use the [MapFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class MapFragment : Fragment(), OnMapReadyCallback {
+class MapFragment :
+    Fragment(),
+    GoogleMap.OnCameraMoveStartedListener,
+    GoogleMap.OnCameraMoveListener,
+    GoogleMap.OnCameraIdleListener,
+    OnMapReadyCallback {
 
     private lateinit var binding: FragmentMapBinding
 
     private val viewModel by viewModels<MapFragmentViewModel>()
+
+    private val favoritePlacesViewModel by viewModels<FavoritePlacesViewModel>()
 
     lateinit var mainActivity: MainActivity
 
@@ -65,7 +78,13 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     private val markersForRoute = mutableListOf<Marker>()
 
+    private var centerRouteMarker: Marker? = null
+
     private var previouslyClickedMarker: Marker? = null
+
+    private var previouslyClickedPlace: NearbyPlace? = null
+
+    private var isRouteMode = false
 
     // Uses for AdvancedMarker
     // Does not work. Bug from google?
@@ -74,6 +93,9 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         .setBorderColor(Color.WHITE)
         .setGlyph(PinConfig.Glyph("A", Color.WHITE))
         .build()
+
+    private val placeInfoImagesSliderRecyclerViewAdapter =
+        PlaceDescriptionImagesSliderRecyclerViewAdapter()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -123,9 +145,12 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
 
         setPlacesListButtonOnClickListener()
-        setPlaceInfoButtonOnClickListener()
+        setPlaceDescriptionButtonOnClickListener()
         setRouteButtonOnClickListener()
         setRefreshMapButtonOnClickListener()
+        setRemovePlaceButtonOnClickListener()
+        setLikeButtonOnClickListener()
+        setOnMapClickListener()
         binding.MapFragmentImageViewChooseNewPlace.setOnClickListener {
             parentFragmentManager
                 .beginTransaction()
@@ -136,6 +161,34 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 .addToBackStack("PlacePickerMapFragment")
                 .commit()
         }
+
+        binding.MapFragmentIncludedPlaceCard.MapFragmentViewPager2PlaceImage.adapter =
+            placeInfoImagesSliderRecyclerViewAdapter
+        TabLayoutMediator(
+            binding.MapFragmentIncludedPlaceCard.PlaceDescriptionFragmentTabLayout,
+            binding.MapFragmentIncludedPlaceCard.MapFragmentViewPager2PlaceImage
+        ) { tab, position ->
+        }.attach()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        if (previouslyClickedPlace != null) {
+            updateLikeButtonState()
+        }
+    }
+
+    override fun onCameraMoveStarted(p0: Int) {
+        if (binding.PlaceDescriptionFragmentCardViewPlaceInfo.alpha == 1F) {
+            hidePlaceInfo()
+        }
+    }
+
+    override fun onCameraMove() {
+    }
+
+    override fun onCameraIdle() {
     }
 
     /**
@@ -144,6 +197,10 @@ class MapFragment : Fragment(), OnMapReadyCallback {
      */
     override fun onMapReady(map: GoogleMap) {
         this.googleMap = map
+
+        googleMap.setOnCameraMoveStartedListener(this)
+        googleMap.setOnCameraMoveListener(this)
+        googleMap.setOnCameraIdleListener(this)
 
         mainActivity.requestLocationPermission()
 
@@ -230,12 +287,14 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             val position = LatLng(latitude, longitude)
             val advancedMarkerOptions = AdvancedMarkerOptions()
                 .position(position)
-                .title(placeTitle)
-                .apply {
-                    if (placeDescription.isNotBlank()) {
-                        snippet(placeDescription)
-                    }
+            /*
+            .title(placeTitle)
+            .apply {
+                if (placeDescription.isNotBlank()) {
+                    snippet(placeDescription)
                 }
+            }
+             */
 
             googleMap.addMarker(advancedMarkerOptions)?.let {
                 markers.add(it)
@@ -282,6 +341,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             )
             googleMap.addMarker(advancedMarkerOptions)?.let {
                 markers.add(it)
+                centerRouteMarker = it
                 it.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap))
             }
         }
@@ -315,16 +375,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
             else -> polyline.startCap = RoundCap()
         }
-        /*
-        polyline.endCap = CustomCap(
-            BitmapDescriptorFactory.fromResource(R.drawable.flag), 10f
-        )
-         */
-        val flagBitmap = BitmapFactory.decodeResource(
-            this.mainActivity.applicationContext.resources,
-            R.drawable.flag
-        )
-        //markersForRoute.last().setIcon(BitmapDescriptorFactory.fromBitmap(flagBitmap))
         polyline.width = 12.0F
         polyline.color = ContextCompat.getColor(requireContext(), R.color.route_polyline_color)
         polyline.jointType = JointType.ROUND
@@ -359,6 +409,13 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             googleMap.clear()
             removeAllMarkers()
             removeAllPolylines()
+            isRouteMode = false
+
+            binding.MapFragmentButtonRoute.visibility = View.VISIBLE
+            binding.MapFragmentImageViewRootIcon.visibility = View.VISIBLE
+            binding.MapFragmentButtonGoogleRoute.visibility = View.GONE
+            binding.MapFragmentImageViewGoogleIcon.visibility = View.GONE
+            binding.MapFragmentImageViewRefreshMap.visibility = View.GONE
         }
 
         mapFragment.getMapAsync(onMapReadyCallback)
@@ -374,11 +431,42 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private fun setRefreshMapButtonOnClickListener() {
         binding.MapFragmentImageViewRefreshMap.setOnClickListener {
             viewModel.onUpdatePlaces(shouldUpdateCachedValue = false)
-            binding.MapFragmentButtonRoute.visibility = View.VISIBLE
-            binding.MapFragmentImageViewRootIcon.visibility = View.VISIBLE
-            binding.MapFragmentButtonGoogleRoute.visibility = View.GONE
-            binding.MapFragmentImageViewGoogleIcon.visibility = View.GONE
-            it.visibility = View.GONE
+        }
+    }
+
+    private fun setRemovePlaceButtonOnClickListener() {
+        binding.MapFragmentIncludedPlaceCard.MapFragmentButtonRemovePlace.setOnClickListener {
+            viewModel.onRemovePlace(previouslyClickedPlace!!)
+            val placeExistsInFavoriteDb =
+                favoritePlacesViewModel.placeExists(previouslyClickedPlace!!)
+            favoritePlacesViewModel.removePlace(previouslyClickedPlace!!)
+
+            Snackbar.make(
+                it,
+                "${previouslyClickedPlace!!.name} удалено",
+                Snackbar.LENGTH_LONG
+            ).setAction("Отменить") {
+                viewModel.onRestoreRemovedPlace(previouslyClickedPlace!!)
+                if (placeExistsInFavoriteDb) {
+                    favoritePlacesViewModel.savePlace(previouslyClickedPlace!!)
+                }
+            }.show()
+
+            hidePlaceInfo()
+        }
+    }
+
+    private fun setLikeButtonOnClickListener() {
+        val likeButton = binding.MapFragmentIncludedPlaceCard.MapFragmentImageViewLike
+        likeButton.setOnClickListener {
+            // It is necessary to check again whether the place exists
+            if (!favoritePlacesViewModel.placeExists(previouslyClickedPlace!!)) {
+                favoritePlacesViewModel.savePlace(previouslyClickedPlace!!)
+                likeButton.setImageResource(R.drawable.like_liked)
+            } else {
+                favoritePlacesViewModel.removePlace(previouslyClickedPlace!!)
+                likeButton.setImageResource(R.drawable.like_unliked)
+            }
         }
     }
 
@@ -389,8 +477,10 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             binding.MapFragmentButtonGoogleRoute.visibility = View.VISIBLE
             binding.MapFragmentImageViewGoogleIcon.visibility = View.VISIBLE
             binding.MapFragmentImageViewRefreshMap.visibility = View.VISIBLE
-            if (markersForRoute.size >= 1) {
 
+            isRouteMode = true
+
+            if (markersForRoute.size >= 1) {
                 var shouldUseUserSequence = true
                 var shouldUseUserGeolocationAsStartLocation = false
                 var shouldOpenGoogleMapsNavigator = false
@@ -529,36 +619,17 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    private fun setPlaceInfoButtonOnClickListener() {
-        binding.MapFragmentImageViewPlaceInfo.setOnClickListener {
-            if (previouslyClickedMarker != null) {
-                val placeId = viewModel.getPlaceIdByLatLng(
-                    previouslyClickedMarker!!.position
+    private fun setPlaceDescriptionButtonOnClickListener() {
+        binding.MapFragmentIncludedPlaceCard.MapFragmentTextViewPlaceName.setOnClickListener {
+            parentFragmentManager
+                .beginTransaction()
+                .replace(
+                    R.id.PlacesListRootFragment__FragmentContainerView,
+                    PlaceDescriptionFragment.newInstance(previouslyClickedPlace!!.placeId)
                 )
-                if (placeId != null) {
-                    parentFragmentManager
-                        .beginTransaction()
-                        .replace(
-                            R.id.PlacesListRootFragment__FragmentContainerView,
-                            PlaceDescriptionFragment.newInstance(placeId)
-                        )
-                        //.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                        .addToBackStack("PlaceDescriptionFragment")
-                        .commit()
-                } else {
-                    Snackbar.make(
-                        binding.MapFragmentImageViewPlaceInfo,
-                        "Не удалось получить описание",
-                        Snackbar.LENGTH_SHORT
-                    ).show()
-                }
-            } else {
-                Snackbar.make(
-                    binding.MapFragmentImageViewPlaceInfo,
-                    "Выберите место",
-                    Snackbar.LENGTH_SHORT
-                ).show()
-            }
+                //.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .addToBackStack("PlaceDescriptionFragment")
+                .commit()
         }
     }
 
@@ -566,27 +637,141 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     fun setOnMarkerClickListener() {
         val onMapReadyCallback = OnMapReadyCallback { googleMap ->
             googleMap.setOnMarkerClickListener {
+                if (it != centerRouteMarker) {
+                    previouslyClickedPlace = viewModel.getPlaceByLatLng(it.position)
 
-                if (it == previouslyClickedMarker) {
-                    if (!markersForRoute.contains(it)) {
-                        it.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
-                        //it.setIcon(BitmapDescriptorFactory.fromPinConfig(pinConfig))
-                        markersForRoute += it
+                    showPlaceInfo()
+
+                    false
+                    /*
+                    if (it == previouslyClickedMarker) {
+                        if (!markersForRoute.contains(it)) {
+                            it.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
+                            //it.setIcon(BitmapDescriptorFactory.fromPinConfig(pinConfig))
+                            markersForRoute += it
+                        } else {
+                            markersForRoute -= it
+                            it.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
+                        }
+                        previouslyClickedMarker = null
+                        true
+
                     } else {
-                        markersForRoute -= it
-                        it.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
+                        previouslyClickedMarker = it
+                        false
                     }
-                    previouslyClickedMarker = null
-                    true
-
+                     */
                 } else {
-                    previouslyClickedMarker = it
                     false
                 }
             }
         }
 
         mapFragment.getMapAsync(onMapReadyCallback)
+    }
+
+    private fun setOnMapClickListener() {
+        val onMapReadyCallback = OnMapReadyCallback { googleMap ->
+            googleMap.setOnMapClickListener {
+                hidePlaceInfo()
+            }
+        }
+
+        mapFragment.getMapAsync(onMapReadyCallback)
+    }
+
+    private fun hidePlaceInfo() {
+        if (binding.PlaceDescriptionFragmentCardViewPlaceInfo.visibility == View.VISIBLE) {
+            // Скрываем PlaceInfo с анимацией
+            // https://stackoverflow.com/questions/19765938/show-and-hide-a-view-with-a-slide-up-down-animation
+            binding.PlaceDescriptionFragmentCardViewPlaceInfo.apply {
+                animate()
+                    .translationY(-1 * this.height.toFloat())
+                    .alpha(0F)
+                    .setListener(
+                        object : AnimatorListenerAdapter() {
+                            override fun onAnimationEnd(animation: Animator) {
+                                super.onAnimationEnd(animation)
+                                this@apply.visibility = View.GONE
+                            }
+                        }
+                    )
+            }
+
+            showHideTopButtons(true)
+        }
+    }
+
+    private fun showPlaceInfo() {
+        if (previouslyClickedPlace != null) {
+            setPlaceInfoData()
+
+            showHideTopButtons(false)
+
+            // Показываем PlaceInfo с анимацией
+            // https://stackoverflow.com/questions/19765938/show-and-hide-a-view-with-a-slide-up-down-animation
+            binding.PlaceDescriptionFragmentCardViewPlaceInfo.alpha = 0F
+            binding.PlaceDescriptionFragmentCardViewPlaceInfo.visibility = View.VISIBLE
+            binding.PlaceDescriptionFragmentCardViewPlaceInfo.apply {
+                animate()
+                    .translationY(0F)
+                    .alpha(1F)
+                    .setListener(null)
+            }
+        } else {
+            Snackbar.make(
+                binding.MapFragmentImageViewPlaceInfo,
+                "Не удалось получить описание",
+                Snackbar.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    /**
+     * @param [shouldShow] true - show top buttons, false - hide top buttons.
+     */
+    private fun showHideTopButtons(shouldShow: Boolean) {
+        val visibilityFlag = if (shouldShow) View.VISIBLE else View.GONE
+
+        // TODO объединить эти кнопки в группу и показывать сразу группу
+        binding.MapFragmentImageViewChooseNewPlace.visibility = visibilityFlag
+        binding.MapFragmentButtonRadiusDec.visibility = visibilityFlag
+        binding.MapFragmentButtonRadiusInc.visibility = visibilityFlag
+        binding.radiusBack.visibility = visibilityFlag
+        binding.MapFragmentTextViewRadius.visibility = visibilityFlag
+        binding.MapFragmentTextViewRadiusTxt.visibility = visibilityFlag
+        binding.MapFragmentImageViewRefreshMap.visibility =
+            if (isRouteMode && shouldShow) View.VISIBLE else View.GONE
+    }
+
+    private fun setPlaceInfoData() {
+        binding.MapFragmentIncludedPlaceCard.MapFragmentTextViewPlaceName.text =
+            previouslyClickedPlace!!.name
+
+        // Чтобы на мгновение не показывались фотки с предыдущего кликнутого места
+        placeInfoImagesSliderRecyclerViewAdapter.submitList(emptyList())
+
+        viewModel.updateImageSlider(
+            previouslyClickedPlace!!.placeId,
+            placeInfoImagesSliderRecyclerViewAdapter
+        )
+        binding.MapFragmentIncludedPlaceCard.MapFragmentRatingBarStarsRate.rating =
+            previouslyClickedPlace!!.rating.toFloat()
+        binding.MapFragmentIncludedPlaceCard.MapFragmentTextViewRate.text =
+            previouslyClickedPlace!!.rating.toString()
+        binding.MapFragmentIncludedPlaceCard.MapFragmentTextViewRateCount.text =
+            previouslyClickedPlace!!.ratingCount.toString()
+
+        updateLikeButtonState()
+    }
+
+    private fun updateLikeButtonState() {
+        val likeButton = binding.MapFragmentIncludedPlaceCard.MapFragmentImageViewLike
+        if (favoritePlacesViewModel.placeExists(previouslyClickedPlace!!)) {
+            likeButton.setImageResource(R.drawable.like_liked)
+        } else {
+            likeButton.setImageResource(R.drawable.like_unliked)
+        }
     }
 
     /**

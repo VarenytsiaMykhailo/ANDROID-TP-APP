@@ -7,7 +7,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
@@ -68,11 +67,7 @@ class PlaceDescriptionFragment : Fragment() {
         binding.PlaceDescriptionFragmentViewPager2PlaceImage.adapter =
             placeDescriptionImagesSliderRecyclerViewAdapter
 
-
-
         placeID = arguments?.getString(PLACE_ID_KEY)!!
-
-
 
         showTags()
 
@@ -80,7 +75,6 @@ class PlaceDescriptionFragment : Fragment() {
             binding.PlaceDescriptionFragmentTabLayout,
             binding.PlaceDescriptionFragmentViewPager2PlaceImage
         ) { tab, position ->
-
         }.attach()
 
         binding.PlaceDescriptionFragmentImageViewBackButton.setOnClickListener {
@@ -109,8 +103,6 @@ class PlaceDescriptionFragment : Fragment() {
                 viewModel.postReaction(place.placeId, PlaceReaction.Reaction.VISITED)
             }
         }
-        val mapFragmentContainer = binding.PlaceDescriptionFragmentFragmentContainerViewSmallMap
-
     }
 
     override fun onResume() {
@@ -157,7 +149,7 @@ class PlaceDescriptionFragment : Fragment() {
     }
 
     /*
-   fun onSetMap(staticMapImageUrl: String, googleMapAppDeeplink: String) {
+    fun onSetMap(staticMapImageUrl: String, googleMapAppDeeplink: String) {
        binding.PlaceDescriptionFragmentImageViewStaticMap.apply {
            load(staticMapImageUrl)
            setOnClickListener {

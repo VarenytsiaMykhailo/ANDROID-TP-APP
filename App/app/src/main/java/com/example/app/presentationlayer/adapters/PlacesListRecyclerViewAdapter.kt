@@ -70,7 +70,7 @@ internal class PlacesListRecyclerViewAdapter(
             onLaunchPlaceDescriptionFragment: (placeId: String) -> Unit,
             onAddPlaceToFavorite: ((place: NearbyPlace) -> Unit)?,
             onRemovePlaceFromFavorite: (place: NearbyPlace) -> Unit,
-            onPlaceExists: (place: NearbyPlace) -> Boolean,
+            onPlaceExistsInFavorite: (place: NearbyPlace) -> Boolean,
         ) {
 
             placeName.text = place.name
@@ -80,14 +80,14 @@ internal class PlacesListRecyclerViewAdapter(
 
             mainImage.load(place.mainImageUrl)
 
-            if (onPlaceExists(place)) {
+            if (onPlaceExistsInFavorite(place)) {
                 likeButton.setImageResource(R.drawable.like_liked)
             } else {
                 likeButton.setImageResource(R.drawable.like_unliked)
             }
             likeButton.setOnClickListener {
                 // It is necessary to check again whether the place exists
-                if (!onPlaceExists(place)) {
+                if (!onPlaceExistsInFavorite(place)) {
                     onAddPlaceToFavorite?.invoke(place)
                     this.likeButton.setImageResource(R.drawable.like_liked)
                 } else {
