@@ -20,6 +20,7 @@ import com.example.app.domain.providers.toNearbyPlace
 import com.example.app.presentationlayer.adapters.PlaceDescriptionImagesSliderRecyclerViewAdapter
 import com.example.app.presentationlayer.viewmodels.FavoritePlacesViewModel
 import com.example.app.presentationlayer.viewmodels.PlaceDescriptionFragmentViewModel
+import com.example.app.presentationlayer.viewmodels.VisitedPlacesViewModel
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.flow.collect
@@ -40,6 +41,8 @@ class PlaceDescriptionFragment : Fragment() {
     private val viewModel by viewModels<PlaceDescriptionFragmentViewModel>()
 
     private val favoritePlacesViewModel by viewModels<FavoritePlacesViewModel>()
+
+    private val visitedPlacesViewModel by viewModels<VisitedPlacesViewModel>()
 
     private val placeDescriptionImagesSliderRecyclerViewAdapter =
         PlaceDescriptionImagesSliderRecyclerViewAdapter()
@@ -96,11 +99,13 @@ class PlaceDescriptionFragment : Fragment() {
             if (visitedFlag) {
                 visitedFlag = false
                 onUnSetVisited()
-                viewModel.postReaction(place.placeId, PlaceReaction.Reaction.UNVISITED)
+                visitedPlacesViewModel.removePlace(place.toNearbyPlace())
+                //viewModel.postReaction(place.placeId, PlaceReaction.Reaction.UNVISITED)
             } else {
                 visitedFlag = true
                 onSetVisited()
-                viewModel.postReaction(place.placeId, PlaceReaction.Reaction.VISITED)
+                visitedPlacesViewModel.savePlace(place.toNearbyPlace())
+                //viewModel.postReaction(place.placeId, PlaceReaction.Reaction.VISITED)
             }
         }
     }
@@ -257,7 +262,6 @@ class PlaceDescriptionFragment : Fragment() {
             onUnSetVisited()
             visitedFlag = false
         }
-
     }
 
     private fun Int.toPx() = (this * resources.displayMetrics.density).toInt()
