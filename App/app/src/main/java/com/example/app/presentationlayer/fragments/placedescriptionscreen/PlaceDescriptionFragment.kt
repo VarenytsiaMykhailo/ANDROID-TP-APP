@@ -67,11 +67,7 @@ class PlaceDescriptionFragment : Fragment() {
         binding.PlaceDescriptionFragmentViewPager2PlaceImage.adapter =
             placeDescriptionImagesSliderRecyclerViewAdapter
 
-
-
         placeID = arguments?.getString(PLACE_ID_KEY)!!
-
-
 
         showTags()
 

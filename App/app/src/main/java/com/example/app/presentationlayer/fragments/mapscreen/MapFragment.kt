@@ -53,7 +53,12 @@ import com.google.android.material.tabs.TabLayoutMediator
  * Use the [MapFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class MapFragment : Fragment(), OnMapReadyCallback {
+class MapFragment :
+    Fragment(),
+    GoogleMap.OnCameraMoveStartedListener,
+    GoogleMap.OnCameraMoveListener,
+    GoogleMap.OnCameraIdleListener,
+    OnMapReadyCallback {
 
     private lateinit var binding: FragmentMapBinding
 
@@ -174,12 +179,28 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
+    override fun onCameraMoveStarted(p0: Int) {
+        if (binding.PlaceDescriptionFragmentCardViewPlaceInfo.alpha == 1F) {
+            hidePlaceInfo()
+        }
+    }
+
+    override fun onCameraMove() {
+    }
+
+    override fun onCameraIdle() {
+    }
+
     /**
      * Manipulates the map when it's available.
      * This callback is triggered when the map is ready to be used.
      */
     override fun onMapReady(map: GoogleMap) {
         this.googleMap = map
+
+        googleMap.setOnCameraMoveStartedListener(this)
+        googleMap.setOnCameraMoveListener(this)
+        googleMap.setOnCameraIdleListener(this)
 
         mainActivity.requestLocationPermission()
 
@@ -266,14 +287,14 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             val position = LatLng(latitude, longitude)
             val advancedMarkerOptions = AdvancedMarkerOptions()
                 .position(position)
-                /*
-                .title(placeTitle)
-                .apply {
-                    if (placeDescription.isNotBlank()) {
-                        snippet(placeDescription)
-                    }
+            /*
+            .title(placeTitle)
+            .apply {
+                if (placeDescription.isNotBlank()) {
+                    snippet(placeDescription)
                 }
-                 */
+            }
+             */
 
             googleMap.addMarker(advancedMarkerOptions)?.let {
                 markers.add(it)
@@ -621,6 +642,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
                     showPlaceInfo()
 
+                    false
+                    /*
                     if (it == previouslyClickedMarker) {
                         if (!markersForRoute.contains(it)) {
                             it.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
@@ -637,6 +660,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                         previouslyClickedMarker = it
                         false
                     }
+                     */
                 } else {
                     false
                 }

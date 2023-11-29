@@ -32,8 +32,8 @@ import java.util.Locale
 class PlacePickerMapFragment :
     Fragment(),
     OnMapReadyCallback,
-    GoogleMap.OnCameraMoveListener,
     GoogleMap.OnCameraMoveStartedListener,
+    GoogleMap.OnCameraMoveListener,
     GoogleMap.OnCameraIdleListener {
 
     private lateinit var binding: FragmentPlacePickerMapBinding
@@ -46,7 +46,7 @@ class PlacePickerMapFragment :
 
     private lateinit var autocompleteFragment: AutocompleteSupportFragment
 
-    private lateinit var choosedLocation: LatLng
+    private lateinit var choseLocation: LatLng
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -92,7 +92,7 @@ class PlacePickerMapFragment :
         })
 
         binding.PlacePickerMapFragmentButtonSelect.setOnClickListener {
-            mainActivity.usersLastChosenLocation = choosedLocation
+            mainActivity.usersLastChosenLocation = choseLocation
             parentFragmentManager.popBackStack()
         }
 
@@ -106,8 +106,8 @@ class PlacePickerMapFragment :
     override fun onMapReady(map: GoogleMap) {
         this.googleMap = map
 
-        googleMap.setOnCameraMoveListener(this)
         googleMap.setOnCameraMoveStartedListener(this)
+        googleMap.setOnCameraMoveListener(this)
         googleMap.setOnCameraIdleListener(this)
 
         mainActivity.requestLocationPermission()
@@ -161,17 +161,17 @@ class PlacePickerMapFragment :
         mainActivity.updateDeviceLocation(onSuccess, onFail)
     }
 
-    override fun onCameraMove() {
+    override fun onCameraMoveStarted(p0: Int) {
     }
 
-    override fun onCameraMoveStarted(p0: Int) {
+    override fun onCameraMove() {
     }
 
     override fun onCameraIdle() {
         val cameraPosition = googleMap.cameraPosition
         val lat = cameraPosition.target.latitude
         val lng = cameraPosition.target.longitude
-        choosedLocation = LatLng(lat, lng)
+        choseLocation = LatLng(lat, lng)
         updateAddressInAutocomplete(lat, lng)
     }
 

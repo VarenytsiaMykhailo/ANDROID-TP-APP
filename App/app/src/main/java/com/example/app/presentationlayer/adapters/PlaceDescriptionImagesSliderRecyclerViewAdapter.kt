@@ -1,9 +1,13 @@
 package com.example.app.presentationlayer.adapters
 
+import android.content.Intent
+import android.net.Uri
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -42,6 +46,24 @@ internal class PlaceDescriptionImagesSliderRecyclerViewAdapter :
 
         fun bind(imageUrl: String) {
             imageView.load(imageUrl)
+            imageView.setOnClickListener {
+//                val intent = Intent()
+//                intent.action = Intent.ACTION_VIEW
+//                intent.setDataAndType(
+//                    Uri.parse(imageUrl),
+//                    "image/*"
+//                )
+                val uri =
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI.buildUpon().appendPath(imageUrl)
+                        .build()
+                val intent = Intent()
+                intent.action = Intent.ACTION_VIEW
+                intent.setDataAndType(
+                    Uri.parse("https://cdn.fotosklad.ru/unsafe/24d33472d338457ebe3ed0f8cc0ba6a9/image.jpg"),
+                    "image/*"
+                )
+                //startActivity(itemView.context, intent, null)
+            }
         }
     }
 }
