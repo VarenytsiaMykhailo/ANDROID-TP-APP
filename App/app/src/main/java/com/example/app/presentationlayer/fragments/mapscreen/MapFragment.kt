@@ -4,9 +4,13 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.location.Location
 import android.net.Uri
 import android.os.Bundle
@@ -33,6 +37,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.AdvancedMarkerOptions
+import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.Dot
@@ -335,18 +340,38 @@ class MapFragment :
             val advancedMarkerOptions = AdvancedMarkerOptions()
                 .position(position)
 
-            val bitmap = BitmapFactory.decodeResource(
-                this.mainActivity.applicationContext.resources,
-                R.drawable.map_pin
-            )
             googleMap.addMarker(advancedMarkerOptions)?.let {
                 markers.add(it)
                 centerRouteMarker = it
-                it.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap))
+                it.setIcon(BitmapFromVector(this.mainActivity.applicationContext, R.drawable.map_pin))
             }
         }
 
         mapFragment.getMapAsync(onMapReadyCallback)
+    }
+
+    private fun BitmapFromVector(context: Context, vectorResId: Int): BitmapDescriptor? {
+        //drawable generator
+        var vectorDrawable: Drawable = ContextCompat.getDrawable(context, vectorResId)!!
+        vectorDrawable.setBounds(
+            0,
+            0,
+            vectorDrawable.intrinsicWidth,
+            vectorDrawable.intrinsicHeight
+        )
+        //bitmap genarator
+        var bitmap: Bitmap = Bitmap.createBitmap(
+            vectorDrawable.intrinsicWidth,
+            vectorDrawable.intrinsicHeight,
+            Bitmap.Config.ARGB_8888
+        )
+        //canvas genaret
+        //pass bitmap in canvas constructor
+        var canvas: Canvas = Canvas(bitmap)
+        //pass canvas in drawable
+        vectorDrawable.draw(canvas)
+        //return BitmapDescriptorFactory
+        return BitmapDescriptorFactory.fromBitmap(bitmap)
     }
 
     fun addCircleOfRadiusAroundCenterPlace() {
