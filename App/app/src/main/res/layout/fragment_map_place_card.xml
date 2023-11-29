@@ -105,6 +105,7 @@
         app:layout_constraintTop_toTopOf="@+id/MapFragment__RatingBar_StarsRate" />
 
     <Button
+        android:id="@+id/MapFragment__Button_RemovePlace"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 

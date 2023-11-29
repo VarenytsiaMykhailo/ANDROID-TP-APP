@@ -26,6 +26,7 @@ import com.example.app.presentationlayer.MainActivity
 import com.example.app.presentationlayer.adapters.PlaceDescriptionImagesSliderRecyclerViewAdapter
 import com.example.app.presentationlayer.fragments.placedescriptionscreen.PlaceDescriptionFragment
 import com.example.app.presentationlayer.fragments.placepickermapscreen.PlacePickerMapFragment
+import com.example.app.presentationlayer.viewmodels.FavoritePlacesViewModel
 import com.example.app.presentationlayer.viewmodels.MapFragmentViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -33,6 +34,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.AdvancedMarkerOptions
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.Dot
 import com.google.android.gms.maps.model.Gap
 import com.google.android.gms.maps.model.JointType
@@ -51,11 +53,18 @@ import com.google.android.material.tabs.TabLayoutMediator
  * Use the [MapFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class MapFragment : Fragment(), OnMapReadyCallback {
+class MapFragment :
+    Fragment(),
+    GoogleMap.OnCameraMoveStartedListener,
+    GoogleMap.OnCameraMoveListener,
+    GoogleMap.OnCameraIdleListener,
+    OnMapReadyCallback {
 
     private lateinit var binding: FragmentMapBinding
 
     private val viewModel by viewModels<MapFragmentViewModel>()
+
+    private val favoritePlacesViewModel by viewModels<FavoritePlacesViewModel>()
 
     lateinit var mainActivity: MainActivity
 
@@ -69,9 +78,13 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     private val markersForRoute = mutableListOf<Marker>()
 
+    private var centerRouteMarker: Marker? = null
+
     private var previouslyClickedMarker: Marker? = null
 
     private var previouslyClickedPlace: NearbyPlace? = null
+
+    private var isRouteMode = false
 
     // Uses for AdvancedMarker
     // Does not work. Bug from google?
@@ -135,6 +148,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         setPlaceDescriptionButtonOnClickListener()
         setRouteButtonOnClickListener()
         setRefreshMapButtonOnClickListener()
+        setRemovePlaceButtonOnClickListener()
+        setLikeButtonOnClickListener()
         setOnMapClickListener()
         binding.MapFragmentImageViewChooseNewPlace.setOnClickListener {
             parentFragmentManager
@@ -156,12 +171,36 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }.attach()
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        if (previouslyClickedPlace != null) {
+            updateLikeButtonState()
+        }
+    }
+
+    override fun onCameraMoveStarted(p0: Int) {
+        if (binding.PlaceDescriptionFragmentCardViewPlaceInfo.alpha == 1F) {
+            hidePlaceInfo()
+        }
+    }
+
+    override fun onCameraMove() {
+    }
+
+    override fun onCameraIdle() {
+    }
+
     /**
      * Manipulates the map when it's available.
      * This callback is triggered when the map is ready to be used.
      */
     override fun onMapReady(map: GoogleMap) {
         this.googleMap = map
+
+        googleMap.setOnCameraMoveStartedListener(this)
+        googleMap.setOnCameraMoveListener(this)
+        googleMap.setOnCameraIdleListener(this)
 
         mainActivity.requestLocationPermission()
 
@@ -248,12 +287,14 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             val position = LatLng(latitude, longitude)
             val advancedMarkerOptions = AdvancedMarkerOptions()
                 .position(position)
-                .title(placeTitle)
-                .apply {
-                    if (placeDescription.isNotBlank()) {
-                        snippet(placeDescription)
-                    }
+            /*
+            .title(placeTitle)
+            .apply {
+                if (placeDescription.isNotBlank()) {
+                    snippet(placeDescription)
                 }
+            }
+             */
 
             googleMap.addMarker(advancedMarkerOptions)?.let {
                 markers.add(it)
@@ -285,7 +326,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         mapFragment.getMapAsync(onMapReadyCallback)
     }
 
-    fun addCenterRouteMarker() {
+    fun addCenterPlaceMarker() {
         val onMapReadyCallback = OnMapReadyCallback { googleMap ->
             val position = LatLng(
                 mainActivity.usersLastChosenLocation.latitude,
@@ -300,8 +341,27 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             )
             googleMap.addMarker(advancedMarkerOptions)?.let {
                 markers.add(it)
+                centerRouteMarker = it
                 it.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap))
             }
+        }
+
+        mapFragment.getMapAsync(onMapReadyCallback)
+    }
+
+    fun addCircleOfRadiusAroundCenterPlace() {
+        val onMapReadyCallback = OnMapReadyCallback { googleMap ->
+            val circle = CircleOptions()
+                .center(mainActivity.usersLastChosenLocation)
+                .radius(viewModel.giveRadiusString().toDouble() * 1000)
+                .strokeWidth(1.0f)
+                //.strokeColor(Color.parseColor("#2271cce7"))
+                .fillColor(Color.parseColor("#2271cce7"))
+            //.strokeColor(Color.RED)
+            //.fillColor(0x220000FF)
+            //.strokeWidth(5.0f)
+
+            googleMap.addCircle(circle)
         }
 
         mapFragment.getMapAsync(onMapReadyCallback)
@@ -349,6 +409,13 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             googleMap.clear()
             removeAllMarkers()
             removeAllPolylines()
+            isRouteMode = false
+
+            binding.MapFragmentButtonRoute.visibility = View.VISIBLE
+            binding.MapFragmentImageViewRootIcon.visibility = View.VISIBLE
+            binding.MapFragmentButtonGoogleRoute.visibility = View.GONE
+            binding.MapFragmentImageViewGoogleIcon.visibility = View.GONE
+            binding.MapFragmentImageViewRefreshMap.visibility = View.GONE
         }
 
         mapFragment.getMapAsync(onMapReadyCallback)
@@ -364,11 +431,42 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private fun setRefreshMapButtonOnClickListener() {
         binding.MapFragmentImageViewRefreshMap.setOnClickListener {
             viewModel.onUpdatePlaces(shouldUpdateCachedValue = false)
-            binding.MapFragmentButtonRoute.visibility = View.VISIBLE
-            binding.MapFragmentImageViewRootIcon.visibility = View.VISIBLE
-            binding.MapFragmentButtonGoogleRoute.visibility = View.GONE
-            binding.MapFragmentImageViewGoogleIcon.visibility = View.GONE
-            it.visibility = View.GONE
+        }
+    }
+
+    private fun setRemovePlaceButtonOnClickListener() {
+        binding.MapFragmentIncludedPlaceCard.MapFragmentButtonRemovePlace.setOnClickListener {
+            viewModel.onRemovePlace(previouslyClickedPlace!!)
+            val placeExistsInFavoriteDb =
+                favoritePlacesViewModel.placeExists(previouslyClickedPlace!!)
+            favoritePlacesViewModel.removePlace(previouslyClickedPlace!!)
+
+            Snackbar.make(
+                it,
+                "${previouslyClickedPlace!!.name} удалено",
+                Snackbar.LENGTH_LONG
+            ).setAction("Отменить") {
+                viewModel.onRestoreRemovedPlace(previouslyClickedPlace!!)
+                if (placeExistsInFavoriteDb) {
+                    favoritePlacesViewModel.savePlace(previouslyClickedPlace!!)
+                }
+            }.show()
+
+            hidePlaceInfo()
+        }
+    }
+
+    private fun setLikeButtonOnClickListener() {
+        val likeButton = binding.MapFragmentIncludedPlaceCard.MapFragmentImageViewLike
+        likeButton.setOnClickListener {
+            // It is necessary to check again whether the place exists
+            if (!favoritePlacesViewModel.placeExists(previouslyClickedPlace!!)) {
+                favoritePlacesViewModel.savePlace(previouslyClickedPlace!!)
+                likeButton.setImageResource(R.drawable.like_liked)
+            } else {
+                favoritePlacesViewModel.removePlace(previouslyClickedPlace!!)
+                likeButton.setImageResource(R.drawable.like_unliked)
+            }
         }
     }
 
@@ -379,8 +477,10 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             binding.MapFragmentButtonGoogleRoute.visibility = View.VISIBLE
             binding.MapFragmentImageViewGoogleIcon.visibility = View.VISIBLE
             binding.MapFragmentImageViewRefreshMap.visibility = View.VISIBLE
-            if (markersForRoute.size >= 1) {
 
+            isRouteMode = true
+
+            if (markersForRoute.size >= 1) {
                 var shouldUseUserSequence = true
                 var shouldUseUserGeolocationAsStartLocation = false
                 var shouldOpenGoogleMapsNavigator = false
@@ -537,24 +637,31 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     fun setOnMarkerClickListener() {
         val onMapReadyCallback = OnMapReadyCallback { googleMap ->
             googleMap.setOnMarkerClickListener {
-                previouslyClickedPlace = viewModel.getPlaceByLatLng(it.position)
+                if (it != centerRouteMarker) {
+                    previouslyClickedPlace = viewModel.getPlaceByLatLng(it.position)
 
-                showPlaceInfo()
+                    showPlaceInfo()
 
-                if (it == previouslyClickedMarker) {
-                    if (!markersForRoute.contains(it)) {
-                        it.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
-                        //it.setIcon(BitmapDescriptorFactory.fromPinConfig(pinConfig))
-                        markersForRoute += it
+                    false
+                    /*
+                    if (it == previouslyClickedMarker) {
+                        if (!markersForRoute.contains(it)) {
+                            it.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
+                            //it.setIcon(BitmapDescriptorFactory.fromPinConfig(pinConfig))
+                            markersForRoute += it
+                        } else {
+                            markersForRoute -= it
+                            it.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
+                        }
+                        previouslyClickedMarker = null
+                        true
+
                     } else {
-                        markersForRoute -= it
-                        it.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
+                        previouslyClickedMarker = it
+                        false
                     }
-                    previouslyClickedMarker = null
-                    true
-
+                     */
                 } else {
-                    previouslyClickedMarker = it
                     false
                 }
             }
@@ -633,6 +740,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         binding.radiusBack.visibility = visibilityFlag
         binding.MapFragmentTextViewRadius.visibility = visibilityFlag
         binding.MapFragmentTextViewRadiusTxt.visibility = visibilityFlag
+        binding.MapFragmentImageViewRefreshMap.visibility =
+            if (isRouteMode && shouldShow) View.VISIBLE else View.GONE
     }
 
     private fun setPlaceInfoData() {
@@ -652,6 +761,17 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             previouslyClickedPlace!!.rating.toString()
         binding.MapFragmentIncludedPlaceCard.MapFragmentTextViewRateCount.text =
             previouslyClickedPlace!!.ratingCount.toString()
+
+        updateLikeButtonState()
+    }
+
+    private fun updateLikeButtonState() {
+        val likeButton = binding.MapFragmentIncludedPlaceCard.MapFragmentImageViewLike
+        if (favoritePlacesViewModel.placeExists(previouslyClickedPlace!!)) {
+            likeButton.setImageResource(R.drawable.like_liked)
+        } else {
+            likeButton.setImageResource(R.drawable.like_unliked)
+        }
     }
 
     /**
