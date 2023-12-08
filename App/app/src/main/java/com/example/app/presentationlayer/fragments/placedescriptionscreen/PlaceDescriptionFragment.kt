@@ -232,33 +232,28 @@ class PlaceDescriptionFragment : Fragment() {
     }
 
     private fun onSetStartReactions(list: List<String>) {
+        onUnSetLike()
+        likedFlag = false
+        onUnSetVisited()
+        visitedFlag = false
         if (list.isNotEmpty())
             list.forEach { it ->
                 String
-                likedFlag = if (it == "like") {
-                    onSetLike()
-                    true
-                } else {
-                    onUnSetLike()
-                    false
+                when (it) {
+                    "like" -> {
+                        onSetLike()
+                        likedFlag = true
+                    }
+                    "visited" -> {
+                        onSetVisited()
+                        visitedFlag = true
+                    }
                 }
 
-                visitedFlag = if (it == "visited") {
-                    onSetVisited()
-                    true
-                } else {
-                    onUnSetVisited()
-                    false
-                }
             }
-        else {
-            onUnSetLike()
-            likedFlag = false
-            onUnSetVisited()
-            visitedFlag = false
-        }
-
     }
+
+
 
     private fun Int.toPx() = (this * resources.displayMetrics.density).toInt()
 
