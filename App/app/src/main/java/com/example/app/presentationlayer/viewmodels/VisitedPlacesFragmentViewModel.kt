@@ -5,6 +5,7 @@ import android.os.Looper
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.app.datalayer.models.NearbyPlace
+import com.example.app.datalayer.models.PlaceReaction
 import com.example.app.domain.providers.MapProvider
 import com.example.app.presentationlayer.adapters.PlacesListRecyclerViewAdapter
 import com.example.app.presentationlayer.fragments.visitedplaceslistscreen.VisitedPlacesListFragment
@@ -40,6 +41,12 @@ internal class VisitedPlacesFragmentViewModel : ViewModel() {
                 Paper.book(VISITED_PLACES).read<NearbyPlace>(it)?.run {
                     add(this)
                 }
+            }
+        }
+    fun postSuggestReaction(placeId: String, reaction: PlaceReaction.Reaction) =
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                mapProvider.postSuggestReaction(placeId, reaction)
             }
         }
 

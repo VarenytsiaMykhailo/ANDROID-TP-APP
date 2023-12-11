@@ -30,10 +30,6 @@ internal class VisitedPlacesViewModel : ViewModel() {
             }
         }
 
-    // TODO завернуть в корутину https://stackoverflow.com/questions/60910978/how-to-return-value-from-async-coroutine-scope-such-as-viewmodelscope-to-your-ui
-    fun placeExists(place: NearbyPlace) =
-        Paper.book(VISITED_PLACES).read<NearbyPlace>(place.placeId) != null
-
     companion object {
 
         private const val VISITED_PLACES = "visited_places"

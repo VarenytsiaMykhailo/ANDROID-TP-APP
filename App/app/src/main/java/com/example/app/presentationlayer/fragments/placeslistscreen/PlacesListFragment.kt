@@ -152,7 +152,6 @@ class PlacesListFragment : Fragment() {
             adapter = filtersAdapter
         }
 
-        ItemTouchHelper(onMoveCallback).attachToRecyclerView(recyclerView)
         viewModel.filtersAdapter = filtersAdapter
     }
 
