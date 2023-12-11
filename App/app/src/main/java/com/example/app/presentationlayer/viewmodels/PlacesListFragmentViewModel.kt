@@ -2,9 +2,11 @@ package com.example.app.presentationlayer.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.app.datalayer.models.CategoriesList
 import com.example.app.domain.providers.MapProvider
 import com.example.app.datalayer.models.NearbyPlace
 import com.example.app.datalayer.models.PlaceReaction
+import com.example.app.presentationlayer.adapters.FiltersAdapter
 import com.example.app.presentationlayer.adapters.PlacesListRecyclerViewAdapter
 import com.example.app.presentationlayer.fragments.placeslistscreen.PlacesListFragment
 import kotlinx.coroutines.Dispatchers
@@ -19,10 +21,15 @@ internal class PlacesListFragmentViewModel : ViewModel() {
 
     lateinit var placesListRecyclerViewAdapter: PlacesListRecyclerViewAdapter
 
+    lateinit var filtersAdapter: FiltersAdapter
+
+    lateinit var filters: CategoriesList
+
     lateinit var placesList: MutableList<NearbyPlace>
 
     fun onUpdatePlaces(
         forceRefresh: Boolean = false, // Need for ignoring isDataAlreadyLoaded flag,
+        placesTypes: String? = null,
     ) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
@@ -32,7 +39,7 @@ internal class PlacesListFragmentViewModel : ViewModel() {
                         fragment.mainActivity.usersLastChosenLocation.longitude,
                         20,
                         0,
-                        forceRefresh
+                        forceRefresh,
                     ).toMutableList()
             }
             fragment.mainActivity.usersPreviousChosenLocation =
@@ -40,6 +47,28 @@ internal class PlacesListFragmentViewModel : ViewModel() {
             placesListRecyclerViewAdapter.submitList(placesList)
         }
     }
+
+    fun onGetFilters() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                filters=mapProvider.getSuggestCategoriesList()
+            }
+            val filtersList:MutableList<String> = filters.categories.toMutableList()
+            filtersList.add(0,"Избранное")
+            filtersList.add(0,"Не посещенное")
+            filtersAdapter.submitList(filtersList)
+        }
+    }
+
+    fun onAddFilter(name: String) {
+        mapProvider.filtersList[name] = name
+    }
+
+    fun onRemoveFilter(name: String) {
+        mapProvider.filtersList.remove(name, name)
+    }
+
+    fun onFilterChosen(name:String)=mapProvider.filtersList.containsKey(name)
 
     fun onRemovePlace(position: Int, placeToDelete: NearbyPlace) {
         removePlace(position)
