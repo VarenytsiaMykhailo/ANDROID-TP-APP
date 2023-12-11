@@ -11,11 +11,14 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.app.R
 import com.example.app.datalayer.models.NearbyPlace
+import com.example.app.datalayer.models.PlaceReaction
 import com.example.app.presentationlayer.MainActivity
 import com.example.app.presentationlayer.adapters.PlacesListRecyclerViewAdapter
 import com.example.app.presentationlayer.fragments.placedescriptionscreen.PlaceDescriptionFragment
 import com.example.app.presentationlayer.viewmodels.FavoritePlacesViewModel
 import com.example.app.presentationlayer.viewmodels.VisitedPlacesFragmentViewModel
+import com.example.app.presentationlayer.viewmodels.VisitedPlacesViewModel
+import com.google.android.material.snackbar.Snackbar
 
 /**
  * Use the [VisitedPlacesListFragment.newInstance] factory method to
@@ -26,7 +29,7 @@ class VisitedPlacesListFragment : Fragment() {
     private val viewModel by viewModels<VisitedPlacesFragmentViewModel>()
 
     private val favoritePlacesViewModel by viewModels<FavoritePlacesViewModel>()
-
+    private val visitedPlacesViewModel by viewModels<VisitedPlacesViewModel>()
     private lateinit var mainActivity: MainActivity
 
     private val onLaunchPlaceDescriptionFragment: (placeId: String) -> Unit = {
@@ -80,7 +83,6 @@ class VisitedPlacesListFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-
         viewModel.onUpdatePlaces()
     }
 
@@ -91,14 +93,14 @@ class VisitedPlacesListFragment : Fragment() {
             adapter = placesListRecyclerViewAdapter
         }
 
-        //ItemTouchHelper(onMoveCallback).attachToRecyclerView(recyclerView)
+        ItemTouchHelper(onMoveCallback).attachToRecyclerView(recyclerView)
         viewModel.placesListRecyclerViewAdapter = placesListRecyclerViewAdapter
     }
 
     private val onMoveCallback =
         object : ItemTouchHelper.SimpleCallback(
             0,
-            ItemTouchHelper.RIGHT,
+            ItemTouchHelper.LEFT,
         ) {
             override fun onMove(
                 recyclerView: RecyclerView,
@@ -110,32 +112,33 @@ class VisitedPlacesListFragment : Fragment() {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
                 when (direction) {
-                    ItemTouchHelper.LEFT -> {}
-
-                    ItemTouchHelper.RIGHT -> {
-                        /*
-                        val placeToVisited = viewModel.favoritePlacesList[position]
-                        val indexOfCachedListForRestoring =
-                            viewModel.onVisitedPlace(position, placeToVisited)
-                            favoritePlacesViewModel.removePlace(placeToVisited)
-
+                    ItemTouchHelper.LEFT -> {
+                        val placeToUnLike = viewModel.visitedPlacesList[position]
+                       visitedPlacesViewModel.removePlace(placeToUnLike)
+                        viewModel.onUpdatePlaces()
+                        viewModel.postSuggestReaction(
+                            placeToUnLike.placeId,
+                            PlaceReaction.Reaction.UNVISITED
+                        )
                         view?.let {
                             Snackbar.make(
                                 it.findViewById<RecyclerView>(R.id.locations_rv),
-                                "${placeToVisited.name} посещено",
+                                "${placeToUnLike.name} не посещенно",
                                 Snackbar.LENGTH_LONG
                             ).setAction("Отменить") {
-                                viewModel.onRestoreVisitedPlace(
-                                    position,
-                                    indexOfCachedListForRestoring,
-                                    placeToVisited,
+                                viewModel.postSuggestReaction(
+                                    placeToUnLike.placeId,
+                                    PlaceReaction.Reaction.VISITED
                                 )
-                                favoritePlacesViewModel.savePlace(placeToVisited)
+
+                                visitedPlacesViewModel.savePlace(placeToUnLike)
+                                viewModel.onUpdatePlaces()
                             }.show()
                         }
 
-                         */
                     }
+
+                    ItemTouchHelper.RIGHT -> {}
                 }
             }
         }
