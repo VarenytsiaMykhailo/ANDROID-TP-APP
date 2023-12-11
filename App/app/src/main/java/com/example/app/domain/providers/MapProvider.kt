@@ -22,6 +22,7 @@ object MapProvider {
     var radius = 3000
 
     lateinit var placesCachedList: MutableList<NearbyPlace>
+    var filtersList: MutableMap<String, String> = mutableMapOf()
 
     // TODO чет не нравится что из параметра убрали radius. Придумать как отрефакторить
     /**
@@ -37,23 +38,21 @@ object MapProvider {
         limit: Int,
         offset: Int,
         forceRefresh: Boolean = false, // Need for ignoring updateListFlag,
-        placesTypes: String? = null,
     ): List<NearbyPlace> {
-        // Log.d("sss","$updateListByRadiusFlag $forceRefresh")
+        stringFromMap(filtersList)?.let { Log.d("sss", it) }
         if (updateListByRadiusFlag || forceRefresh) {
             placesCachedList = mapRepository.getSuggestPlaces(
                 "$lat,$lng",
                 radius.toString(),
                 limit,
                 offset,
-                placesTypes,
+                stringFromMap(filtersList),
             ).also {
                 Log.d(LOG_TAG, "getSuggestPlaces = $it")
             }.toMutableList()
 
             updateListByRadiusFlag = false
         }
-
         return placesCachedList
     }
 
@@ -87,6 +86,16 @@ object MapProvider {
         mapRepository.postSuggestRouteSortPlace(
             sortPlacesRequest
         )
+
+    fun stringFromMap(map:MutableMap<String,String>):String?{
+        var string:String?=null
+        map.values.forEach(){
+            if (string==null) string=""
+            string= "$string$it,"
+        }
+        string= string?.dropLast(1)
+        return string
+    }
 
     fun increaseRadius() {
         radius += 500

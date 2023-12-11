@@ -1,13 +1,18 @@
 package com.example.app.presentationlayer.fragments.placeslistscreen
 
+
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver.OnGlobalLayoutListener
+import android.view.animation.Animation
+import android.view.animation.TranslateAnimation
 import android.widget.Button
 import android.widget.ImageView
-import androidx.appcompat.app.AlertDialog
+import androidx.cardview.widget.CardView
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -16,12 +21,14 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.app.R
 import com.example.app.datalayer.models.NearbyPlace
 import com.example.app.presentationlayer.MainActivity
+import com.example.app.presentationlayer.adapters.FiltersAdapter
 import com.example.app.presentationlayer.adapters.PlacesListRecyclerViewAdapter
 import com.example.app.presentationlayer.fragments.mapscreen.MapFragment
 import com.example.app.presentationlayer.fragments.placedescriptionscreen.PlaceDescriptionFragment
 import com.example.app.presentationlayer.viewmodels.FavoritePlacesViewModel
 import com.example.app.presentationlayer.viewmodels.PlacesListFragmentViewModel
 import com.google.android.material.snackbar.Snackbar
+
 
 /**
  * Use the [PlacesListFragment.newInstance] factory method to
@@ -32,6 +39,8 @@ class PlacesListFragment : Fragment() {
     private val viewModel by viewModels<PlacesListFragmentViewModel>()
 
     private val favoritePlacesViewModel by viewModels<FavoritePlacesViewModel>()
+
+    private var relativity: Float = 300f/24f
 
     internal lateinit var mainActivity: MainActivity
 
@@ -59,6 +68,23 @@ class PlacesListFragment : Fragment() {
         favoritePlacesViewModel.placeExists(it)
     }
 
+    private val onAddFilter: (name: String) -> Unit = {
+        viewModel.onAddFilter(it)
+    }
+    private val onRemoveFilter: (name: String) -> Unit = {
+        viewModel.onRemoveFilter(it)
+    }
+    private val onFilterChosen: (name: String) -> Boolean = {
+        viewModel.onFilterChosen(it)
+    }
+
+    private val filtersAdapter =
+        FiltersAdapter(
+            onAddFilter,
+            onRemoveFilter,
+            onFilterChosen,
+        )
+
     private val placesListRecyclerViewAdapter =
         PlacesListRecyclerViewAdapter(
             onLaunchPlaceDescriptionFragment,
@@ -76,60 +102,116 @@ class PlacesListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         mainActivity = requireActivity() as MainActivity
 
         viewModel.fragment = this
 
         setupRecyclerView(view)
-
+        setupFiltersRecyclerView(view)
         setChangeFragmentButtonClickListener(view)
 
         val swipeLayout = view.findViewById<SwipeRefreshLayout>(R.id.swiperefresh)
         swipeLayout.setOnRefreshListener {
             viewModel.onUpdatePlaces(forceRefresh = true)
+            placesListRecyclerViewAdapter.notifyDataSetChanged()
             swipeLayout.isRefreshing = false;
         }
+        viewModel.onGetFilters()
+        var filtersShown = false
 
-        view.findViewById<ImageView>(R.id.PlacesListFragment__ImageView_Filters)
+        val cardView = view.findViewById<CardView>(R.id.PlaceListFragment__CardView)
+        val imageView = view.findViewById<ImageView>(R.id.PlacesListFragment__ImageView_Filters)
+
+
+        cardView.visibility = View.INVISIBLE
+        Log.d("sss",cardView.height.toString())
+        cardView.visibility = View.GONE
+
+        imageView
             .setOnClickListener {
-                var shouldUseParks = true
-                var shouldUseChurches = true
-                AlertDialog.Builder(this.requireContext()).apply {
-                    setTitle("Фильтр мест")
-                    setMultiChoiceItems(
-                        arrayOf(
-                            "Парки",
-                            "Церкви",
-                        ),
-                        booleanArrayOf(true, true)
-                    ) { dialog, which, isChecked ->
-                        // The user checked or unchecked a box
-                        when (which) {
-                            0 -> shouldUseParks = isChecked
-                            1 -> shouldUseChurches = isChecked
-                        }
-                    }
-                    setPositiveButton("OK") { dialog, which ->
-                        var placesTypes = ""
-                        if (shouldUseParks) {
-                            placesTypes += "Парк"
-                        }
-                        if (shouldUseChurches) {
-                            if (placesTypes.isNotEmpty()) {
-                                placesTypes += ","
-                            }
-                            placesTypes += "Церковь"
-                        }
-                        viewModel.onUpdatePlaces(
-                            forceRefresh = true,
-                            placesTypes = placesTypes.ifEmpty { null }
-                        )
-                    }
+                filtersShown = if (!filtersShown) {
+                    showFilters(
+                        cardView,
+                        imageView,
+                    )
+                    true
+                } else {
+                    hideFilters(
+                        cardView,
+                        imageView
+                    )
+                    false
                 }
-                    .create()
-                    .show()
             }
+    }
+
+    private fun setupFiltersRecyclerView(view: View) {
+        val recyclerView = view.findViewById<RecyclerView>(R.id.FiltersFragment__RecyclerView)
+        recyclerView.apply {
+            layoutManager = GridLayoutManager(context, 1)
+            adapter = filtersAdapter
+        }
+
+        ItemTouchHelper(onMoveCallback).attachToRecyclerView(recyclerView)
+        viewModel.filtersAdapter = filtersAdapter
+    }
+
+
+    private fun showFilters(cardView: CardView, imageView: ImageView) {
+        //showHideTopButtons(false) ЗАДИЗЕЙБЛИТЬ ВСЕ СЗАДИ
+        imageView.setImageResource(R.drawable.filter_closer)
+        cardView.visibility = View.VISIBLE
+        cardView.startAnimation(inFromBottomAnimation())
+        imageView.startAnimation(inFromBottomAnimationImg())
+    }
+
+    private fun hideFilters(cardView: CardView, imageView: ImageView) {
+        viewModel.onUpdatePlaces(forceRefresh = true)
+        placesListRecyclerViewAdapter.notifyDataSetChanged()
+        imageView.setImageResource(R.drawable.filter_opener)
+        cardView.startAnimation(outToBottomAnimation())
+        imageView.startAnimation(outToBottomAnimationImg())
+        cardView.visibility = View.GONE
+
+        // showHideTopButtons(true) ОТДИЗЕЙБЛИТЬ ВСЕ СЗАДИ
+
+    }
+
+    private fun inFromBottomAnimation(): Animation {
+        val inFromBottom: Animation = TranslateAnimation(
+            Animation.RELATIVE_TO_PARENT, 0.0f, Animation.RELATIVE_TO_PARENT, 0.0f,
+            Animation.RELATIVE_TO_SELF, +1.0f, Animation.RELATIVE_TO_SELF, 0.0f
+        )
+        inFromBottom.duration = 300
+        return inFromBottom
+    }
+
+    private fun inFromBottomAnimationImg(): Animation {
+        val inFromBottom: Animation = TranslateAnimation(
+            Animation.RELATIVE_TO_PARENT, 0.0f, Animation.RELATIVE_TO_PARENT, 0.0f,
+            Animation.RELATIVE_TO_SELF, (relativity), Animation.RELATIVE_TO_SELF, 0.0f
+        )
+        inFromBottom.duration = 300
+        return inFromBottom
+    }
+
+
+    private fun outToBottomAnimation(): Animation {
+        val outToBottom: Animation = TranslateAnimation(
+            Animation.RELATIVE_TO_PARENT, 0.0f, Animation.RELATIVE_TO_PARENT, 0.0f,
+            Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, +1.0f
+        )
+        outToBottom.duration = 300
+        return outToBottom
+    }
+
+    private fun outToBottomAnimationImg(): Animation {
+        val outToBottom: Animation = TranslateAnimation(
+            Animation.RELATIVE_TO_PARENT, 0.0f, Animation.RELATIVE_TO_PARENT, 0.0f,
+            Animation.RELATIVE_TO_SELF, -(relativity), Animation.RELATIVE_TO_SELF, 0.0f
+        )
+        outToBottom.duration = 300
+        return outToBottom
     }
 
     override fun onResume() {
