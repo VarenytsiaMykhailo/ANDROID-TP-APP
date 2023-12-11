@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/FragmentFilters__CardView_FilterCard"
+    android:layout_width="match_parent"
+    android:layout_height="40dp"
+    android:layout_marginTop="6dp"
+    app:cardCornerRadius="16dp"
+    android:backgroundTint="@color/white"
+    android:clickable="true"
+    app:cardElevation="0dp"
+    >
+
+    <TextView
+        android:id="@+id/FragmentFilters__TextView_Name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:textColor="@color/black"
+        android:layout_marginStart="30dp"
+        android:layout_gravity="center_vertical|start"
+        tools:text="Фильтр 1" />
+
+    <ImageView
+        android:id="@+id/FragmentFilters__ImageView_Indicator"
+        android:layout_width="13dp"
+        android:layout_height="13dp"
+        android:layout_marginStart="11dp"
+        android:layout_gravity="center_vertical|start"
+        app:srcCompat="@drawable/filter_indicator_unchosen" />
+
+
+</androidx.cardview.widget.CardView>

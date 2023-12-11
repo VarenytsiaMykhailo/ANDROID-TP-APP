@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@color/white"
+    android:id="@+id/parent">
 
     <TextView
         android:id="@+id/PlaceListFragment__TextView_TopText"
@@ -28,25 +29,21 @@
         android:textColor="@color/black"
         android:textSize="16sp" />
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/swiperefresh"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="40dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/PlaceListFragment__TextView_TopText" >
+        app:layout_constraintTop_toBottomOf="@+id/PlaceListFragment__TextView_TopText">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/locations_rv"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            />
+            android:layout_height="match_parent" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/change_fragment_button"
@@ -56,7 +53,6 @@
         android:backgroundTint="@color/white"
         android:gravity="end|center_vertical"
         android:paddingEnd="12dp"
-        android:paddingStart="0dp"
         android:text="Карта"
         android:textColor="@color/black"
         android:textSize="18sp"
@@ -76,5 +72,29 @@
         app:layout_constraintTop_toTopOf="@+id/change_fragment_button"
         app:srcCompat="@drawable/map_vector_icon" />
 
+    <ImageView
+        android:id="@+id/PlacesListFragment__ImageView_Filters"
+        android:layout_width="80dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/PlaceListFragment__CardView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/filter_opener" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/PlaceListFragment__CardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/white"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/stub"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <include
+            android:id="@+id/PlaceListFragment__Included_PlaceCard"
+            layout="@layout/fragment_filters_card" />
+
+    </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

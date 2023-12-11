@@ -1,6 +1,7 @@
 package com.example.app.datalayer.repositories
 
 import com.example.app.BuildConfig
+import com.example.app.datalayer.models.CategoriesList
 import com.example.app.datalayer.models.NearbyPlace
 import com.example.app.datalayer.models.PlaceDescription
 import com.example.app.datalayer.models.PlaceReaction
@@ -32,7 +33,11 @@ internal interface MapRepository {
         @Query("radius") radius: String,
         @Query("limit") limit: Int,
         @Query("offset") offset: Int,
+        @Query("types") placesTypes: String?,
     ): List<NearbyPlace>
+
+    @GET("suggest/categories/list")
+    suspend fun getSuggestCategoriesList(): CategoriesList
 
     /**
      * @param placeId Example: "ChIJfRJDflpKtUYRl0UbgcrmUUk".
