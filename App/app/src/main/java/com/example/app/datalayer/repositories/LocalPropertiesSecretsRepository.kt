@@ -8,7 +8,11 @@ internal object LocalPropertiesSecretsRepository {
 
     const val BACKEND_CONNECTION_URL: String = BuildConfig.BACKEND_CONNECTION_URL
 
+    const val CHAT_GPT_CONNECTION_URL: String = BuildConfig.CHAT_GPT_CONNECTION_URL
+
     const val MAPS_API_KEY: String = BuildConfig.MAPS_API_KEY
+
+    const val CHAT_GPT_API_KEY: String = BuildConfig.CHAT_GPT_API_KEY
 
     lateinit var USER_UUID: String // Initializes from MainActivity
 
