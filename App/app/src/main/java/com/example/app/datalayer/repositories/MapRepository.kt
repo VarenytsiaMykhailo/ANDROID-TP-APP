@@ -18,6 +18,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
+import java.util.concurrent.TimeUnit
 
 internal interface MapRepository {
 
@@ -71,6 +72,7 @@ internal interface MapRepository {
 
         private fun createMapRepository(): MapRepository {
             val client = OkHttpClient.Builder().apply {
+                readTimeout(20, TimeUnit.SECONDS)
                 if (BuildConfig.DEBUG) {
                     val loggingInterceptor = HttpLoggingInterceptor().apply {
                         level = HttpLoggingInterceptor.Level.BODY

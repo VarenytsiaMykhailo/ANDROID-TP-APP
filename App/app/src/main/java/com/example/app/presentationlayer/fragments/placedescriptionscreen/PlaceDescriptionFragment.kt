@@ -3,6 +3,8 @@ package com.example.app.presentationlayer.fragments.placedescriptionscreen
 import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.location.Address
+import android.location.Geocoder
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -16,6 +18,7 @@ import com.example.app.R
 import com.example.app.databinding.FragmentPlaceDescriptionBinding
 import com.example.app.datalayer.models.PlaceDescription
 import com.example.app.datalayer.models.PlaceReaction
+import com.example.app.datalayer.repositories.ChatGptRepository
 import com.example.app.domain.providers.toNearbyPlace
 import com.example.app.presentationlayer.adapters.PlaceDescriptionImagesSliderRecyclerViewAdapter
 import com.example.app.presentationlayer.viewmodels.FavoritePlacesViewModel
@@ -26,6 +29,8 @@ import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import java.io.IOException
+import java.util.Locale
 
 
 /**
@@ -124,11 +129,10 @@ class PlaceDescriptionFragment : Fragment() {
                 onSetWorkingHours(placeDescription.workingHours)
                 onSetTags(placeDescription.tags)
                 onSetStartReactions(placeDescription.reactions)
+                onSetAIPlaceDescription(placeDescription.name, placeDescription.location)
                 place = placeDescription
             }.collect()
         }
-
-
     }
 
     fun disableScroll() {
@@ -258,7 +262,63 @@ class PlaceDescriptionFragment : Fragment() {
             }
     }
 
+    private fun onSetAIPlaceDescription(placeName: String, location: PlaceDescription.Location) {
+        val aiPlaceDescriptionTextView = binding.PlaceDescriptionFragmentTextViewAIPlaceDescription
+        val aiPlaceDescriptionProgressBar = binding.PlaceDescriptionFragmentProgressBarAIPlaceDescription
 
+        ChatGptRepository.getPlaceDescriptionByChatGpt(
+            placeName = formChatGptRequestString(placeName, location),
+            onSuccess = {
+                aiPlaceDescriptionTextView.apply {
+                    post {
+                        aiPlaceDescriptionProgressBar.visibility = View.GONE
+                        text = it
+                    }
+                }
+            },
+            onFailure = {
+                aiPlaceDescriptionTextView.apply {
+                    post {
+                        aiPlaceDescriptionProgressBar.visibility = View.GONE
+                        text = "Не удалось получить описание места"
+                    }
+                }
+            },
+        )
+    }
+
+    private fun formChatGptRequestString(placeName: String, location: PlaceDescription.Location): String {
+        var chatGptRequestString = ""
+
+        var addresses: List<Address>? = null
+        try {
+            val geocoder = Geocoder(requireContext(), Locale.getDefault())
+            addresses = geocoder.getFromLocation(location.lat, location.lng, 1)
+        } catch (e: IOException) {
+            Log.d(LOG_TAG, "$e")
+        }
+        if (!addresses.isNullOrEmpty()) {
+            val address = addresses[0]
+
+            val locality = address.locality
+            val country = address.countryName
+            val state = address.adminArea
+
+            if (!country.isNullOrEmpty()) {
+                chatGptRequestString += "$country, "
+            }
+            if (!state.isNullOrEmpty()) {
+                chatGptRequestString += "$state, "
+            } else if (!locality.isNullOrEmpty()) {
+                chatGptRequestString += "$locality, "
+            }
+        }
+
+        chatGptRequestString += placeName
+        Log.d(LOG_TAG, "chatGptRequestString = $chatGptRequestString")
+
+        return chatGptRequestString
+    }
 
     private fun Int.toPx() = (this * resources.displayMetrics.density).toInt()
 
