@@ -17,7 +17,6 @@ import androidx.lifecycle.lifecycleScope
 import com.example.app.R
 import com.example.app.databinding.FragmentPlaceDescriptionBinding
 import com.example.app.datalayer.models.PlaceDescription
-import com.example.app.datalayer.models.PlaceReaction
 import com.example.app.datalayer.repositories.ChatGptRepository
 import com.example.app.domain.providers.toNearbyPlace
 import com.example.app.presentationlayer.adapters.PlaceDescriptionImagesSliderRecyclerViewAdapter
@@ -49,8 +48,7 @@ class PlaceDescriptionFragment : Fragment() {
 
     private val visitedPlacesViewModel by viewModels<VisitedPlacesViewModel>()
 
-    private val placeDescriptionImagesSliderRecyclerViewAdapter =
-        PlaceDescriptionImagesSliderRecyclerViewAdapter()
+    private lateinit var placeDescriptionImagesSliderRecyclerViewAdapter: PlaceDescriptionImagesSliderRecyclerViewAdapter
 
     private var likedFlag = false
     private var visitedFlag = false
@@ -71,6 +69,9 @@ class PlaceDescriptionFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.fragment = this
+
+        placeDescriptionImagesSliderRecyclerViewAdapter =
+            PlaceDescriptionImagesSliderRecyclerViewAdapter(requireContext())
 
         binding.PlaceDescriptionFragmentViewPager2PlaceImage.adapter =
             placeDescriptionImagesSliderRecyclerViewAdapter
@@ -253,6 +254,7 @@ class PlaceDescriptionFragment : Fragment() {
                         onSetLike()
                         likedFlag = true
                     }
+
                     "visited" -> {
                         onSetVisited()
                         visitedFlag = true
@@ -264,7 +266,8 @@ class PlaceDescriptionFragment : Fragment() {
 
     private fun onSetAIPlaceDescription(placeName: String, location: PlaceDescription.Location) {
         val aiPlaceDescriptionTextView = binding.PlaceDescriptionFragmentTextViewAIPlaceDescription
-        val aiPlaceDescriptionProgressBar = binding.PlaceDescriptionFragmentProgressBarAIPlaceDescription
+        val aiPlaceDescriptionProgressBar =
+            binding.PlaceDescriptionFragmentProgressBarAIPlaceDescription
 
         ChatGptRepository.getPlaceDescriptionByChatGpt(
             placeName = formChatGptRequestString(placeName, location),
@@ -287,7 +290,10 @@ class PlaceDescriptionFragment : Fragment() {
         )
     }
 
-    private fun formChatGptRequestString(placeName: String, location: PlaceDescription.Location): String {
+    private fun formChatGptRequestString(
+        placeName: String,
+        location: PlaceDescription.Location
+    ): String {
         var chatGptRequestString = ""
 
         var addresses: List<Address>? = null

@@ -8,6 +8,7 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.doOnAttach
 import androidx.viewpager2.widget.ViewPager2
 import com.example.app.databinding.ActivityMainBinding
 import com.example.app.datalayer.repositories.LocalPropertiesSecretsRepository
@@ -136,6 +137,13 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         )
+
+        /*
+        // Select start screen of second tab
+        binding.MainActivityViewPager.doOnAttach {
+            binding.MainActivityViewPager.setCurrentItem(1, false)
+        }
+         */
 
         binding.MainActivityTabLayout.addOnTabSelectedListener(
             object : TabLayout.OnTabSelectedListener {

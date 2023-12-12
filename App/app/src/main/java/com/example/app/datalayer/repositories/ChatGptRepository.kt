@@ -18,7 +18,9 @@ import java.util.concurrent.TimeUnit
 
 internal object ChatGptRepository {
 
-    private const val responsePlaceDescriptionMaxTextSize = 1000 // Num of tokens in response
+    private const val RESPONSE_MAX_TOKENS_IN_TEXT = 150 // Num of tokens in response
+
+    private const val LOG_TAG = "ChatGptRepository"
 
     private val client = OkHttpClient.Builder().apply {
         connectTimeout(20, TimeUnit.SECONDS)
@@ -47,42 +49,56 @@ internal object ChatGptRepository {
             )
             .post(getRequestBody(placeName).toRequestBody("application/json".toMediaTypeOrNull()))
             .build()
-
-        Log.d("qwerty123", "formed request = $request")
+        Log.d(LOG_TAG, "formed request = $request")
 
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                Log.e("qwerty123", "API failed", e)
+                Log.e(LOG_TAG, "API failed", e)
                 onFailure()
             }
 
             override fun onResponse(call: Call, response: Response) {
-                val body = response.body?.string()
-                if (body != null) {
-                    Log.v("qwerty123", "body = $body")
-                    val jsonObject = JSONObject(body)
-                    val jsonArray: JSONArray = jsonObject.getJSONArray("choices")
-                    Log.v("qwerty123", "jsonArray = $jsonArray")
+                try {
+                    val body = response.body?.string()
+                    if (body != null) {
+                        val jsonObject = JSONObject(body)
+                        val jsonArray: JSONArray = jsonObject.getJSONArray("choices")
 
-                    val placeDescription = jsonArray.getJSONObject(0)
-                        .getJSONObject("message")
-                        .getString("content")
-                    Log.v("qwerty123", "textResult = $placeDescription")
-
-                    onSuccess(placeDescription)
-                } else {
-                    Log.v("qwerty123", "empty body")
+                        val placeDescription = jsonArray
+                            .getJSONObject(0)
+                            .getJSONObject("message")
+                            .getString("content")
+                            .filterTextTail()
+                        Log.v(LOG_TAG, "filteredTextResult = $placeDescription")
+                        onSuccess(placeDescription)
+                    } else {
+                        Log.v(LOG_TAG, "response body is empty")
+                        onFailure()
+                    }
+                } catch (e: Exception) {
+                    Log.e(LOG_TAG, e.message, e)
                     onFailure()
                 }
             }
         })
     }
 
+    private fun String.filterTextTail(): String {
+        var result = this
+        var lastSymbol = result.last()
+        while (lastSymbol != '.' && lastSymbol != '!' && lastSymbol != ';') {
+            result = result.removeSuffix(lastSymbol.toString())
+            lastSymbol = result.last()
+        }
+
+        return result
+    }
+
     private fun getRequestBody(placeName: String) =
         """
             {
                 "model": "gpt-3.5-turbo",
-                "max_tokens": $responsePlaceDescriptionMaxTextSize,
+                "max_tokens": $RESPONSE_MAX_TOKENS_IN_TEXT,
                 "messages": [
                     {
                         "role": "system",
