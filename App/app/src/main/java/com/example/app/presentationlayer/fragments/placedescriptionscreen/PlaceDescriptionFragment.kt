@@ -312,7 +312,7 @@ class PlaceDescriptionFragment : Fragment() {
         val aiPlaceDescriptionTextView = binding.PlaceDescriptionFragmentTextViewAIPlaceDescription
         val aiStubIcon = binding.PlaceDescriptionFragmentImageViewIcon
         val aiStubText = binding.PlaceDescriptionFragmentTextViewAIStubText
-        val aiHeaderText=binding.PlaceDescriptionFragmentTextViewAIHeaderText
+        val aiHeaderText = binding.PlaceDescriptionFragmentTextViewAIHeaderText
 
         ChatGptRepository.getPlaceDescriptionByChatGpt(
             placeName = formChatGptRequestString(placeName, location),
@@ -321,7 +321,7 @@ class PlaceDescriptionFragment : Fragment() {
                     post {
                         aiStubIcon.visibility = View.GONE
                         aiStubText.visibility = View.GONE
-                        aiHeaderText.visibility=View.VISIBLE
+                        aiHeaderText.visibility = View.VISIBLE
                         aiStubText.clearAnimation()
                         visibility = View.VISIBLE
                         text = it
@@ -333,7 +333,7 @@ class PlaceDescriptionFragment : Fragment() {
                     post {
                         aiStubIcon.visibility = View.GONE
                         aiStubText.visibility = View.GONE
-                        aiHeaderText.visibility=View.VISIBLE
+                        aiHeaderText.visibility = View.VISIBLE
                         aiStubText.clearAnimation()
                         text = "Не удалось получить описание места"
                     }

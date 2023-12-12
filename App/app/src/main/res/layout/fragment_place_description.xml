@@ -385,7 +385,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
                     android:gravity="center"
-                    android:text="Икусственный интелект думает"
+                    android:text="Искусственный интеллект думает"
                     android:textColor="@color/dark_grey"
                     android:textSize="24sp"
                     app:layout_constraintEnd_toEndOf="parent"
