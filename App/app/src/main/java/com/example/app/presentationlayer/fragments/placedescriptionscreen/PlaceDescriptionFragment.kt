@@ -11,6 +11,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
+import android.view.animation.TranslateAnimation
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -106,14 +109,55 @@ class PlaceDescriptionFragment : Fragment() {
                 visitedFlag = false
                 onUnSetVisited()
                 visitedPlacesViewModel.removePlace(place.toNearbyPlace())
-                //viewModel.postReaction(place.placeId, PlaceReaction.Reaction.UNVISITED)
             } else {
                 visitedFlag = true
                 onSetVisited()
                 visitedPlacesViewModel.savePlace(place.toNearbyPlace())
-                //viewModel.postReaction(place.placeId, PlaceReaction.Reaction.VISITED)
             }
         }
+
+        var aiCardVisible = false
+        binding.PlaceDescriptionFragmentButtonAI.setOnClickListener {
+            if (!aiCardVisible) {
+                binding.PlaceDescriptionFragmentCardView.visibility = View.VISIBLE
+                binding.PlaceDescriptionFragmentCardView.startAnimation(inFromBottomAnimation())
+                binding.PlaceDescriptionFragmentImageViewDarkBack.visibility = View.VISIBLE
+                aiCardVisible = true
+            }
+        }
+
+        binding.PlaceDescriptionFragmentImageViewDarkBack.setOnClickListener {
+            if (aiCardVisible) {
+                binding.PlaceDescriptionFragmentCardView.startAnimation(outToBottomAnimation())
+                binding.PlaceDescriptionFragmentCardView.visibility = View.INVISIBLE
+                binding.PlaceDescriptionFragmentImageViewDarkBack.visibility = View.GONE
+                aiCardVisible = false
+            }
+        }
+        binding.PlaceDescriptionFragmentTextViewAIStubText.startAnimation(
+            AnimationUtils.loadAnimation(
+                context,
+                R.anim.blinking
+            )
+        )
+    }
+
+    private fun inFromBottomAnimation(): Animation {
+        val inFromBottom: Animation = TranslateAnimation(
+            Animation.RELATIVE_TO_PARENT, 0.0f, Animation.RELATIVE_TO_PARENT, 0.0f,
+            Animation.RELATIVE_TO_SELF, +1.0f, Animation.RELATIVE_TO_SELF, 0.0f
+        )
+        inFromBottom.duration = 300
+        return inFromBottom
+    }
+
+    private fun outToBottomAnimation(): Animation {
+        val outToBottom: Animation = TranslateAnimation(
+            Animation.RELATIVE_TO_PARENT, 0.0f, Animation.RELATIVE_TO_PARENT, 0.0f,
+            Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, +1.0f
+        )
+        outToBottom.duration = 300
+        return outToBottom
     }
 
     override fun onResume() {
@@ -266,15 +310,20 @@ class PlaceDescriptionFragment : Fragment() {
 
     private fun onSetAIPlaceDescription(placeName: String, location: PlaceDescription.Location) {
         val aiPlaceDescriptionTextView = binding.PlaceDescriptionFragmentTextViewAIPlaceDescription
-        val aiPlaceDescriptionProgressBar =
-            binding.PlaceDescriptionFragmentProgressBarAIPlaceDescription
+        val aiStubIcon = binding.PlaceDescriptionFragmentImageViewIcon
+        val aiStubText = binding.PlaceDescriptionFragmentTextViewAIStubText
+        val aiHeaderText=binding.PlaceDescriptionFragmentTextViewAIHeaderText
 
         ChatGptRepository.getPlaceDescriptionByChatGpt(
             placeName = formChatGptRequestString(placeName, location),
             onSuccess = {
                 aiPlaceDescriptionTextView.apply {
                     post {
-                        aiPlaceDescriptionProgressBar.visibility = View.GONE
+                        aiStubIcon.visibility = View.GONE
+                        aiStubText.visibility = View.GONE
+                        aiHeaderText.visibility=View.VISIBLE
+                        aiStubText.clearAnimation()
+                        visibility = View.VISIBLE
                         text = it
                     }
                 }
@@ -282,7 +331,10 @@ class PlaceDescriptionFragment : Fragment() {
             onFailure = {
                 aiPlaceDescriptionTextView.apply {
                     post {
-                        aiPlaceDescriptionProgressBar.visibility = View.GONE
+                        aiStubIcon.visibility = View.GONE
+                        aiStubText.visibility = View.GONE
+                        aiHeaderText.visibility=View.VISIBLE
+                        aiStubText.clearAnimation()
                         text = "Не удалось получить описание места"
                     }
                 }
@@ -292,7 +344,7 @@ class PlaceDescriptionFragment : Fragment() {
 
     private fun formChatGptRequestString(
         placeName: String,
-        location: PlaceDescription.Location
+        location: PlaceDescription.Location,
     ): String {
         var chatGptRequestString = ""
 

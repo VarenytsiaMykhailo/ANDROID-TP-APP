@@ -10,4 +10,5 @@
     <color name="main_green">#439975</color>
     <color name="light_green">#D9F5E9</color>
     <color name="transparent">#00000000</color>
+    <color name="semitransparent">#66000000</color>
 </resources>
