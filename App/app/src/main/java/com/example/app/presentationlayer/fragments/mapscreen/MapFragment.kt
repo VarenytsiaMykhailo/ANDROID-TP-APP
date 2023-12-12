@@ -99,8 +99,7 @@ class MapFragment :
         .setGlyph(PinConfig.Glyph("A", Color.WHITE))
         .build()
 
-    private val placeInfoImagesSliderRecyclerViewAdapter =
-        PlaceDescriptionImagesSliderRecyclerViewAdapter()
+    private lateinit var placeInfoImagesSliderRecyclerViewAdapter: PlaceDescriptionImagesSliderRecyclerViewAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -121,6 +120,9 @@ class MapFragment :
             childFragmentManager.findFragmentById(R.id.MapFragment__FragmentContainerView) as SupportMapFragment
 
         viewModel.fragment = this
+
+        placeInfoImagesSliderRecyclerViewAdapter =
+            PlaceDescriptionImagesSliderRecyclerViewAdapter(requireContext())
 
         // Нужен true т.к. корневая локация могла измениться из PlacePickerMapFragment
         if (mainActivity.usersLastChosenLocation == mainActivity.usersPreviousChosenLocation) {
@@ -343,7 +345,12 @@ class MapFragment :
             googleMap.addMarker(advancedMarkerOptions)?.let {
                 markers.add(it)
                 centerRouteMarker = it
-                it.setIcon(BitmapFromVector(this.mainActivity.applicationContext, R.drawable.map_pin))
+                it.setIcon(
+                    BitmapFromVector(
+                        this.mainActivity.applicationContext,
+                        R.drawable.map_pin
+                    )
+                )
             }
         }
 

@@ -51,8 +51,7 @@ class PlaceDescriptionFragment : Fragment() {
 
     private val visitedPlacesViewModel by viewModels<VisitedPlacesViewModel>()
 
-    private val placeDescriptionImagesSliderRecyclerViewAdapter =
-        PlaceDescriptionImagesSliderRecyclerViewAdapter()
+    private lateinit var placeDescriptionImagesSliderRecyclerViewAdapter: PlaceDescriptionImagesSliderRecyclerViewAdapter
 
     private var likedFlag = false
     private var visitedFlag = false
@@ -73,6 +72,9 @@ class PlaceDescriptionFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.fragment = this
+
+        placeDescriptionImagesSliderRecyclerViewAdapter =
+            PlaceDescriptionImagesSliderRecyclerViewAdapter(requireContext())
 
         binding.PlaceDescriptionFragmentViewPager2PlaceImage.adapter =
             placeDescriptionImagesSliderRecyclerViewAdapter
@@ -310,7 +312,7 @@ class PlaceDescriptionFragment : Fragment() {
         val aiPlaceDescriptionTextView = binding.PlaceDescriptionFragmentTextViewAIPlaceDescription
         val aiStubIcon = binding.PlaceDescriptionFragmentImageViewIcon
         val aiStubText = binding.PlaceDescriptionFragmentTextViewAIStubText
-        val aiHeaderText=binding.PlaceDescriptionFragmentTextViewAIHeaderText
+        val aiHeaderText = binding.PlaceDescriptionFragmentTextViewAIHeaderText
 
         ChatGptRepository.getPlaceDescriptionByChatGpt(
             placeName = formChatGptRequestString(placeName, location),
@@ -319,7 +321,7 @@ class PlaceDescriptionFragment : Fragment() {
                     post {
                         aiStubIcon.visibility = View.GONE
                         aiStubText.visibility = View.GONE
-                        aiHeaderText.visibility=View.VISIBLE
+                        aiHeaderText.visibility = View.VISIBLE
                         aiStubText.clearAnimation()
                         visibility = View.VISIBLE
                         text = it
@@ -331,7 +333,7 @@ class PlaceDescriptionFragment : Fragment() {
                     post {
                         aiStubIcon.visibility = View.GONE
                         aiStubText.visibility = View.GONE
-                        aiHeaderText.visibility=View.VISIBLE
+                        aiHeaderText.visibility = View.VISIBLE
                         aiStubText.clearAnimation()
                         text = "Не удалось получить описание места"
                     }
@@ -342,7 +344,7 @@ class PlaceDescriptionFragment : Fragment() {
 
     private fun formChatGptRequestString(
         placeName: String,
-        location: PlaceDescription.Location
+        location: PlaceDescription.Location,
     ): String {
         var chatGptRequestString = ""
 
