@@ -21,9 +21,4 @@ data class SortPlacesRequest (
         @SerializedName("lng")
         val lng: Double,
     )
-
-    data class Waypoint(
-        @SerializedName("location")
-        val location: Location,
-    )
 }

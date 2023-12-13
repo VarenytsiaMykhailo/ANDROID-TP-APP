@@ -41,15 +41,21 @@ object MapProvider {
     ): List<NearbyPlace> {
         stringFromMap(filtersList)?.let { Log.d("sss", it) }
         if (updateListByRadiusFlag || forceRefresh) {
-            placesCachedList = mapRepository.getSuggestPlaces(
-                "$lat,$lng",
-                radius.toString(),
-                limit,
-                offset,
-                stringFromMap(filtersList),
-            ).also {
-                Log.d(LOG_TAG, "getSuggestPlaces = $it")
-            }.toMutableList()
+            placesCachedList =
+                try {
+                    mapRepository.getSuggestPlaces(
+                        "$lat,$lng",
+                        radius.toString(),
+                        limit,
+                        offset,
+                        stringFromMap(filtersList),
+                    ).also {
+                        Log.d(LOG_TAG, "getSuggestPlaces = $it")
+                    }.toMutableList()
+                } catch (e: Exception) {
+                    Log.e(LOG_TAG, e.message, e)
+                    emptyList<NearbyPlace>().toMutableList()
+                }
 
             updateListByRadiusFlag = false
         }
@@ -57,43 +63,109 @@ object MapProvider {
     }
 
     suspend fun getSuggestCategoriesList(): CategoriesList =
-        mapRepository.getSuggestCategoriesList().also {
-            Log.d(LOG_TAG, "getSuggestCategoriesList = $it")
+        try {
+            mapRepository.getSuggestCategoriesList().also {
+                Log.d(LOG_TAG, "getSuggestCategoriesList = $it")
+            }
+        } catch (e: Exception) {
+            Log.e(LOG_TAG, e.message, e)
+            CategoriesList(emptyList())
         }
 
     /**
      * @param placeId Example: "ChIJfRJDflpKtUYRl0UbgcrmUUk".
      */
     suspend fun getPlaceDescription(placeId: String): PlaceDescription =
-        mapRepository.getPlaceDescription(placeId).also {
-            Log.d(LOG_TAG, "getPlaceDescription = $it")
+        try {
+            mapRepository.getPlaceDescription(placeId).also {
+                Log.d(LOG_TAG, "getPlaceDescription = $it")
+            }
+        } catch (e: Exception) {
+            Log.e(LOG_TAG, e.message, e)
+            PlaceDescription(
+                placeId = "",
+                _name = "",
+                _rating = 0.0,
+                _ratingCount = 0,
+                _description = "",
+                _address = "",
+                _workingHours = emptyList(),
+                _tags = emptyList(),
+                _photos = null,
+                location = PlaceDescription.Location(0.0, 0.0),
+                _reactions = emptyList()
+            )
         }
 
     suspend fun postSuggestReaction(placeId: String, reaction: PlaceReaction.Reaction) =
-        mapRepository.postSuggestReaction(
-            PlaceReaction(placeId, reaction)
-        )
+        try {
+            mapRepository.postSuggestReaction(
+                PlaceReaction(placeId, reaction)
+            )
+        } catch (e: Exception) {
+            Log.e(LOG_TAG, e.message, e)
+        }
 
     suspend fun postSuggestUserNew() =
         mapRepository.postSuggestUserNew()
 
     suspend fun postSuggestRoute(routeRequest: RouteRequest): RouteResponse =
-        mapRepository.postSuggestRoute(
-            routeRequest
-        )
+        try {
+            mapRepository.postSuggestRoute(
+                routeRequest
+            )
+        } catch (e: Exception) {
+            Log.e(LOG_TAG, e.message, e)
+            RouteResponse(
+                travelMode = "WALK",
+                route = emptyList(),
+            )
+        }
+
 
     suspend fun postSuggestRouteSortPlace(sortPlacesRequest: SortPlacesRequest): SortPlaceResponse =
-        mapRepository.postSuggestRouteSortPlace(
-            sortPlacesRequest
-        )
-
-    fun stringFromMap(map:MutableMap<String,String>):String?{
-        var string:String?=null
-        map.values.forEach(){
-            if (string==null) string=""
-            string= "$string$it,"
+        try {
+            mapRepository.postSuggestRouteSortPlace(
+                sortPlacesRequest
+            )
+        } catch (e: Exception) {
+            Log.e(LOG_TAG, e.message, e)
+            SortPlaceResponse(
+                start = SortPlaceResponse.Location(
+                    sortPlacesRequest.start.lat,
+                    sortPlacesRequest.start.lng,
+                ),
+                end = SortPlaceResponse.Location(
+                    sortPlacesRequest.end.lat,
+                    sortPlacesRequest.end.lng,
+                ),
+                waypoints = mutableListOf<SortPlaceResponse.Location>().apply {
+                    sortPlacesRequest.waypoints.forEach {
+                        this += SortPlaceResponse.Location(
+                            it.lat,
+                            it.lng,
+                        )
+                    }
+                },
+            )
         }
-        string= string?.dropLast(1)
+
+    suspend fun getPing(): Boolean =
+        try {
+            mapRepository.getPing()
+            true
+        } catch (e: Exception) {
+            Log.e(LOG_TAG, e.message, e)
+            false
+        }
+
+    private fun stringFromMap(map: MutableMap<String, String>): String? {
+        var string: String? = null
+        map.values.forEach {
+            if (string == null) string = ""
+            string = "$string$it,"
+        }
+        string = string?.dropLast(1)
         return string
     }
 

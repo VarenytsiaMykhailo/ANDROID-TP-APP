@@ -8,13 +8,14 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.doOnAttach
 import androidx.viewpager2.widget.ViewPager2
+import com.example.app.R
 import com.example.app.databinding.ActivityMainBinding
 import com.example.app.datalayer.repositories.LocalPropertiesSecretsRepository
 import com.example.app.domain.providers.MapAndroidClient
 import com.example.app.domain.providers.MapProvider
 import com.example.app.presentationlayer.adapters.TabBarAdapter
+import com.example.app.presentationlayer.fragments.nointernetscreen.NoInternetFragment
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
@@ -56,6 +57,21 @@ class MainActivity : AppCompatActivity() {
         // !!! All requests to backend (such as ping-pong) should be used after this
         // because uuid sets to header and we can get exception uninitialized uuid
         generateOrInitializeUserUUID()
+
+        // Check internet connection
+        runBlocking {
+            if (!MapProvider.getPing()) {
+                supportFragmentManager
+                    .beginTransaction()
+                    .replace(
+                        R.id.MainActivity__ConstraintLayout_Root,
+                        NoInternetFragment.newInstance()
+                    )
+                    .addToBackStack("NoInternetFragment")
+                    .commit()
+            }
+        }
+
         setupTabBar()
         initMapAndroidClient()
         initLocationClient()
