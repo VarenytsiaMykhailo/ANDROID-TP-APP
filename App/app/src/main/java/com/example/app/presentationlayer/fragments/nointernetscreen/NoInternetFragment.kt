@@ -33,10 +33,14 @@ class NoInternetFragment : Fragment() {
         binding.NoInternetFragmentButtonRefresh.setOnClickListener {
             runBlocking {
                 if (MapProvider.getPing()) {
-                    parentFragmentManager.popBackStack()
+                    closeScreen()
                 }
             }
         }
+    }
+
+    private fun closeScreen() {
+        parentFragmentManager.popBackStack()
     }
 
     /**
