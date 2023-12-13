@@ -22,6 +22,9 @@ import java.util.concurrent.TimeUnit
 
 internal interface MapRepository {
 
+    @GET("suggest/ping")
+    suspend fun getPing()
+
     /**
      * @param location Example: "55.7520233,37.6174994" in lat, lng format.
      * @param radius Example: "50000" in metres.

@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/MainActivity__ConstraintLayout_Root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".presentationlayer.MainActivity">
@@ -15,7 +16,6 @@
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/MainActivity__TabLayout"
-        app:tabTextAppearance="@style/MyStyle"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:background="@color/white"
@@ -27,6 +27,7 @@
         app:tabMode="fixed"
         app:tabRippleColor="@color/main_green"
         app:tabSelectedTextColor="@color/main_green"
+        app:tabTextAppearance="@style/MyStyle"
         app:tabTextColor="@color/black">
 
         <com.google.android.material.tabs.TabItem

@@ -11,7 +11,7 @@ data class SortPlaceResponse (
     val end: Location,
 
     @SerializedName("waypoints")
-    val waypoints: List<SortPlacesRequest.Location>,
+    val waypoints: List<Location>,
 ) {
 
     data class Location(
@@ -20,10 +20,5 @@ data class SortPlaceResponse (
 
         @SerializedName("lng")
         val lng: Double,
-    )
-
-    data class Waypoint(
-        @SerializedName("location")
-        val location: Location,
     )
 }
