@@ -16,6 +16,7 @@ import com.example.app.domain.providers.MapAndroidClient
 import com.example.app.domain.providers.MapProvider
 import com.example.app.presentationlayer.adapters.TabBarAdapter
 import com.example.app.presentationlayer.fragments.nointernetscreen.NoInternetFragment
+import com.example.app.presentationlayer.fragments.onboardingscreen.OnboardingRootFragment
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
@@ -30,6 +31,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+
+    private var isFirstLaunch = false
 
     var locationPermissionGranted = false
 
@@ -72,6 +75,18 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        // Launch onboarding
+        if (isFirstLaunch) {
+            supportFragmentManager
+                .beginTransaction()
+                .replace(
+                    R.id.MainActivity__ConstraintLayout_Root,
+                    OnboardingRootFragment.newInstance()
+                )
+                .addToBackStack("OnboardingRootFragment")
+                .commit()
+        }
+
         setupTabBar()
         initMapAndroidClient()
         initLocationClient()
@@ -102,6 +117,8 @@ class MainActivity : AppCompatActivity() {
                     Log.e(LOG_TAG, "generateOrInitializeUserUUID Error while saving user UUID!")
                     throw RuntimeException("Error while saving user UUID!")
                 }
+
+                isFirstLaunch = true
 
                 newUserUUID
             }
