@@ -9,6 +9,7 @@ import coil.load
 import com.example.app.R
 import com.example.app.databinding.FragmentOnboardingImageBinding
 import com.example.app.datalayer.repositories.LocalPropertiesSecretsRepository
+import com.google.android.material.tabs.TabLayoutMediator
 
 /**
  * Use the [OnboardingImageFragment.newInstance] factory method to
@@ -41,7 +42,7 @@ class OnboardingImageFragment : Fragment() {
             }
 
             else -> {
-                R.drawable.onboarding_step2
+                R.color.white
             }
         }
 

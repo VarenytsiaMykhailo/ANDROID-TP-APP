@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import com.example.app.databinding.FragmentOnboardingRootBinding
 import com.example.app.presentationlayer.adapters.OnboardingViewPagerAdapter
+import com.google.android.material.tabs.TabLayoutMediator
 
 /**
  * Use the [OnboardingRootFragment.newInstance] factory method to
@@ -31,6 +32,11 @@ class OnboardingRootFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupViewPager2()
+        TabLayoutMediator(
+            binding.OnboardingRootFragmentTabLayout,
+            binding.OnboardingRootFragmentViewPager
+        ) { tab, position ->
+        }.attach()
     }
 
     private fun setupViewPager2() {

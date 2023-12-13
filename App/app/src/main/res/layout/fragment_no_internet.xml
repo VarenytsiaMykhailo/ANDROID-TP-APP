@@ -6,17 +6,19 @@
     android:id="@+id/NoInternetFragment__ConstraintLayout_Root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@color/main_green">
 
     <TextView
         android:id="@+id/NoInternetFragment__TextView_NoInternetMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:gravity="center_vertical|left"
         android:paddingLeft="40dp"
         android:paddingRight="40dp"
         android:text="Проверьте подключение к интернету и повторите попытку"
-        android:textSize="22sp"
+        android:textSize="24sp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -29,8 +31,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
+        android:textSize="16sp"
         android:text="Обновить"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textColor="@color/main_green"
+        android:backgroundTint="@color/white"
+android:layout_marginStart="40dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/NoInternetFragment__TextView_NoInternetMessage" />
 
