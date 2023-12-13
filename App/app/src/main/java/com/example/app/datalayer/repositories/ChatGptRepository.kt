@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit
 
 internal object ChatGptRepository {
 
-    private const val RESPONSE_MAX_TOKENS_IN_TEXT = 150 // Num of tokens in response
+    private const val RESPONSE_MAX_TOKENS_IN_TEXT = 280 // Num of tokens in response
 
     private const val LOG_TAG = "ChatGptRepository"
 
